@@ -1,6 +1,6 @@
 #pragma once
 
-#include <filesystem>
+#include <ranges>
 
 #include <core/utils/CommonOperations.h>
 #include <core/XsdParserCore.h>
@@ -28,17 +28,16 @@ private:
      * In this project this attribute is used to specify another file location that contains more element definitions
      * that belong to the same XSD language definition.
      */
-    std::filesystem::path m_schemaLocation;
+    SchemaLocation m_schemaLocation;
 public:
     XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
       : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
     {
       if(attributesMap.contains(*SCHEMA_LOCATION))
-        m_schemaLocation = attributesMap.at(*SCHEMA_LOCATION);
-
-      if (!m_schemaLocation.empty())
       {
-        parser->addFileToParse(m_schemaLocation);
+        for(auto location : std::views::split(attributesMap.at(*SCHEMA_LOCATION), '\n'))
+          m_schemaLocation.insert(location.data());
+        parser->addLocationToParse(m_schemaLocation);
       }
     }
 public:
@@ -53,7 +52,7 @@ public:
         visitorParam->visit(std::shared_ptr<XsdInclude>(this));
     }
 
-  std::filesystem::path getSchemaLocation(void) {
+  SchemaLocation getSchemaLocation(void) {
         return m_schemaLocation;
     }
 };

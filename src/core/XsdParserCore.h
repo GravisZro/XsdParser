@@ -1,7 +1,5 @@
 #pragma once
 
-#include <filesystem>
-
 #include <core/utils/CommonTypes.h>
 #include <pugixml.hpp>
 
@@ -33,7 +31,7 @@ private:
      * A {@link List} of {@link UnsolvedReference} elements that weren't solved. This list is consulted after all the
      * elements are parsed in order to find if there is any suitable parsed element to replace the unsolved element.
      */
-    std::map<std::string, std::list<std::shared_ptr<UnsolvedReference>>> m_unsolvedElements;
+    std::map<SchemaLocation, std::list<std::shared_ptr<UnsolvedReference>>> m_unsolvedElements;
 
     /**
      * A {@link List} containing all the elements that even after parsing all the elements on the file, don't have a
@@ -43,7 +41,7 @@ private:
     std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElementsMap;
 
 protected:
-    std::filesystem::path m_currentFile;
+    SchemaLocation m_currentFile;
 
 public:
 
@@ -52,23 +50,20 @@ public:
      * type supported by this mapper, this way based on the concrete {@link XsdAbstractElement} tag the according parse
      * method can be invoked.
      */
-    static std::map<std::string_view, ConfigEntryData> m_parseMappers;// = config.getParseMappers();
+    static std::map<std::string_view, ConfigEntryData> m_parseMappers;
 
     /**
      * A {@link List} which contains all the top elements parsed by this class.
      */
-  std::map<std::string, std::list<std::shared_ptr<ReferenceBase>>> m_parseElements;
+  std::map<SchemaLocation, std::list<std::shared_ptr<ReferenceBase>>> m_parseElements;
     /**
      * A {@link List} containing the paths of files that were present in either {@link XsdInclude} or {@link XsdImport}
      * objects that are present in the original or subsequent files. These paths are stored to be parsed as well, the
      * parsing process only ends when all the files present in this {@link List} are parsed.
      */
-  std::list<std::filesystem::path> m_schemaLocations;
-  StringMap m_schemaLocationsMap;
+  std::set<SchemaLocation> m_schemaLocations;
+  std::map<SchemaLocation, SchemaLocation> m_schemaLocationsMap;
 
-
-
-  //static auto xsdTypesToJava = config.getXsdTypesToJava();
 
     /**
      * Verifies if a given {@link DOMNode} object, i.e. {@code node} is a xsd:schema node.
@@ -95,7 +90,7 @@ public:
     void resolveOtherNamespaceRefs(void);
     void replaceUnsolvedImportedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
                                           std::shared_ptr<UnsolvedReference> unsolvedReference,
-                                          std::string fileName);
+                                          SchemaLocation fileLocation);
     
     void resolveInnerRefs(void);
 
@@ -108,7 +103,7 @@ public:
      */
     void replaceUnsolvedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
                                   std::shared_ptr<UnsolvedReference> unsolvedReference,
-                                  std::string fileName);
+                                  SchemaLocation fileLocation);
 
     /**
      * Saves an occurrence of an element which couldn't be resolved in the {@link XsdParser#replaceUnsolvedReference}
@@ -151,7 +146,7 @@ public:
      * original file to parse.
      * @param schemaLocation A new file path of another XSD file to parse.
      */
-  void addFileToParse(std::filesystem::path schemaLocation);
+  void addLocationToParse(SchemaLocation schemaLocation);
 
   static StringMap getXsdTypesToJava(void)
   {
@@ -174,10 +169,4 @@ public:
         m_parseMappers = config.getParseMappers();
     }
 
-    protected:
-    bool isRelativePath(std::string filePath)
-    {
-        //return !filePath.matches(".*:.*");
-      return false;
-    }
 };

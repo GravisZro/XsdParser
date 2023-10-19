@@ -10,10 +10,10 @@ XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser, StringMap attributes
     m_namespace = attributesMap.at(*NAMESPACE);
 
   if(attributesMap.contains(*SCHEMA_LOCATION))
+  {
     m_schemaLocation = attributesMap.at(*SCHEMA_LOCATION);
-
-  if (!m_schemaLocation)
-    m_parser->addFileToParse(m_schemaLocation.value());
+    m_parser->addLocationToParse(m_schemaLocation);
+  }
 }
 
 

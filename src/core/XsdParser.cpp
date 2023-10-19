@@ -1,16 +1,17 @@
 #include "XsdParser.h"
 
-
 #include <core/utils/ConfigEntryData.h>
 #include <xsdelements/exceptions/ParsingException.h>
 
 
 void XsdParser::parse(std::string filePath)
 {
-    m_schemaLocations.push_back(filePath);
-    for(auto& schemaLocation : m_schemaLocations)
-      parseFile(schemaLocation);
-    resolveRefs();
+  if(m_schemaLocations.contains(filePath))
+    m_schemaLocations.insert(filePath);
+
+  for(auto& schemaLocation : m_schemaLocations)
+    parseLocation(schemaLocation);
+  resolveRefs();
 }
 
 /**
@@ -19,38 +20,21 @@ void XsdParser::parse(std::string filePath)
  * field.
  * @param filePath The path to the XSD file.
  */
-void XsdParser::parseFile(std::string filePath)
+void XsdParser::parseLocation(SchemaLocation fileLocation)
 {
-  // TODO
-  /*
-    //https://www.mkyong.com/java/how-to-read-xml-file-in-java-dom-parser/
+  m_currentFile = fileLocation;
+  ConfigEntryData xsdSchemaConfig;
 
-    try {
-        if (!new File(filePath).exists() && isRelativePath(filePath)){
-            std::string parentFile = m_schemaLocationsMap.get(filePath);
+  if(m_parseMappers.contains(*XsdSchema::XSD_TAG))
+    xsdSchemaConfig = m_parseMappers.at(*XsdSchema::XSD_TAG);
+  else if(m_parseMappers.contains(*XsdSchema::XS_TAG))
+    xsdSchemaConfig = m_parseMappers.at(*XsdSchema::XS_TAG);
 
-            filePath  = parentFile.substring(0, parentFile.lastIndexOf('/') + 1).concat(filePath);
+  if (xsdSchemaConfig.parserFunction == nullptr && xsdSchemaConfig.visitorFunction == nullptr)
+    throw new std::runtime_error("XsdSchema not correctly configured.");
 
-            if (!new File(filePath).exists()) {
-                throw new FileNotFoundException(filePath);
-            }
-        }
-
-        m_currentFile = filePath.replace("\\", "/");
-
-        ConfigEntryData xsdSchemaConfig = parseMappers.getOrDefault(XsdSchema::XSD_TAG, parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
-
-        if (xsdSchemaConfig == null){
-            throw new ParserConfigurationException("XsdSchema not correctly configured.");
-        }
-
-        ReferenceBase schemaReference = xsdSchemaConfig.parserFunction( ParseData { std::make_shared<XsdParserCore>(this), getSchemaNode(filePath), xsdSchemaConfig.visitorFunction});
-        ((XsdSchema)schemaReference.getElement()).setFilePath(filePath);
-    } catch (SAXException | IOException | ParserConfigurationException e) {
-        Logger.getAnonymousLogger().log(Level.SEVERE, "Exception while parsing.", e);
-        throw new RuntimeException(e);
-    }
-*/
+  std::shared_ptr<ReferenceBase> schemaReference = xsdSchemaConfig.parserFunction( ParseData { std::shared_ptr<XsdParserCore>(this), getSchemaNode(fileLocation), xsdSchemaConfig.visitorFunction});
+  std::static_pointer_cast<XsdSchema>(schemaReference->getElement())->setFileLocation(fileLocation);
 }
 
 
@@ -63,8 +47,12 @@ void XsdParser::parseFile(std::string filePath)
  *      {@link ParserConfigurationException}.
  * @return A list of nodes that represent the node tree of the XSD file with the path received.
  */
-pugi::xml_node XsdParser::getSchemaNode(std::string filePath) //throws IOException, SAXException, ParserConfigurationException
+pugi::xml_node XsdParser::getSchemaNode(SchemaLocation fileLocation)
 {
+  std::string filePath;
+
+
+
   pugi::xml_document doc;
   pugi::xml_parse_result result = doc.load_file(filePath.c_str());
   assert(result);

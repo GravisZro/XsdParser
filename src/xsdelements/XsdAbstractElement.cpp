@@ -79,28 +79,30 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
  */
 void XsdAbstractElement::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
-  std::list<std::shared_ptr<ReferenceBase>> e = getElements();
-  if (!e.empty())
+  std::list<std::shared_ptr<ReferenceBase>> element_list = getElements();
+  if (!element_list.empty())
   {
     std::list<std::shared_ptr<UnsolvedReference>> unsolved_refs;
-    std::remove_if(e.begin(),
-                   e.end(),
+    std::remove_if(std::begin(element_list),
+                   std::end(element_list),
                    [element](std::shared_ptr<ReferenceBase> e)
     {
       auto unsolved = std::dynamic_pointer_cast<UnsolvedReference>(e);
       return unsolved == nullptr || !compareReference(element, unsolved);
     });
 
-    std::transform(e.begin(),
-                   e.end(),
-                   unsolved_refs.begin(),
+    std::transform(std::begin(element_list),
+                   std::end(element_list),
+                   std::begin(unsolved_refs),
                    [](std::shared_ptr<ReferenceBase> element) { return std::static_pointer_cast<UnsolvedReference>(element); });
 
     if(!unsolved_refs.empty())
     {
       auto oldElement = unsolved_refs.front();
-      auto iter = std::find(std::begin(e), std::end(e), std::static_pointer_cast<ReferenceBase>(oldElement));
-      assert(iter != std::end(e));
+      auto iter = std::find(std::begin(element_list),
+                            std::end(element_list),
+                            std::static_pointer_cast<ReferenceBase>(oldElement));
+      assert(iter != std::end(element_list));
       *iter = ReferenceBase::clone(m_parser, std::static_pointer_cast<ReferenceBase>(element), oldElement->getParent());
     }
   }
@@ -129,20 +131,19 @@ bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> 
 std::list<std::shared_ptr<XsdAbstractElement>> XsdAbstractElement::getXsdElements(void)
 {
   std::list<std::shared_ptr<XsdAbstractElement>> xsd_elements;
-  std::list<std::shared_ptr<ReferenceBase>> e = getElements();
+  std::list<std::shared_ptr<ReferenceBase>> element_list = getElements();
 
-  if (e.empty())
-    return {};
+  if(!element_list.empty())
+  {
+    std::remove_if(std::begin(element_list),
+                   std::end(element_list),
+                   [](std::shared_ptr<ReferenceBase> element) { return std::dynamic_pointer_cast<ConcreteElement>(element) == nullptr; });
 
-  std::remove_if(std::begin(e),
-                 std::end(e),
-                 [](std::shared_ptr<ReferenceBase> element) { return std::dynamic_pointer_cast<ConcreteElement>(element) == nullptr; });
-
-  std::transform(std::begin(e),
-                 std::end(e),
-                 xsd_elements.begin(),
-                 [](std::shared_ptr<ReferenceBase> element) { return element->getElement(); });
-
+    std::transform(std::begin(element_list),
+                   std::end(element_list),
+                   std::begin(xsd_elements),
+                   [](std::shared_ptr<ReferenceBase> element) { return element->getElement(); });
+  }
   return xsd_elements;
 }
 

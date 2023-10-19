@@ -42,13 +42,21 @@ public:
 
   std::list<std::shared_ptr<XsdAbstractElement>> getParentsExcludingClones(void)
   {
-        //return parents.stream().filter(parent -> parent.getCloneOf() == null).distinct();
-    return {}; // TODO
+    std::list<std::shared_ptr<XsdAbstractElement>> rval;
+    for(auto& parent : m_parents)
+      if(parent->getCloneOf() == nullptr)
+        rval.push_back(parent);
+    rval.unique();
+    return rval;
   }
 
-    // @SuppressWarnings("unused")
-  std::list<std::shared_ptr<XsdAbstractElement>> getParentsWithClones(void) {
-        //return parents.stream().filter(parent -> parent.getCloneOf() != null).distinct();
-    return {}; // TODO
+  std::list<std::shared_ptr<XsdAbstractElement>> getParentsWithClones(void)
+  {
+    std::list<std::shared_ptr<XsdAbstractElement>> rval;
+    for(auto& parent : m_parents)
+      if(parent->getCloneOf())
+        rval.push_back(parent);
+    rval.unique();
+    return rval;
   }
 };

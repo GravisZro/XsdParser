@@ -2,7 +2,7 @@
 
 #include <core/utils/CommonTypes.h>
 
-class ParseData;
+struct ParseData;
 class ReferenceBase;
 
 struct ConfigEntryData

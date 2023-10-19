@@ -79,12 +79,12 @@ std::shared_ptr<ReferenceBase> XsdSchema::parse(ParseData parseData)
 
       std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
 
-      StringMap prefixLocations;
+      std::map<std::string, SchemaLocation> prefixLocations;
       for(auto& nspair : xsdSchema->getNamespaces())
         for(auto& import : importsList)
           if(import->getNamespace() == nspair.second.getName() && import->getSchemaLocation())
           {
-            prefixLocations.emplace(nspair.first, import->getSchemaLocation().value());
+            prefixLocations.emplace(nspair.first, import->getSchemaLocation());
             break;
           }
 
@@ -234,7 +234,6 @@ std::list<std::shared_ptr<XsdElement>> XsdSchema::getChildrenElements(void)
 /**
  * @return The children elements that are of the type {@link XsdAttribute}.
  */
-// @SuppressWarnings("unused")
 std::list<std::shared_ptr<XsdAttribute>> XsdSchema::getChildrenAttributes(void)
 {
   std::list<std::shared_ptr<XsdAttribute>> attributes;
@@ -244,13 +243,13 @@ std::list<std::shared_ptr<XsdAttribute>> XsdSchema::getChildrenAttributes(void)
   return attributes;
 }
 
-void XsdSchema::resolveNameSpace(std::optional<std::string> Namespace, std::optional<std::string> schemaLocation)
+void XsdSchema::resolveNameSpace(std::optional<std::string> Namespace, SchemaLocation schemaLocation)
 {
   if (Namespace && schemaLocation &&
       m_namespaces.contains(*Namespace))
   {
     NamespaceInfo namespaceInfo = m_namespaces.at(*Namespace);
     if(!namespaceInfo.getFile())
-      namespaceInfo.setFile(*schemaLocation);
+      namespaceInfo.setFile(schemaLocation);
   }
 }

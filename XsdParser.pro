@@ -19,6 +19,7 @@ HEADERS += \
   src/core/utils/NamespaceInfo.h \
   src/core/utils/ParseData.h \
   src/core/utils/ParserConfig.h \
+  src/core/utils/SchemaLocation.h \
   src/core/utils/UnsolvedReferenceItem.h \
   src/xsdelements/AttributeValidations.h \
   src/xsdelements/XsdAbstractElement.h \
@@ -106,6 +107,7 @@ SOURCES += \
   src/core/XsdParserCore.cpp \
   src/core/utils/ParseData.cpp \
   src/core/utils/ParserConfig.cpp \
+  src/core/utils/SchemaLocation.cpp \
   src/main.cpp \
   src/xsdelements/AttributeValidations.cpp \
   src/xsdelements/XsdAbstractElement.cpp \

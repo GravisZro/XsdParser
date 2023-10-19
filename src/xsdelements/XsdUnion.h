@@ -2,11 +2,13 @@
 
 //#include <core/XsdParserCore.h>
 #include <core/utils/ParseData.h>
+#include <ranges>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
+#include <xsdelements/XsdSimpleType.h>
 
 #include <list>
 #include <map>
@@ -61,9 +63,12 @@ public:
 
         auto elementCopy = std::make_shared<XsdUnion>(m_parser, placeHolderAttributes, m_visitorFunction);
 
-        if (m_simpleTypeList.empty()){
-          // TODO
-            //elementCopy->m_simpleTypeList = m_simpleTypeList.stream().map(simpleType -> (XsdSimpleType) simpleType->clone(simpleType->getAttributesMap(), elementCopy));
+        if (m_simpleTypeList.empty())
+        {
+          for(auto& simpleType : m_simpleTypeList)
+            elementCopy->m_simpleTypeList.push_back(
+                std::static_pointer_cast<XsdSimpleType>(
+                    simpleType->clone(simpleType->getAttributesMap(), elementCopy)));
         }
 
         elementCopy->m_parent = nullptr;
@@ -77,8 +82,10 @@ public:
 
   std::list<std::string> getMemberTypesList(void)
   {
-    return {}; // TODO
-    //return Arrays.asList(memberTypes.split(" "));
+    std::list<std::string> rval;
+    for(auto val : std::ranges::views::split(m_memberTypes, " "))
+      rval.push_back(val.data());
+    return rval;
   }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)

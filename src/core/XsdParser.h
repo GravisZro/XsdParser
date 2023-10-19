@@ -1,6 +1,7 @@
 #pragma once
 
 #include <core/utils/CommonTypes.h>
+
 #include <pugixml.hpp>
 
 #include <core/utils/ParseData.h>
@@ -53,8 +54,8 @@ private:
      * field.
      * @param filePath The path to the XSD file.
      */
-  void parseFile(std::string filePath);
+  void parseLocation(SchemaLocation fileLocation);
 
 
-  pugi::xml_node getSchemaNode(std::string filePath);
+  pugi::xml_node getSchemaNode(SchemaLocation fileLocation);
 };

@@ -31,7 +31,7 @@ private:
      * In this project this attribute is used to specify another file location that contains more element definitions
      * that belong to the same XSD language definition.
      */
-    std::optional<std::string> m_schemaLocation;
+    SchemaLocation m_schemaLocation;
 public:
     XsdImport(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
 
@@ -47,7 +47,7 @@ public:
         return m_namespace;
     }
 
-  std::optional<std::string> getSchemaLocation(void) {
+  SchemaLocation getSchemaLocation(void) {
         return m_schemaLocation;
     }
 };

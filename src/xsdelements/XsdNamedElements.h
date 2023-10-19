@@ -1,5 +1,6 @@
 #pragma once
 
+#include <regex>
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <core/utils/CommonOperations.h>
 
@@ -48,8 +49,17 @@ public:
      */
   std::optional<std::string> getName(void)
   {
-    return m_name; // TODO
-        //return name == null ? null : name.replaceAll("[^a-zA-Z0-9]", "_");
+    if(m_name)
+    {
+      static std::regex non_alphanum("[^a-zA-Z0-9]");
+      std::string rval;
+      std::regex_replace(std::begin(rval),
+                         std::begin(*m_name),
+                         std::end(*m_name),
+                         non_alphanum, "_");
+      return rval;
+    }
+    return std::nullopt;
   }
 
   std::optional<std::string> getRawName(void)

@@ -101,8 +101,12 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
       auto elementCopy = std::make_shared<XsdRestriction>(m_parser, placeHolderAttributes, m_visitorFunction);
 
-      if (!m_enumeration.empty()){ // TODO
-//          elementCopy->m_enumeration = m_enumeration.stream().map(enumerationObj -> (XsdEnumeration) enumerationObj->clone(enumerationObj->getAttributesMap(), elementCopy));
+      if (!m_enumeration.empty())
+      {
+        for(auto& enumerationObj : m_enumeration)
+          elementCopy->m_enumeration.push_back(
+              std::static_pointer_cast<XsdEnumeration>(
+                  enumerationObj->clone(enumerationObj->getAttributesMap(), elementCopy)));
       }
 
       if (m_fractionDigits){

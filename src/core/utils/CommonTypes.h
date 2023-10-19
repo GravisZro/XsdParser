@@ -7,6 +7,8 @@
 #include <functional>
 #include <memory>
 
+#include "SchemaLocation.h"
+
 class XsdAbstractElementVisitor;
 class XsdAbstractElement;
 

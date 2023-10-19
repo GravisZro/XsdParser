@@ -19,7 +19,6 @@
 class XsdAbstractElement;
 class XsdAbstractElementVisitor;
 class XsdParserCore;
-class ParseData;
 
 class XsdSchema : public XsdAnnotatedElements
 {
@@ -72,7 +71,7 @@ private:
      */
     std::optional<std::string> m_xmlns;
 
-    std::string m_filePath;
+    SchemaLocation m_fileLocation;
 
     std::map<std::string, NamespaceInfo> m_namespaces;
 
@@ -101,10 +100,13 @@ public:
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
 
 private:
-  void updatePrefixLocations(StringMap prefixLocations)
+  void updatePrefixLocations(std::map<std::string, SchemaLocation> prefixLocations)
   {
     for(auto& pair : prefixLocations)
+    {
+      assert(m_namespaces.contains(pair.first));
       m_namespaces.at(pair.first).setFile(pair.second);
+    }
   }
 public:
   void add(std::shared_ptr<XsdInclude> element);
@@ -187,17 +189,17 @@ public:
      */
   std::list<std::shared_ptr<XsdAttribute>> getChildrenAttributes(void);
 
-  void resolveNameSpace(std::optional<std::string> Namespace, std::optional<std::string> schemaLocation);
+  void resolveNameSpace(std::optional<std::string> Namespace, SchemaLocation schemaLocation);
 
   std::map<std::string, NamespaceInfo> getNamespaces(void) {
         return m_namespaces;
     }
 
-  std::string getFilePath(void) {
-        return m_filePath;
+  SchemaLocation getFileLocation(void) {
+        return m_fileLocation;
     }
 
-  void setFilePath(std::string filePath) {
-        m_filePath = filePath;
+  void setFileLocation(SchemaLocation filePath) {
+        m_fileLocation = filePath;
     }
 };
