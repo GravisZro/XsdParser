@@ -11,9 +11,7 @@
 #include <xsdelements/enums/WhiteSpaceEnum.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
-
-#include <map>
-#include <functional>
+#include <xsdelements/XsdAnnotatedElements.h>
 
 /**
  * States how the whiteSpace characters should be treated. The value is defined as an {@link std::string}.
@@ -28,7 +26,8 @@ public:
 private:
   bool m_fixed;
   WhiteSpaceEnum m_value;
-
+public:
+  using XsdAnnotatedElements::clone;
   XsdWhiteSpace(std::shared_ptr<XsdParserCore> parser,
                 StringMap elementFieldsMapParam,
                 VisitorFunctionReference visitorFunction)

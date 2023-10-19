@@ -56,8 +56,8 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
         {
           if(auto configEntryData = parse_mappers.at(nodeName); configEntryData.parserFunction)
           {
-            auto rval = configEntryData.parserFunction({parser, child, configEntryData.visitorFunction});
-            auto childElement = rval.getElement();
+            auto rval = configEntryData.parserFunction( ParseData { parser, child, configEntryData.visitorFunction });
+            auto childElement = rval->getElement();
             childElement->accept(element->getVisitor());
             childElement->validateSchemaRules();
           }
@@ -112,13 +112,13 @@ bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> 
   return compareReference(element, reference->getRef());
 }
 
-bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> element, std::string unsolvedRef)
+bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> element, std::optional<std::string> unsolvedRef)
 {
-  if (unsolvedRef.contains(":"))
+  if (unsolvedRef && unsolvedRef->contains(":"))
   {
-    unsolvedRef = unsolvedRef.substr(unsolvedRef.find_first_of(":") + 1);
+    unsolvedRef = unsolvedRef->substr(unsolvedRef->find_first_of(":") + 1);
   }
-  return element->getName() == unsolvedRef;
+  return unsolvedRef && element->getName() == unsolvedRef.value();
 }
 
 

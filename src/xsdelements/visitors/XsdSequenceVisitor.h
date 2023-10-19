@@ -56,4 +56,4 @@ public:
 
         m_owner->addElement(element);
     }
-}
+};

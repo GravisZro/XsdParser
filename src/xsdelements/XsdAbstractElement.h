@@ -204,7 +204,7 @@ public:
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
 
   static bool compareReference(std::shared_ptr<NamedConcreteElement> element, std::shared_ptr<UnsolvedReference> reference);
-  static bool compareReference(std::shared_ptr<NamedConcreteElement> element, std::string unsolvedRef);
+  static bool compareReference(std::shared_ptr<NamedConcreteElement> element, std::optional<std::string> unsolvedRef);
 
     /**
      * @return The parent of the current {@link XsdAbstractElement} object.

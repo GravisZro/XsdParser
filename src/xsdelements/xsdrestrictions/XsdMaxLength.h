@@ -8,12 +8,8 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
+
 #include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
-
-
-#include <list>
-#include <map>
-#include <functional>
 
 /**
  * States the maximum length of a given type, either a {@link std::string}, a {@link List} or another measurable type.
@@ -28,7 +24,8 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:maxLength";
     constexpr static const std::string_view TAG = "maxLength";
 
-private:
+public:
+  using XsdIntegerRestrictions::clone;
   XsdMaxLength(std::shared_ptr<XsdParserCore> parser, StringMap elementFieldsMapParam, VisitorFunctionReference visitorFunction)
         : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction)
   {

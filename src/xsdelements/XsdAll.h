@@ -38,7 +38,7 @@ private:
      * std::shared_ptr<XsdSchema> element.
      */
     int m_maxOccurs;
-
+public:
     XsdAll(std::shared_ptr<XsdParserCore> parser,
            StringMap attributesMap,
            VisitorFunctionReference visitorFunction);

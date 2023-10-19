@@ -1,6 +1,5 @@
 #pragma once
 
-
 //#include <core/XsdParserCore.h>
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ConcreteElement.h>
@@ -38,14 +37,10 @@ private:
      * Specifies whether character data is allowed to appear between the child elements of this element.
      */
     bool m_mixed;
-
-    XsdComplexContent(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction),
-        m_mixed(false)
-    {
-      if(attributesMap.contains(*MIXED_TAG))
-        m_mixed = AttributeValidations::validateBoolean(attributesMap.at(*MIXED_TAG));
-    }
+public:
+    XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
+                      StringMap attributesMap,
+                      VisitorFunctionReference visitorFunction);
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
@@ -53,44 +48,14 @@ public:
         visitorParam->visit(std::shared_ptr<XsdComplexContent>(this));
     }
 
-    /**
-     * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-     * {@link UnsolvedReference} objects in the reference solving process.
-     * @param placeHolderAttributes The additional attributes to add to the clone.
-     * @return A copy of the object from which is called upon.
-     */
-  std::shared_ptr<XsdComplexContent> clone(StringMap placeHolderAttributes)
-    {
-        placeHolderAttributes.merge(m_attributesMap);
+  std::shared_ptr<XsdComplexContent> clone(StringMap placeHolderAttributes);
 
-        auto elementCopy = std::make_shared<XsdComplexContent>(m_parser, placeHolderAttributes, m_visitorFunction);
-
-        elementCopy->m_restriction = ReferenceBase::clone(m_parser, m_restriction, elementCopy);
-        elementCopy->m_extension = ReferenceBase::clone(m_parser, m_extension, elementCopy);
-        elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
-        elementCopy->m_parent = nullptr;
-
-        return elementCopy;
-    }
-
-    // @SuppressWarnings("unused")
   bool isMixed(void) {
         return m_mixed;
     }
 
-  std::shared_ptr<XsdExtension> getXsdExtension(void)
-  {
-    if(auto e = std::dynamic_pointer_cast<ConcreteElement>(m_extension))
-      return std::static_pointer_cast<XsdExtension>(e->getElement());
-    return nullptr;
-  }
-
-  std::shared_ptr<XsdRestriction> getXsdRestriction(void)
-  {
-    if(auto r = std::dynamic_pointer_cast<ConcreteElement>(m_restriction))
-      return std::static_pointer_cast<XsdRestriction>(r->getElement());
-    return nullptr;
-  }
+  std::shared_ptr<XsdExtension> getXsdExtension(void);
+  std::shared_ptr<XsdRestriction> getXsdRestriction(void);
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {

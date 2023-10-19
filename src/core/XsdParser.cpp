@@ -44,7 +44,7 @@ void XsdParser::parseFile(std::string filePath)
             throw new ParserConfigurationException("XsdSchema not correctly configured.");
         }
 
-        ReferenceBase schemaReference = xsdSchemaConfig.parserFunction({ std::make_shared<XsdParserCore>(this), getSchemaNode(filePath), xsdSchemaConfig.visitorFunction});
+        ReferenceBase schemaReference = xsdSchemaConfig.parserFunction( ParseData { std::make_shared<XsdParserCore>(this), getSchemaNode(filePath), xsdSchemaConfig.visitorFunction});
         ((XsdSchema)schemaReference.getElement()).setFilePath(filePath);
     } catch (SAXException | IOException | ParserConfigurationException e) {
         Logger.getAnonymousLogger().log(Level.SEVERE, "Exception while parsing.", e);

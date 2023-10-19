@@ -3,6 +3,10 @@
 #include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdComplexContent.h>
 #include <xsdelements/XsdSimpleContent.h>
+#include <xsdelements/XsdGroup.h>
+#include <xsdelements/XsdAll.h>
+#include <xsdelements/XsdChoice.h>
+#include <xsdelements/XsdSequence.h>
 
 XsdComplexType::XsdComplexType(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
   : XsdNamedElements(parser, attributesMap, visitorFunction),
@@ -49,10 +53,10 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
     std::list<std::shared_ptr<ReferenceBase>> clonedAttributes;
     std::list<std::shared_ptr<ReferenceBase>> clonedAttributeGroups;
 
-    for(ReferenceBase attribute : std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor).getAttributes())
+    for(auto& attribute : std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributes())
       clonedAttributes.push_back(ReferenceBase::clone(m_parser, attribute, elementCopy));
 
-    for(ReferenceBase attributeGroup: std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor).getAttributeGroups())
+    for(auto& attributeGroup: std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributeGroups())
       clonedAttributeGroups.push_back(ReferenceBase::clone(m_parser, attributeGroup, elementCopy));
 
     std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->m_visitor)->setAttributes(clonedAttributes);
@@ -67,12 +71,12 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
 void XsdComplexType::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
     XsdComplexType::replaceUnsolvedElements(element);
-    std::dynamic_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->replaceUnsolvedAttributes(parser, element, std::shared_ptr<XsdComplexType>(this));
+    std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->replaceUnsolvedAttributes(m_parser, element, std::shared_ptr<XsdComplexType>(this));
 
     if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_childElement);
         x &&
-        std::dynamic_pointer_cast<XsdGroup>(m_childElement.getElement()) &&
-        std::dynamic_pointer_cast<XsdGroup>(element.getElement()) &&
+        std::dynamic_pointer_cast<XsdGroup>(m_childElement->getElement()) &&
+        std::dynamic_pointer_cast<XsdGroup>(element->getElement()) &&
         compareReference(element, x))
         m_childElement = element;
 }
@@ -84,28 +88,28 @@ if(m_childElement)
 return nullptr;
 }
 
-std::string XsdComplexType::getFinal(void) {
-    return m_elementFinal->getValue();
+std::optional<std::string> XsdComplexType::getFinal(void) {
+    return m_elementFinal.getValue();
 }
 
 std::list<std::shared_ptr<ReferenceBase>> XsdComplexType::getAttributes(void) {
-    return std::dynamic_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributes();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributes();
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getXsdAttributes(void) {
-    return std::dynamic_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getXsdAttributes();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getXsdAttributes();
 }
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getXsdAttributeGroup(void) {
-    return std::dynamic_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getXsdAttributeGroups();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getXsdAttributeGroups();
 }
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getAllXsdAttributeGroups(void) {
-    return std::dynamic_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAllXsdAttributeGroups();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAllXsdAttributeGroups();
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getAllXsdAttributes(void) {
-    return std::dynamic_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAllAttributes().stream();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAllAttributes();
 }
 
 

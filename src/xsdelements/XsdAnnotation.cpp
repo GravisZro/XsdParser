@@ -16,12 +16,12 @@ void XsdAnnotation::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorPar
     visitorParam->visit(std::shared_ptr<XsdAnnotation>(this));
 }
 
-std::list<std::shared_ptr<XsdAppInfo>> XsdAnnotation::getAppInfoList(void)
+std::list<std::shared_ptr<XsdAppInfo>>& XsdAnnotation::getAppInfoList(void)
 {
     return m_appInfoList;
 }
 
-std::list<std::shared_ptr<XsdDocumentation>> XsdAnnotation::getDocumentations(void)
+std::list<std::shared_ptr<XsdDocumentation>>& XsdAnnotation::getDocumentations(void)
 {
     return m_documentations;
 }

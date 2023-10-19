@@ -73,18 +73,18 @@ class XsdParserJar : public XsdParserCore
 //                    throw new ParserConfigurationException("XsdSchema not correctly configured.");
 //                }
 //
-//                xsdSchemaConfig.parserFunction({ std::shared_ptr<XsdParserCore>(this), schemaNode, xsdSchemaConfig.visitorFunction }));
+//                xsdSchemaConfig.parserFunction( ParseData { std::shared_ptr<XsdParserCore>(this), schemaNode, xsdSchemaConfig.visitorFunction }));
 //            } else {
 //                throw new ParsingException("The top level element of a XSD file should be the xsd:schema node.");
 //            }
 
-            ConfigEntryData xsdSchemaConfig = parseMappers.getOrDefault(XsdSchema::XSD_TAG, parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
+            ConfigEntryData xsdSchemaConfig = m_parseMappers.getOrDefault(XsdSchema::XSD_TAG, m_parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
 
             if (xsdSchemaConfig == null){
                 throw new ParserConfigurationException("XsdSchema not correctly configured.");
             }
 
-            ReferenceBase schemaReference = xsdSchemaConfig.parserFunction({ std::shared_ptr<XsdParserCore>(this), getSchemaNode(inputStream), xsdSchemaConfig.visitorFunction }));
+            ReferenceBase schemaReference = xsdSchemaConfig.parserFunction( ParseData { std::shared_ptr<XsdParserCore>(this), getSchemaNode(inputStream), xsdSchemaConfig.visitorFunction }));
         } catch (SAXException | IOException | ParserConfigurationException e) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "Exception while parsing.", e);
             throw new RuntimeException(e);

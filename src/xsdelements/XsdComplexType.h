@@ -126,7 +126,7 @@ public:
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
   std::shared_ptr<XsdAbstractElement> getXsdChildElement(void);
 
-  std::string getFinal(void);
+  std::optional<std::string> getFinal(void);
 
   std::list<std::shared_ptr<ReferenceBase>> getAttributes(void);
   std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);

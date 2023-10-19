@@ -21,10 +21,10 @@ UnsolvedReference::UnsolvedReference(std::string refType, std::shared_ptr<XsdNam
 
 std::shared_ptr<XsdAbstractElement> UnsolvedReference::getParent(void) const
 {
-  return element->getParent();
+  return m_element->getParent();
 }
 
 std::shared_ptr<XsdNamedElements> UnsolvedReference::getElement(void)
 {
-  return std::static_pointer_cast<XsdNamedElements>(element);
+  return std::static_pointer_cast<XsdNamedElements>(m_element);
 }

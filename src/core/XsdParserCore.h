@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include <core/utils/CommonTypes.h>
 #include <pugixml.hpp>
 
@@ -19,12 +21,12 @@ class XsdSchema;
 class XsdParserCore
 {
 private:
-    static ParserConfig config;
+    static ParserConfig m_config;
     /**
      * A {@link Map} object that contains the all the XSD types and their respective types in the Java
      * language.
      */
-    static StringMap xsdTypesToJava;
+    static StringMap m_xsdTypesToJava;
 
 
     /**
@@ -41,7 +43,7 @@ private:
     std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElementsMap;
 
 protected:
-    std::string m_currentFile;
+    std::filesystem::path m_currentFile;
 
 public:
 
@@ -50,7 +52,7 @@ public:
      * type supported by this mapper, this way based on the concrete {@link XsdAbstractElement} tag the according parse
      * method can be invoked.
      */
-    static std::map<std::string, ConfigEntryData> parseMappers;// = config.getParseMappers();
+    static std::map<std::string_view, ConfigEntryData> m_parseMappers;// = config.getParseMappers();
 
     /**
      * A {@link List} which contains all the top elements parsed by this class.
@@ -61,7 +63,7 @@ public:
      * objects that are present in the original or subsequent files. These paths are stored to be parsed as well, the
      * parsing process only ends when all the files present in this {@link List} are parsed.
      */
-  std::list<std::string> m_schemaLocations;
+  std::list<std::filesystem::path> m_schemaLocations;
   StringMap m_schemaLocationsMap;
 
 
@@ -95,7 +97,7 @@ public:
                                           std::shared_ptr<UnsolvedReference> unsolvedReference,
                                           std::string fileName);
     
-    void resolveInnerRefs();
+    void resolveInnerRefs(void);
 
     /**
      * Replaces a single {@link UnsolvedReference} object, with the respective {@link NamedConcreteElement} object. If
@@ -104,7 +106,9 @@ public:
      * @param concreteElementsMap The map containing all named concreteElements.
      * @param unsolvedReference The unsolved reference to solve.
      */
-    void replaceUnsolvedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap, UnsolvedReference unsolvedReference, std::string fileName);
+    void replaceUnsolvedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
+                                  std::shared_ptr<UnsolvedReference> unsolvedReference,
+                                  std::string fileName);
 
     /**
      * Saves an occurrence of an element which couldn't be resolved in the {@link XsdParser#replaceUnsolvedReference}
@@ -147,20 +151,16 @@ public:
      * original file to parse.
      * @param schemaLocation A new file path of another XSD file to parse.
      */
-  void addFileToParse(std::string schemaLocation);
+  void addFileToParse(std::filesystem::path schemaLocation);
 
   static StringMap getXsdTypesToJava(void)
   {
-    if(xsdTypesToJava.empty())
-      xsdTypesToJava = config.getXsdTypesToJava();
-    return xsdTypesToJava;
+    return m_xsdTypesToJava;
   }
 
-  static std::map<std::string, ConfigEntryData> getParseMappers(void)
+  static std::map<std::string_view, ConfigEntryData> getParseMappers(void)
   {
-    if(parseMappers.empty())
-      parseMappers = config.getParseMappers();
-    return parseMappers;
+    return m_parseMappers;
   }
 
   void addParsedElement(std::shared_ptr<ReferenceBase> wrappedElement)
@@ -170,8 +170,8 @@ public:
   }
 
     static void updateConfig(ParserConfig config) {
-        xsdTypesToJava = config.getXsdTypesToJava();
-        parseMappers = config.getParseMappers();
+        m_xsdTypesToJava = config.getXsdTypesToJava();
+        m_parseMappers = config.getParseMappers();
     }
 
     protected:

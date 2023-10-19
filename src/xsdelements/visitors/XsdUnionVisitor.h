@@ -32,7 +32,6 @@ public:
   void visit(std::shared_ptr<XsdSimpleType> element)
     {
         XsdAnnotatedElementsVisitor::visit(element);
-
         m_owner->add(element);
     }
 };

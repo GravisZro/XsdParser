@@ -9,9 +9,9 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
+#include <xsdelements/XsdRestriction.h>
+#include <xsdelements/XsdExtension.h>
 
-#include <map>
-#include <functional>
 
 /**
  * A class representing the xsd:simpleContent element.
@@ -68,15 +68,15 @@ public:
 
   std::shared_ptr<XsdExtension> getXsdExtension(void)
   {
-    if(auto e = std::dynamic_pointer_cast<ConcreteElement>(m_extension))
-      return std::static_pointer_cast<XsdExtension>(e->getElement());
+    if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_extension); x)
+      return std::static_pointer_cast<XsdExtension>(x->getElement());
     return nullptr;
   }
 
   std::shared_ptr<XsdRestriction> getXsdRestriction(void)
   {
-    if(auto r = std::dynamic_pointer_cast<ConcreteElement>(m_restriction))
-      return std::static_pointer_cast<XsdRestriction>(r->getElement());
+    if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_restriction); x)
+      return std::static_pointer_cast<XsdRestriction>(x->getElement());
     return nullptr;
   }
 

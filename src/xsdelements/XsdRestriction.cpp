@@ -19,9 +19,17 @@
 
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdBuiltInDataType.h>
+#include <xsdelements/visitors/XsdRestrictionVisitor.h>
+
+#include <xsdelements/XsdComplexType.h>
+#include <xsdelements/XsdSimpleType.h>
+#include <xsdelements/XsdAll.h>
+#include <xsdelements/XsdChoice.h>
+#include <xsdelements/XsdSequence.h>
+#include <xsdelements/XsdGroup.h>
+
 
 #include <core/XsdParserCore.h>
-//#include <core/utils/ParserConfig.h>
 
 
 XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
@@ -38,7 +46,7 @@ XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap 
             attributes.emplace(NAME_TAG, m_baseString.value());
             m_base = ReferenceBase::createFromXsd(std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdBuiltInDataType>(parser, attributes, std::shared_ptr<XsdRestriction>(this))));
         } else {
-            std::map<std::string, ConfigEntryData> parseMappers = XsdParserCore::getParseMappers();
+            auto parseMappers = XsdParserCore::getParseMappers();
 
             ConfigEntryData config;
             if(parseMappers.contains(*XsdElement::XSD_TAG))
@@ -51,7 +59,7 @@ XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap 
 
             m_base = std::make_shared<UnsolvedReference>(m_baseString.value(),
                                                          std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), m_parser, StringMap{}, config.visitorFunction));
-            parser->addUnsolvedReference((UnsolvedReference) m_base);
+            parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
         }
     }
 }
@@ -61,7 +69,7 @@ void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElemen
   {
       XsdAnnotatedElements::replaceUnsolvedElements(element);
 
-      std::static_pointer_cast<XsdRestrictionsVisitor>(visitor)->replaceUnsolvedAttributes(parser, element, this);
+      std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->replaceUnsolvedAttributes(m_parser, element, std::shared_ptr<XsdAbstractElement>(this));
 
       std::shared_ptr<XsdNamedElements> elem = element->getElement();
 
@@ -74,11 +82,11 @@ void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElemen
           m_base = element;
       }
 
-      if (std::dynamic_pointer_cast<UnsolvedReference>(m_group) &&
-          std::dynamic_pointer_cast<XsdGroup>(m_group->getElement()) &&
-              elem instanceof XsdGroup && compareReference(element, (UnsolvedReference) m_group)){
-          m_group = element;
-      }
+      if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_group);
+          x && std::dynamic_pointer_cast<XsdGroup>(m_group->getElement()) &&
+          std::dynamic_pointer_cast<XsdGroup>(elem) &&
+          compareReference(element, x))
+        m_group = element;
   }
 
   /**
@@ -93,71 +101,71 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
       auto elementCopy = std::make_shared<XsdRestriction>(m_parser, placeHolderAttributes, m_visitorFunction);
 
-      if (m_enumeration != null){
-          elementCopy->m_enumeration = m_enumeration.stream().map(enumerationObj -> (XsdEnumeration) enumerationObj.clone(enumerationObj.getAttributesMap(), elementCopy));
+      if (!m_enumeration.empty()){ // TODO
+//          elementCopy->m_enumeration = m_enumeration.stream().map(enumerationObj -> (XsdEnumeration) enumerationObj->clone(enumerationObj->getAttributesMap(), elementCopy));
       }
 
-      if (m_fractionDigits != m_all){
-          elementCopy->m_fractionDigits = (XsdFractionDigits) m_fractionDigits.clone(m_fractionDigits.getAttributesMap(), elementCopy);
+      if (m_fractionDigits){
+          elementCopy->m_fractionDigits = std::static_pointer_cast<XsdFractionDigits>(m_fractionDigits->clone(m_fractionDigits->getAttributesMap(), elementCopy));
       }
 
-      if (m_length != m_all){
-          elementCopy->m_length = (XsdLength) m_length.clone(m_length.getAttributesMap(), elementCopy);
+      if (m_length){
+          elementCopy->m_length = std::static_pointer_cast<XsdLength>(m_length->clone(m_length->getAttributesMap(), elementCopy));
       }
 
-      if (m_maxExclusive != m_all){
-          elementCopy->m_maxExclusive = (XsdMaxExclusive) m_maxExclusive.clone(m_maxExclusive.getAttributesMap(), elementCopy);
+      if (m_maxExclusive){
+          elementCopy->m_maxExclusive = std::static_pointer_cast<XsdMaxExclusive>(m_maxExclusive->clone(m_maxExclusive->getAttributesMap(), elementCopy));
       }
 
-      if (m_maxInclusive != m_all){
-          elementCopy->m_maxInclusive = (XsdMaxInclusive) m_maxInclusive.clone(m_maxInclusive.getAttributesMap(), elementCopy);
+      if (m_maxInclusive){
+          elementCopy->m_maxInclusive = std::static_pointer_cast<XsdMaxInclusive>(m_maxInclusive->clone(m_maxInclusive->getAttributesMap(), elementCopy));
       }
 
-      if (m_maxLength != m_all){
-          elementCopy->m_maxLength = (XsdMaxLength) m_maxLength.clone(m_maxLength.getAttributesMap(), elementCopy);
+      if (m_maxLength){
+          elementCopy->m_maxLength = std::static_pointer_cast<XsdMaxLength>(m_maxLength->clone(m_maxLength->getAttributesMap(), elementCopy));
       }
 
-      if (m_minExclusive != m_all){
-          elementCopy->m_minExclusive = (XsdMinExclusive) m_minExclusive.clone(m_minExclusive.getAttributesMap(), elementCopy);
+      if (m_minExclusive){
+          elementCopy->m_minExclusive = std::static_pointer_cast<XsdMinExclusive>(m_minExclusive->clone(m_minExclusive->getAttributesMap(), elementCopy));
       }
 
-      if (m_minInclusive != m_all){
-          elementCopy->m_minInclusive = (XsdMinInclusive) m_minInclusive.clone(m_minInclusive.getAttributesMap(), elementCopy);
+      if (m_minInclusive){
+          elementCopy->m_minInclusive = std::static_pointer_cast<XsdMinInclusive>(m_minInclusive->clone(m_minInclusive->getAttributesMap(), elementCopy));
       }
 
-      if (m_minLength != m_all){
-          elementCopy->m_minLength = (XsdMinLength) m_minLength.clone(m_minLength.getAttributesMap(), elementCopy);
+      if (m_minLength){
+          elementCopy->m_minLength = std::static_pointer_cast<XsdMinLength>(m_minLength->clone(m_minLength->getAttributesMap(), elementCopy));
       }
 
-      if (m_pattern != m_all){
-          elementCopy->m_pattern = (XsdPattern) m_pattern.clone(pattern.getAttributesMap(), elementCopy);
+      if (m_pattern){
+          elementCopy->m_pattern = std::static_pointer_cast<XsdPattern>(m_pattern->clone(m_pattern->getAttributesMap(), elementCopy));
       }
 
-      if (m_totalDigits != m_all){
-          elementCopy->m_totalDigits = (XsdTotalDigits) m_totalDigits.clone(totalDigits.getAttributesMap(), elementCopy);
+      if (m_totalDigits){
+          elementCopy->m_totalDigits = std::static_pointer_cast<XsdTotalDigits>(m_totalDigits->clone(m_totalDigits->getAttributesMap(), elementCopy));
       }
 
-      if (m_whiteSpace != null){
-          elementCopy->m_whiteSpace = (XsdWhiteSpace) m_whiteSpace.clone(whiteSpace.getAttributesMap(), elementCopy);
+      if (m_whiteSpace){
+          elementCopy->m_whiteSpace = std::static_pointer_cast<XsdWhiteSpace>(m_whiteSpace->clone(m_whiteSpace->getAttributesMap(), elementCopy));
       }
 
-      if (m_all != null){
-          elementCopy->m_all = (XsdAll) m_all.clone(m_all.getAttributesMap(), elementCopy);
+      if (m_all){
+          elementCopy->m_all = std::static_pointer_cast<XsdAll>(m_all->clone(m_all->getAttributesMap(), elementCopy));
       }
 
-      if (m_choice != null){
-          elementCopy->m_choice = (XsdChoice) m_choice.clone(m_choice.getAttributesMap(), elementCopy);
+      if (m_choice){
+          elementCopy->m_choice = std::static_pointer_cast<XsdChoice>(m_choice->clone(m_choice->getAttributesMap(), elementCopy));
       }
 
-      if (m_sequence != null){
-          elementCopy->m_sequence = (XsdSequence) m_sequence.clone(m_sequence.getAttributesMap(), elementCopy);
+      if (m_sequence){
+          elementCopy->m_sequence = std::static_pointer_cast<XsdSequence>(m_sequence->clone(m_sequence->getAttributesMap(), elementCopy));
       }
 
-      if (m_group != null){
+      if (m_group){
           elementCopy->m_group = ReferenceBase::clone(m_parser, m_group, elementCopy);
       }
 
-      elementCopy->m_parent = null;
+      elementCopy->m_parent = nullptr;
       elementCopy->m_base = m_base;
 
       return elementCopy;
@@ -166,12 +174,12 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
 
 std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void) {
-      return ((XsdRestrictionsVisitor)visitor).getXsdAttributes();
+      return std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->getXsdAttributes();
   }
 
   // @SuppressWarnings("unused")
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void) {
-      return ((XsdRestrictionsVisitor)visitor).getXsdAttributeGroups();
+      return std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->getXsdAttributeGroups();
   }
 
   /**
@@ -212,7 +220,7 @@ std::shared_ptr<XsdBuiltInDataType> XsdRestriction::getBaseAsBuiltInDataType(voi
 
 std::shared_ptr<XsdGroup> XsdRestriction::getGroup(void)
 {
-  if(auto g = std::dynamic_pointer_cast<ConcreteElement>(m_group); g)
-    return std::static_pointer_cast<XsdGroup>(g->getElement());
+  if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_group); x)
+    return std::static_pointer_cast<XsdGroup>(x->getElement());
   return nullptr;
 }

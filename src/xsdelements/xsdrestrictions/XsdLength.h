@@ -10,10 +10,6 @@
 
 #include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
 
-#include <list>
-#include <map>
-#include <functional>
-
 /**
  * States the exact number of length to a given type, either a {@link std::string}, a {@link List}, or another measurable type.
  * The value is defined as an {@link int}.
@@ -25,7 +21,8 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:length";
     constexpr static const std::string_view TAG = "length";
 
-private:
+public:
+  using XsdIntegerRestrictions::clone;
   XsdLength(std::shared_ptr<XsdParserCore> parser,
             StringMap elementFieldsMapParam,
             VisitorFunctionReference visitorFunction)

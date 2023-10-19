@@ -8,10 +8,8 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
-#include <map>
-#include <functional>
+#include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
 /**
  * States the minimum value that a given type might take, excluding the respective value. The value is defined
@@ -30,7 +28,8 @@ private:
      * Indicates if the value is fixed.
      */
     bool m_fixed;
-
+public:
+    using XsdStringRestrictions::clone;
     XsdMinExclusive(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
                     VisitorFunctionReference visitorFunction)

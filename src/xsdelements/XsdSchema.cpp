@@ -1,5 +1,7 @@
 #include "XsdSchema.h"
 
+#include <ranges>
+
 #include <xsdelements/XsdInclude.h>
 #include <xsdelements/XsdImport.h>
 #include <xsdelements/XsdAnnotation.h>
@@ -16,27 +18,45 @@
 #include <core/XsdParserCore.h>
 
 XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
-          StringMap attributesMap,
-          VisitorFunctionReference visitorFunction)
+                     StringMap attributesMap,
+                     VisitorFunctionReference visitorFunction)
   : XsdAnnotatedElements(parser, attributesMap, visitorFunction),
-    attributeFormDefault(FormEnum::UNQUALIFIED),
-    elementFormDefault(FormEnum::UNQUALIFIED),
+    m_attributeFormDefault(FormEnum::UNQUALIFIED),
+    m_elementFormDefault(FormEnum::UNQUALIFIED),
+    m_blockDefault(BlockDefaultEnum::DEFAULT),
+    m_finalDefault(FinalDefaultEnum::DEFAULT)
 {
-    m_attributeFormDefault = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.getOrDefault(ATTRIBUTE_FORM_DEFAULT, FormEnum::UNQUALIFIED.getValue()));
-    m_elementFormDefault = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.getOrDefault(ELEMENT_FORM_DEFAULT, FormEnum::UNQUALIFIED.getValue()));
-    m_blockDefault = AttributeValidations::belongsToEnum<BlockDefaultEnum>(attributesMap.getOrDefault(BLOCK_DEFAULT, BlockDefaultEnum::DEFAULT.getValue()));
-    m_finalDefault = AttributeValidations::belongsToEnum<FinalDefaultEnum>(attributesMap.getOrDefault(FINAL_DEFAULT, FinalDefaultEnum::DEFAULT.getValue()));
-    m_targetNamespace = attributesMap.getOrDefault(TARGET_NAMESPACE, targetNamespace);
-    m_version = attributesMap.getOrDefault(VERSION, version);
-    m_xmlns = attributesMap.getOrDefault(XMLNS, xmlns);
+  if(attributesMap.contains(*ATTRIBUTE_FORM_DEFAULT))
+    m_attributeFormDefault = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.at(*ATTRIBUTE_FORM_DEFAULT));
 
-    for (std::string key : attributesMap.keySet())
+  if(attributesMap.contains(*ELEMENT_FORM_DEFAULT))
+    m_elementFormDefault = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.at(*ELEMENT_FORM_DEFAULT));
+
+  if(attributesMap.contains(*BLOCK_DEFAULT))
+    m_blockDefault = AttributeValidations::belongsToEnum<BlockDefaultEnum>(attributesMap.at(*BLOCK_DEFAULT));
+
+  if(attributesMap.contains(*FINAL_DEFAULT))
+    m_finalDefault = AttributeValidations::belongsToEnum<FinalDefaultEnum>(attributesMap.at(*FINAL_DEFAULT));
+
+  if(attributesMap.contains(*TARGET_NAMESPACE))
+    m_targetNamespace = attributesMap.at(*TARGET_NAMESPACE);
+
+  if(attributesMap.contains(*VERSION))
+    m_version = attributesMap.at(*VERSION);
+
+  if(attributesMap.contains(*XMLNS))
+    m_xmlns = attributesMap.at(*XMLNS);
+
+  for (auto& key : std::views::keys(attributesMap))
+  {
+    if (key.starts_with(XMLNS) &&
+        key != "xmlns:xs" &&
+        key != "xmlns:xsd")
     {
-        if (key.startsWith(XMLNS) && !key.equals("xmlns:xs") && !key.equals("xmlns:xsd")/*&& !attributesMap.get(key).contains("http")*/){
-            std::string namespaceId = key.replace(XMLNS + ":", "");
-            namespaces.put(namespaceId, new NamespaceInfo(attributesMap.get(key)));
-        }
+      std::string namespaceId = key.substr(key.find_first_of(':') + 1);
+      m_namespaces.emplace(namespaceId, NamespaceInfo(attributesMap.at(key)));
     }
+  }
 }
 
 std::list<std::shared_ptr<ReferenceBase>> XsdSchema::getElements(void)
@@ -60,16 +80,13 @@ std::shared_ptr<ReferenceBase> XsdSchema::parse(ParseData parseData)
       std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
 
       StringMap prefixLocations;
-
       for(auto& nspair : xsdSchema->getNamespaces())
-      {
         for(auto& import : importsList)
-          if(import->getNamespace() == nspair.second.getName())
+          if(import->getNamespace() == nspair.second.getName() && import->getSchemaLocation())
           {
-            prefixLocations.emplace(nspair.first, import->getSchemaLocation());
+            prefixLocations.emplace(nspair.first, import->getSchemaLocation().value());
             break;
           }
-      }
 
       xsdSchema->updatePrefixLocations(prefixLocations);
       return xsdSchemaRef;
@@ -125,8 +142,8 @@ std::list<std::shared_ptr<XsdInclude>> XsdSchema::getChildrenIncludes(void)
 {
   std::list<std::shared_ptr<XsdInclude>> includes;
   for(auto& element : getXsdElements())
-    if(auto i = std::dynamic_pointer_cast<XsdInclude>(element); i)
-      includes.push_back(i);
+    if(auto x = std::dynamic_pointer_cast<XsdInclude>(element); x)
+      includes.push_back(x);
   return includes;
 }
 
@@ -137,8 +154,8 @@ std::list<std::shared_ptr<XsdImport>> XsdSchema::getChildrenImports(void)
 {
   std::list<std::shared_ptr<XsdImport>> imports;
   for(auto& element : getXsdElements())
-    if(auto i = std::dynamic_pointer_cast<XsdImport>(element); i)
-      imports.push_back(i);
+    if(auto x = std::dynamic_pointer_cast<XsdImport>(element); x)
+      imports.push_back(x);
   return imports;
 }
 
@@ -149,8 +166,8 @@ std::list<std::shared_ptr<XsdAnnotation>> XsdSchema::getChildrenAnnotations(void
 {
   std::list<std::shared_ptr<XsdAnnotation>> annotations;
   for(auto& element : getXsdElements())
-    if(auto a = std::dynamic_pointer_cast<XsdAnnotation>(element); a)
-      annotations.push_back(a);
+    if(auto x = std::dynamic_pointer_cast<XsdAnnotation>(element); x)
+      annotations.push_back(x);
   return annotations;
 }
 
@@ -161,8 +178,8 @@ std::list<std::shared_ptr<XsdSimpleType>> XsdSchema::getChildrenSimpleTypes(void
 {
   std::list<std::shared_ptr<XsdSimpleType>> simple_types;
   for(auto& element : getXsdElements())
-    if(auto st = std::dynamic_pointer_cast<XsdSimpleType>(element); st)
-      simple_types.push_back(st);
+    if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(element); x)
+      simple_types.push_back(x);
   return simple_types;
 }
 
@@ -173,8 +190,8 @@ std::list<std::shared_ptr<XsdComplexType>> XsdSchema::getChildrenComplexTypes(vo
 {
   std::list<std::shared_ptr<XsdComplexType>> complex_types;
   for(auto& element : getXsdElements())
-    if(auto ct = std::dynamic_pointer_cast<XsdComplexType>(element); ct)
-      complex_types.push_back(ct);
+    if(auto x = std::dynamic_pointer_cast<XsdComplexType>(element); x)
+      complex_types.push_back(x);
   return complex_types;
 }
 
@@ -185,8 +202,8 @@ std::list<std::shared_ptr<XsdGroup>> XsdSchema::getChildrenGroups(void)
 {
   std::list<std::shared_ptr<XsdGroup>> groups;
   for(auto& element : getXsdElements())
-    if(auto g = std::dynamic_pointer_cast<XsdGroup>(element); g)
-      groups.push_back(g);
+    if(auto x = std::dynamic_pointer_cast<XsdGroup>(element); x)
+      groups.push_back(x);
   return groups;
 }
 
@@ -197,8 +214,8 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdSchema::getChildrenAttributeGro
 {
   std::list<std::shared_ptr<XsdAttributeGroup>> attribute_groups;
   for(auto& element : getXsdElements())
-    if(auto ag = std::dynamic_pointer_cast<XsdAttributeGroup>(element); ag)
-      attribute_groups.push_back(ag);
+    if(auto x = std::dynamic_pointer_cast<XsdAttributeGroup>(element); x)
+      attribute_groups.push_back(x);
   return attribute_groups;
 }
 
@@ -209,8 +226,8 @@ std::list<std::shared_ptr<XsdElement>> XsdSchema::getChildrenElements(void)
 {
   std::list<std::shared_ptr<XsdElement>> rval;
   for(auto& element : getXsdElements())
-    if(auto e = std::dynamic_pointer_cast<XsdElement>(element); e)
-      rval.push_back(e);
+    if(auto x = std::dynamic_pointer_cast<XsdElement>(element); x)
+      rval.push_back(x);
   return rval;
 }
 
@@ -222,8 +239,8 @@ std::list<std::shared_ptr<XsdAttribute>> XsdSchema::getChildrenAttributes(void)
 {
   std::list<std::shared_ptr<XsdAttribute>> attributes;
   for(auto& element : getXsdElements())
-    if(auto a = std::dynamic_pointer_cast<XsdAttribute>(element); a)
-      attributes.push_back(a);
+    if(auto x = std::dynamic_pointer_cast<XsdAttribute>(element); x)
+      attributes.push_back(x);
   return attributes;
 }
 

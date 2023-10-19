@@ -47,4 +47,4 @@ public:
 
         m_owner->setExtension(ReferenceBase::createFromXsd(element));
     }
-}
+};

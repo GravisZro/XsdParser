@@ -33,7 +33,7 @@ XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attr
         }
         else
         {
-            std::map<std::string, ConfigEntryData> parseMappers = XsdParserCore::getParseMappers();
+            auto parseMappers = XsdParserCore::getParseMappers();
             ConfigEntryData config;
 
             if(parseMappers.contains(*XsdElement::XSD_TAG))
@@ -44,7 +44,7 @@ XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attr
             if (!config.parserFunction || !config.visitorFunction)
                 throw new ParsingException("Invalid Parsing Configuration for XsdElement.");
 
-            m_base = std::make_shared<UnsolvedReference>(baseValue, std::make_shared<XsdElement>(this, m_parser, StringMap{}, config.visitorFunction));
+            m_base = std::make_shared<UnsolvedReference>(baseValue, std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), m_parser, StringMap{}, config.visitorFunction));
             m_parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
         }
     }
@@ -182,7 +182,7 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup
 std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement()
 {
   if (m_childElement &&
-      !std::dynamic_pointer_cast<UnsolvedReference>(m_childElement))
+      std::dynamic_pointer_cast<UnsolvedReference>(m_childElement) == nullptr)
     return m_childElement->getElement();
   return nullptr;
 }

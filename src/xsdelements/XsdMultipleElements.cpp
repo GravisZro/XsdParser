@@ -4,6 +4,10 @@
 
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdElement.h>
+#include <xsdelements/XsdGroup.h>
+#include <xsdelements/XsdAll.h>
+#include <xsdelements/XsdChoice.h>
+#include <xsdelements/XsdSequence.h>
 
 XsdMultipleElements::XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
                                          StringMap elementFieldsMapParam,

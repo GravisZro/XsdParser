@@ -40,16 +40,16 @@ private:
      * The list of {@link XsdDocumentation} children.
      */
     std::list<std::shared_ptr<XsdDocumentation>> m_documentations;
-
+public:
     XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
                   StringMap elementFieldsMapParam,
                   VisitorFunctionReference visitorFunction);
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
 
-  std::list<std::shared_ptr<XsdAppInfo>> getAppInfoList(void);
+  std::list<std::shared_ptr<XsdAppInfo>>& getAppInfoList(void);
 
-  std::list<std::shared_ptr<XsdDocumentation>> getDocumentations(void);
+  std::list<std::shared_ptr<XsdDocumentation>>& getDocumentations(void);
 
   void add(std::shared_ptr<XsdAppInfo> appInfo);
 

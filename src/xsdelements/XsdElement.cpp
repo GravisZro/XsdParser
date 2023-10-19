@@ -52,7 +52,7 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
   if (localSubstitutionGroup)
   {
     auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), m_parser, StringMap{}, visitorFunction);
-    m_substitutionGroup = std::make_shared<UnsolvedReference>(localSubstitutionGroup, std::static_pointer_cast<XsdNamedElements>(e));
+    m_substitutionGroup = std::make_shared<UnsolvedReference>(localSubstitutionGroup.value(), std::static_pointer_cast<XsdNamedElements>(e));
     m_parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_substitutionGroup));
   }
 
@@ -97,7 +97,7 @@ void XsdElement::rule7(void)
     throw new ParsingException(*XSD_TAG + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
-void rule6(void) {
+void XsdElement::rule6(void) {
     //fixed 	Optional. Specifies a fixed value for the element (can only be used if the element's content is a simple type or text only)
 }
 
@@ -166,9 +166,9 @@ std::shared_ptr<XsdElement> XsdElement::clone(StringMap placeHolderAttributes)
         }
         else
         {
-          elementCopy->m_type = std::make_shared<UnsolvedReference>(std::dynamic_pointer_cast<UnsolvedReference>(m_type)->getRef(),
+          elementCopy->m_type = std::make_shared<UnsolvedReference>(std::static_pointer_cast<UnsolvedReference>(m_type)->getRef().value(),
                                                                     std::make_shared<XsdElement>(elementCopy, m_parser, StringMap{}, m_visitorFunction));
-          m_parser->addUnsolvedReference(std::dynamic_pointer_cast<UnsolvedReference>(elementCopy->m_type));
+          m_parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(elementCopy->m_type));
         }
     }
 

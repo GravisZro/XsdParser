@@ -14,7 +14,10 @@ private:
   std::optional<std::string> value;
 public:
   XsdEnum(void) = default;
-  XsdEnum(std::string value)
+
+  XsdEnum(std::string_view value)
+    : value(std::string(value)) { }
+  XsdEnum(std::optional<std::string> value)
     : value(value) { }
 
   void operator =(const std::string_view& v) { value = v; }

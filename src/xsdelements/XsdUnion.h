@@ -63,7 +63,7 @@ public:
 
         if (m_simpleTypeList.empty()){
           // TODO
-            //elementCopy->m_simpleTypeList = m_simpleTypeList.stream().map(simpleType -> (XsdSimpleType) simpleType.clone(simpleType.getAttributesMap(), elementCopy));
+            //elementCopy->m_simpleTypeList = m_simpleTypeList.stream().map(simpleType -> (XsdSimpleType) simpleType->clone(simpleType->getAttributesMap(), elementCopy));
         }
 
         elementCopy->m_parent = nullptr;

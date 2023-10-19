@@ -46,4 +46,4 @@ public:
 
         m_owner->setSimpleType(ReferenceBase::createFromXsd(element));
     }
-}
+};

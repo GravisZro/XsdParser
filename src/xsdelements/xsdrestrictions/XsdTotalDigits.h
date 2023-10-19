@@ -9,9 +9,7 @@
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
-
-#include <map>
-#include <functional>
+#include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
 
 /**
  * States the number of total digits allowed in a numeric type. The value is defined as an {@link int}.
@@ -23,7 +21,8 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:totalDigits";
     constexpr static const std::string_view TAG = "totalDigits";
 
-private:
+public:
+  using XsdIntegerRestrictions::clone;
   XsdTotalDigits(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
                  VisitorFunctionReference visitorFunction)

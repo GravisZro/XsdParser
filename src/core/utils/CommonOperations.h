@@ -20,6 +20,6 @@ template<typename T>
 std::string operator +(const std::string& a, T b)
   { return std::string().append(a).append(b); }
 
-std::string operator *(const std::string_view& a) { return std::string(a); }
+inline std::string operator *(const std::string_view& a) { return std::string(a); }
 
 #endif // COMMONOPERATIONS_H

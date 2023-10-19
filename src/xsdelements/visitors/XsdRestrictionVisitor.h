@@ -37,18 +37,18 @@ class XsdRestriction;
  * Can also have {@link XsdAttribute} and {@link XsdAttributeGroup} children as per inheritance of {@link AttributesVisitor}.
  * Can also have {@link XsdAnnotation} children as per inheritance of {@link XsdAnnotatedElementsVisitor}.
  */
-class XsdRestrictionsVisitor : public AttributesVisitor
+class XsdRestrictionVisitor : public AttributesVisitor
 {
 private:
     /**
-     * The {@link XsdRestriction} instance which owns this {@link XsdRestrictionsVisitor} instance. This way this
+     * The {@link XsdRestriction} instance which owns this {@link XsdRestrictionVisitor} instance. This way this
      * visitor instance can perform changes in the {@link XsdRestriction} object.
      */
     std::shared_ptr<XsdRestriction> m_owner;
 public:
   using AttributesVisitor::visit;
 
-  XsdRestrictionsVisitor(std::shared_ptr<XsdRestriction> owner);
+  XsdRestrictionVisitor(std::shared_ptr<XsdRestriction> owner);
   std::shared_ptr<XsdRestriction> getOwner(void)
   {
     return m_owner;

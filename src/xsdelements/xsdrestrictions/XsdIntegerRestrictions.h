@@ -4,12 +4,9 @@
 //#include <core/XsdParserCore.h>
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
-#include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
-
-#include <map>
-#include <functional>
+#include <xsdelements/XsdAnnotatedElements.h>
 
 /**
  * This class serves as a base to every different restriction that has its restricting parameter defined as an {@link int}.
@@ -31,6 +28,7 @@ protected:
      */
     int m_value;
 public:
+    using XsdAnnotatedElements::clone;
     XsdIntegerRestrictions(std::shared_ptr<XsdParserCore> parser,
                            StringMap elementFieldsMapParam,
                            VisitorFunctionReference visitorFunction)
@@ -40,7 +38,7 @@ public:
       if(elementFieldsMapParam.contains(*FIXED_TAG))
         m_fixed = AttributeValidations::validateBoolean(elementFieldsMapParam.at(*FIXED_TAG));
     }
-
+public:
     /**
      * Compares two different objects of this type.
      * @param o1 The first object.

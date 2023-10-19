@@ -7,6 +7,6 @@ class ReferenceBase;
 
 struct ConfigEntryData
 {
-  std::function<ReferenceBase(ParseData)> parserFunction;
+  std::function<std::shared_ptr<ReferenceBase>(ParseData)> parserFunction;
   VisitorFunctionReference visitorFunction;
 };

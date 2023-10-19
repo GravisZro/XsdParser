@@ -8,11 +8,8 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
 
-#include <list>
-#include <map>
-#include <functional>
+#include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
 
 /**
  * States the minimum length of a given type, either a {@link std::string}, a {@link List} or another measurable type. This
@@ -27,7 +24,8 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:minLength";
     constexpr static const std::string_view TAG = "minLength";
 
-private:
+public:
+  using XsdIntegerRestrictions::clone;
   XsdMinLength(std::shared_ptr<XsdParserCore> parser,
                StringMap elementFieldsMapParam,
                VisitorFunctionReference visitorFunction)

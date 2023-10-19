@@ -33,7 +33,6 @@ public:
   void visit(std::shared_ptr<XsdElement> element)
     {
         XsdAnnotatedElementsVisitor::visit(element);
-
         m_owner->addElement(element);
     }
-}
+};

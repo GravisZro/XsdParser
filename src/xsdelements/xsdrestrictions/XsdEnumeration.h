@@ -6,11 +6,8 @@
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
-//#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
-#include <map>
-#include <functional>
+#include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
 class XsdAbstractElementVisitor;
 class XsdParserCore;
@@ -26,7 +23,8 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:enumeration";
     constexpr static const std::string_view TAG = "enumeration";
 
-private:
+public:
+  using XsdStringRestrictions::clone;
   XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
                  VisitorFunctionReference visitorFunction);

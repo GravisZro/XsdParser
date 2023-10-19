@@ -1,14 +1,13 @@
 #pragma once
 
+#include <filesystem>
+
 #include <core/utils/CommonOperations.h>
 #include <core/XsdParserCore.h>
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotatedElements.h>
-
-#include <map>
-#include <functional>
 
 /**
  * A class representing the xsd:include element.
@@ -29,7 +28,7 @@ private:
      * In this project this attribute is used to specify another file location that contains more element definitions
      * that belong to the same XSD language definition.
      */
-    std::string m_schemaLocation;
+    std::filesystem::path m_schemaLocation;
 public:
     XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
       : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
@@ -45,8 +44,8 @@ public:
 public:
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdInclude>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdInclude>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+  }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
@@ -54,8 +53,7 @@ public:
         visitorParam->visit(std::shared_ptr<XsdInclude>(this));
     }
 
-    // @SuppressWarnings("unused")
-  std::string getSchemaLocation(void) {
+  std::filesystem::path getSchemaLocation(void) {
         return m_schemaLocation;
     }
 };

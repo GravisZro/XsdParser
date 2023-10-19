@@ -8,5 +8,5 @@ class ParserConfig
 {
 public:
   virtual const StringMap getXsdTypesToJava(void);
-  virtual const std::map<std::string, ConfigEntryData> getParseMappers(void);
+  virtual const std::map<std::string_view, ConfigEntryData> getParseMappers(void);
 };

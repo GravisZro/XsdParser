@@ -1,5 +1,8 @@
 #include "XsdSimpleType.h"
 
+#include <ranges>
+#include <type_traits>
+
 #include <xsdelements/xsdrestrictions/XsdEnumeration.h>
 #include <xsdelements/xsdrestrictions/XsdFractionDigits.h>
 #include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
@@ -15,10 +18,13 @@
 #include <xsdelements/xsdrestrictions/XsdTotalDigits.h>
 #include <xsdelements/xsdrestrictions/XsdWhiteSpace.h>
 
+#include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/XsdSchema.h>
 #include <xsdelements/XsdUnion.h>
 #include <xsdelements/XsdList.h>
 #include <xsdelements/XsdRestriction.h>
+
+#include <core/XsdParserCore.h>
 
 XsdSimpleType::XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
@@ -56,7 +62,7 @@ void XsdSimpleType::validateSchemaRules(void)
  */
 void XsdSimpleType::rule2(void)
 {
-    if (!std::dynamic_pointer_cast<XsdSchema>(m_parent) && m_name)
+    if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && m_name)
         throw new ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
 }
 
@@ -67,7 +73,7 @@ void XsdSimpleType::rule2(void)
 void XsdSimpleType::rule3(void)
 {
     if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && !m_name)
-        throw new ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element."));
+        throw new ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
 }
 
 void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
@@ -110,14 +116,9 @@ std::shared_ptr<ReferenceBase> XsdSimpleType::parse(ParseData parseData)
 std::shared_ptr<XsdList> XsdSimpleType::getList(void)
 {
     if (!m_xsd_list && m_xsd_union)
-    {
-        Optional<XsdSimpleType> simpleType = xsd_union.getUnionElements().stream().filter(xsdSimpleType -> xsdSimpleType.xsd_list != null).findFirst();
-
-        if (simpleType.isPresent()){
-            return simpleType.get().xsd_list;
-        }
-    }
-
+      for(auto& xsdSimpleType : m_xsd_union->getUnionElements())
+        if(xsdSimpleType->m_xsd_list)
+          return xsdSimpleType->m_xsd_list;
     return m_xsd_list;
 }
 
@@ -129,34 +130,45 @@ std::shared_ptr<XsdList> XsdSimpleType::getList(void)
  */
 std::list<std::shared_ptr<XsdRestriction>> XsdSimpleType::getAllRestrictions(void)
 {
-    std::map<std::string, XsdRestriction> restrictions;
+    std::map<std::string, std::shared_ptr<XsdRestriction>> restrictions;
     StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToJava();
 
-    if (restriction != null){
-        restrictions.put(xsdBuiltinTypes.get(restriction.getBase()), restriction);
+    if (m_restriction && m_restriction->getBase())
+    {
+        restrictions.emplace(xsdBuiltinTypes.at(m_restriction->getBase().value()), m_restriction);
     }
 
-    if (xsd_union != null){
-        xsd_union.getUnionElements().forEach(unionMember -> {
-            XsdRestriction unionMemberRestriction = unionMember.getRestriction();
+    if (m_xsd_union)
+    {
+      for(auto& unionMember :  m_xsd_union->getUnionElements())
+      {
+        auto unionMemberRestriction = unionMember->getRestriction();
+        if (unionMemberRestriction)
+        {
+          assert(unionMemberRestriction->getBase());
+          assert(xsdBuiltinTypes.contains(unionMemberRestriction->getBase().value()));
 
-            if (unionMemberRestriction != null){
-                XsdRestriction existingRestriction = restrictions.getOrDefault(xsdBuiltinTypes.get(unionMemberRestriction.getBase()), null);
 
-                if (existingRestriction != null){
-                    if (existsRestrictionOverlap(existingRestriction, unionMemberRestriction)){
-                        throw new InvalidParameterException("The xsd file is invalid because has contradictory restrictions.");
-                    }
+          std::shared_ptr<XsdRestriction> existingRestriction;
+          if(restrictions.contains(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value())))
+             existingRestriction = restrictions.at(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()));
 
-                    updateExistingRestriction(existingRestriction, unionMemberRestriction);
-                } else {
-                    restrictions.put(xsdBuiltinTypes.get(unionMemberRestriction.getBase()), unionMemberRestriction);
-                }
-            }
-        });
+          if(existingRestriction)
+          {
+            if (existsRestrictionOverlap(existingRestriction, unionMemberRestriction))
+              throw std::runtime_error("The xsd file is invalid because has contradictory restrictions.");
+            updateExistingRestriction(existingRestriction, unionMemberRestriction);
+          }
+          else
+            restrictions.emplace(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()), unionMemberRestriction);
+        }
+      }
     }
 
-    return restrictions.values();
+    std::list<std::shared_ptr<XsdRestriction>> rvals;
+    for(auto& value : std::views::values(restrictions))
+      rvals.push_back(value);
+    return rvals;
 }
 
 /**
@@ -223,37 +235,45 @@ void XsdSimpleType::updateExistingRestriction(std::shared_ptr<XsdRestriction> ex
  */
 void XsdSimpleType::updateExistingRestrictionEnumerations(std::shared_ptr<XsdRestriction> existing, std::shared_ptr<XsdRestriction> newRestriction)
 {
-    std::list<std::shared_ptr<XsdEnumeration>> existingEnumeration = existing.getEnumeration();
-    std::list<std::shared_ptr<XsdEnumeration>> newRestrictionEnumeration = newRestriction->getEnumeration();
+  std::list<std::shared_ptr<XsdEnumeration>> existingEnumeration = existing->getEnumeration();
+  std::list<std::shared_ptr<XsdEnumeration>> newRestrictionEnumeration = newRestriction->getEnumeration();
 
-    if (existingEnumeration == null){
-        existing.setEnumeration(newRestrictionEnumeration);
-    } else {
-        if (newRestrictionEnumeration != null){
-            for (XsdEnumeration enumerationElem : newRestrictionEnumeration){
-                if (existingEnumeration.stream().noneMatch(existingEnumerationElem -> existingEnumerationElem.getValue().equals(enumerationElem.getValue()))){
-                    existingEnumeration.add(enumerationElem);
-                }
-            }
+  if(!existingEnumeration.empty())
+    existing->setEnumeration(newRestrictionEnumeration);
+  else
+    for (auto& enumerationElem : newRestrictionEnumeration)
+    {
+      bool found = false;
+      for (auto& existingEnumerationElem : existingEnumeration)
+        if(existingEnumerationElem->getValue() == enumerationElem->getValue())
+        {
+          found = true;
+          break;
         }
+      if(!found)
+        existingEnumeration.push_back(enumerationElem);
     }
 }
 
-static bool hasDifferentValue(std::shared_ptr<XsdRestriction> existing, std::shared_ptr<XsdRestriction> newRestriction)
+template<typename T, std::enable_if_t<std::is_base_of_v<XsdIntegerRestrictions, T>, bool> = true>
+constexpr bool hasDifferentValue(std::shared_ptr<T> existing, std::shared_ptr<T> newRestriction)
 {
-  if(std::dynamic_pointer_cast<XsdIntegerRestrictions>(existing))
-    return XsdIntegerRestrictions::hasDifferentValue(std::static_pointer_cast<XsdIntegerRestrictions>(existing),
-                                                     std::static_pointer_cast<XsdIntegerRestrictions>(newRestriction));
+  return XsdIntegerRestrictions::hasDifferentValue(std::static_pointer_cast<XsdIntegerRestrictions>(existing),
+                                                   std::static_pointer_cast<XsdIntegerRestrictions>(newRestriction));
+}
 
-  if(std::dynamic_pointer_cast<XsdStringRestrictions>(existing))
-    return XsdStringRestrictions::hasDifferentValue(std::static_pointer_cast<XsdStringRestrictions>(existing),
-                                                    std::static_pointer_cast<XsdStringRestrictions>(newRestriction));
+template<typename T, std::enable_if_t<std::is_base_of_v<XsdStringRestrictions, T>, bool> = true>
+constexpr bool hasDifferentValue(std::shared_ptr<T> existing, std::shared_ptr<T> newRestriction)
+{
+  return XsdStringRestrictions::hasDifferentValue(std::static_pointer_cast<XsdStringRestrictions>(existing),
+                                                   std::static_pointer_cast<XsdStringRestrictions>(newRestriction));
+}
 
-  if(std::dynamic_pointer_cast<XsdWhiteSpace>(existing))
-    return XsdWhiteSpace::hasDifferentValue(std::static_pointer_cast<XsdWhiteSpace>(existing),
-                                            std::static_pointer_cast<XsdWhiteSpace>(newRestriction));
-  assert(false);
-  return false;
+template<typename T, std::enable_if_t<std::is_base_of_v<XsdWhiteSpace, T>, bool> = true>
+constexpr bool hasDifferentValue(std::shared_ptr<T> existing, std::shared_ptr<T> newRestriction)
+{
+  return XsdWhiteSpace::hasDifferentValue(std::static_pointer_cast<XsdWhiteSpace>(existing),
+                                          std::static_pointer_cast<XsdWhiteSpace>(newRestriction));
 }
 
 /**

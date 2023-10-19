@@ -80,7 +80,7 @@ HEADERS += \
   src/xsdelements/visitors/XsdExtensionVisitor.h \
   src/xsdelements/visitors/XsdGroupVisitor.h \
   src/xsdelements/visitors/XsdListVisitor.h \
-  src/xsdelements/visitors/XsdRestrictionsVisitor.h \
+  src/xsdelements/visitors/XsdRestrictionVisitor.h \
   src/xsdelements/visitors/XsdSchemaVisitor.h \
   src/xsdelements/visitors/XsdSequenceVisitor.h \
   src/xsdelements/visitors/XsdSimpleContentVisitor.h \
@@ -105,11 +105,16 @@ SOURCES += \
   src/core/XsdParser.cpp \
   src/core/XsdParserCore.cpp \
   src/core/utils/ParseData.cpp \
+  src/core/utils/ParserConfig.cpp \
+  src/main.cpp \
   src/xsdelements/AttributeValidations.cpp \
   src/xsdelements/XsdAbstractElement.cpp \
   src/xsdelements/XsdAll.cpp \
   src/xsdelements/XsdAnnotation.cpp \
   src/xsdelements/XsdAttribute.cpp \
+  src/xsdelements/XsdAttributeGroup.cpp \
+  src/xsdelements/XsdChoice.cpp \
+  src/xsdelements/XsdComplexContent.cpp \
   src/xsdelements/XsdComplexType.cpp \
   src/xsdelements/XsdElement.cpp \
   src/xsdelements/XsdExtension.cpp \
@@ -118,6 +123,7 @@ SOURCES += \
   src/xsdelements/XsdNamedElements.cpp \
   src/xsdelements/XsdRestriction.cpp \
   src/xsdelements/XsdSchema.cpp \
+  src/xsdelements/XsdSequence.cpp \
   src/xsdelements/XsdSimpleType.cpp \
   src/xsdelements/elementswrapper/ConcreteElement.cpp \
   src/xsdelements/elementswrapper/NamedConcreteElement.cpp \
@@ -125,7 +131,7 @@ SOURCES += \
   src/xsdelements/elementswrapper/UnsolvedReference.cpp \
   src/xsdelements/visitors/XsdAbstractElementVisitor.cpp \
   src/xsdelements/visitors/XsdComplexTypeVisitor.cpp \
-  src/xsdelements/visitors/XsdRestrictionsVisitor.cpp \
+  src/xsdelements/visitors/XsdRestrictionVisitor.cpp \
   src/xsdelements/visitors/XsdSchemaVisitor.cpp \
   src/xsdelements/visitors/XsdSimpleTypeVisitor.cpp \
   src/xsdelements/xsdrestrictions/XsdEnumeration.cpp

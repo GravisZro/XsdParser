@@ -5,7 +5,6 @@
 
 #include <xsdelements/XsdAnnotatedElements.h>
 
-
 /**
  * This class serves as a base to every different restriction that has its restricting parameter defined as an {@link std::string}.
  * Classes like {@link XsdPattern} or {@link XsdEnumeration} should extend this class.
@@ -21,6 +20,7 @@ private:
     std::optional<std::string> value;
 
 public:
+    using XsdAnnotatedElements::clone;
     XsdStringRestrictions(std::shared_ptr<XsdParserCore> parser,
                           StringMap elementFieldsMapParam,
                           VisitorFunctionReference visitorFunction)
@@ -29,6 +29,7 @@ public:
       if(m_attributesMap.contains(*VALUE_TAG))
         value = m_attributesMap.at(*VALUE_TAG);
     }
+public:
     /**
      * Compares two different objects of this type.
      * @param o1 The first object.

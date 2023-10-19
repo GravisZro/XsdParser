@@ -1,4 +1,4 @@
-#include "XsdRestrictionsVisitor.h"
+#include "XsdRestrictionVisitor.h"
 
 
 
@@ -23,101 +23,101 @@
 
 #include <xsdelements/XsdRestriction.h>
 
-XsdRestrictionsVisitor::XsdRestrictionsVisitor(std::shared_ptr<XsdRestriction> owner)
+XsdRestrictionVisitor::XsdRestrictionVisitor(std::shared_ptr<XsdRestriction> owner)
       : AttributesVisitor(std::static_pointer_cast<XsdAnnotatedElements>(owner)),
         m_owner(owner) { }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdEnumeration> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdEnumeration> element)
   {
       AttributesVisitor::visit(element);
       m_owner->add(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdFractionDigits> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdFractionDigits> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setFractionDigits(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdLength> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdLength> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setLength(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdMaxExclusive> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMaxExclusive> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setMaxExclusive(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdMaxInclusive> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMaxInclusive> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setMaxInclusive(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdMaxLength> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMaxLength> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setMaxLength(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdMinExclusive> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMinExclusive> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setMinExclusive(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdMinInclusive> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMinInclusive> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setMinInclusive(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdMinLength> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMinLength> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setMinLength(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdPattern> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdPattern> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setPattern(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdTotalDigits> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdTotalDigits> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setTotalDigits(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdWhiteSpace> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdWhiteSpace> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setWhiteSpace(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdAll> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdAll> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setAll(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdChoice> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdChoice> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setChoice(element);
   }
 
-void XsdRestrictionsVisitor::visit(std::shared_ptr<XsdSequence> element)
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdSequence> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setSequence(element);
   }
 
-void XsdRestrictionsVisitor::XsdRestrictionsVisitor::visit(std::shared_ptr<XsdGroup> element)
+void XsdRestrictionVisitor::XsdRestrictionVisitor::visit(std::shared_ptr<XsdGroup> element)
   {
       AttributesVisitor::visit(element);
       m_owner->setGroup(ReferenceBase::createFromXsd(element));

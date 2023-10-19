@@ -10,9 +10,6 @@
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 
-#include <list>
-#include <map>
-#include <functional>
 
 class ReferenceBase;
 class XsdAbstractElementVisitor;

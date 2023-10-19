@@ -7,10 +7,9 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
+
 #include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
-#include <map>
-#include <functional>
 
 /**
  * States a pattern that a given attribute must match in order to be considered valid. The value is defined as a
@@ -23,7 +22,8 @@ public:
   constexpr static const std::string_view XS_TAG = "xs:pattern";
   constexpr static const std::string_view TAG = "pattern";
 
-private:
+public:
+  using XsdStringRestrictions::clone;
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
              StringMap elementFieldsMapParam,
              VisitorFunctionReference visitorFunction)

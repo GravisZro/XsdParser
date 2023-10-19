@@ -1,5 +1,4 @@
 #pragma once
-// package org.xmlet.xsdparser.core.utils;
 
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAll.h>
@@ -19,6 +18,7 @@
 #include <xsdelements/XsdGroup.h>
 #include <xsdelements/XsdIdentifierElements.h>
 #include <xsdelements/XsdImport.h>
+#include <xsdelements/XsdInclude.h>
 #include <xsdelements/XsdList.h>
 #include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdNamedElements.h>
@@ -43,7 +43,7 @@
 #include <xsdelements/visitors/XsdExtensionVisitor.h>
 #include <xsdelements/visitors/XsdGroupVisitor.h>
 #include <xsdelements/visitors/XsdListVisitor.h>
-#include <xsdelements/visitors/XsdRestrictionsVisitor.h>
+#include <xsdelements/visitors/XsdRestrictionVisitor.h>
 #include <xsdelements/visitors/XsdSchemaVisitor.h>
 #include <xsdelements/visitors/XsdSequenceVisitor.h>
 #include <xsdelements/visitors/XsdSimpleContentVisitor.h>
@@ -71,256 +71,230 @@
 #include <map>
 #include <string_view>
 
-const std::map<std::u16string, std::u16string> ParserConfig::getXsdTypesToJava(void)
+const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
 {
-  std::map<std::u16string, std::u16string> xsdTypesToJava;
+  std::map<std::string, std::string> xsdTypesToJava;
 
-  std::u16string_view string = u"std::string";
-  std::u16string_view xmlGregorianCalendar = u"XMLGregorianCalendar";
-  std::u16string_view duration = u"Duration";
-  std::u16string_view bigInteger = u"BigInteger";
-  std::u16string_view integer = u"Integer";
-  std::u16string_view shortString = u"Short";
-  std::u16string_view qName = u"QName";
-  std::u16string_view longString = u"Long";
-  std::u16string_view byteString = u"Byte";
+  std::string_view string = "std::string";
+  std::string_view xmlGregorianCalendar = "XMLGregorianCalendar";
+  std::string_view duration = "Duration";
+  std::string_view bigInteger = "BigInteger";
+  std::string_view integer = "Integer";
+  std::string_view shortString = "Short";
+  std::string_view qName = "QName";
+  std::string_view longString = "Long";
+  std::string_view byteString = "Byte";
 
-  xsdTypesToJava.insert(std::make_pair(u"xsd:anyURI", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:anyURI", string));
-  xsdTypesToJava.insert(std::make_pair(u"anyURI", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:bool", u"Boolean"));
-  xsdTypesToJava.insert(std::make_pair(u"xs:bool", u"Boolean"));
-  xsdTypesToJava.insert(std::make_pair(u"bool", u"Boolean"));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:date", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:date", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"date", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:dateTime", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:dateTime", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"dateTime", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:time", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:time", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"time", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:duration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"xs:duration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"duration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:dayTimeDuration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"xs:dayTimeDuration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"dayTimeDuration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:yearMonthDuration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"xs:yearMonthDuration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"yearMonthDuration", duration));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:gDay", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:gDay", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"gDay", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:gMonth", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:gMonth", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"gMonth", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:gMonthDay", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:gMonthDay", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"gMonthDay", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:gYear", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:gYear", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"gYear", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:gYearMonth", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xs:gYearMonth", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"gYearMonth", xmlGregorianCalendar));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:decimal", u"BigDecimal"));
-  xsdTypesToJava.insert(std::make_pair(u"xs:decimal", u"BigDecimal"));
-  xsdTypesToJava.insert(std::make_pair(u"decimal", u"BigDecimal"));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:integer", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xs:integer", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"integer", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:nonPositiveInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xs:nonPositiveInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"nonPositiveInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:negativeInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xs:negativeInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"negativeInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:long", longString));
-  xsdTypesToJava.insert(std::make_pair(u"xs:long", longString));
-  xsdTypesToJava.insert(std::make_pair(u"long", longString));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:int", integer));
-  xsdTypesToJava.insert(std::make_pair(u"xs:int", integer));
-  xsdTypesToJava.insert(std::make_pair(u"int", integer));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:short", shortString));
-  xsdTypesToJava.insert(std::make_pair(u"xs:short", shortString));
-  xsdTypesToJava.insert(std::make_pair(u"short", shortString));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:byte", byteString));
-  xsdTypesToJava.insert(std::make_pair(u"xs:byte", byteString));
-  xsdTypesToJava.insert(std::make_pair(u"byte", byteString));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:nonNegativeInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xs:nonNegativeInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"nonNegativeInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:unsignedLong", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xs:unsignedLong", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"unsignedLong", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:unsignedInt", longString));
-  xsdTypesToJava.insert(std::make_pair(u"xs:unsignedInt", longString));
-  xsdTypesToJava.insert(std::make_pair(u"unsignedInt", longString));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:unsignedShort", integer));
-  xsdTypesToJava.insert(std::make_pair(u"xs:unsignedShort", integer));
-  xsdTypesToJava.insert(std::make_pair(u"unsignedShort", integer));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:unsignedByte", shortString));
-  xsdTypesToJava.insert(std::make_pair(u"xs:unsignedByte", shortString));
-  xsdTypesToJava.insert(std::make_pair(u"unsignedByte", shortString));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:positiveInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xs:positiveInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"positiveInteger", bigInteger));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:double", u"Double"));
-  xsdTypesToJava.insert(std::make_pair(u"xs:double", u"Double"));
-  xsdTypesToJava.insert(std::make_pair(u"double", u"Double"));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:float", u"Float"));
-  xsdTypesToJava.insert(std::make_pair(u"xs:float", u"Float"));
-  xsdTypesToJava.insert(std::make_pair(u"float", u"Float"));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:QName", qName));
-  xsdTypesToJava.insert(std::make_pair(u"xs:QName", qName));
-  xsdTypesToJava.insert(std::make_pair(u"QName", qName));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:NOTATION", qName));
-  xsdTypesToJava.insert(std::make_pair(u"xs:NOTATION", qName));
-  xsdTypesToJava.insert(std::make_pair(u"NOTATION", qName));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:string", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:string", string));
-  xsdTypesToJava.insert(std::make_pair(u"string", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:normalizedString", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:normalizedString", string));
-  xsdTypesToJava.insert(std::make_pair(u"normalizedString", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:token", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:token", string));
-  xsdTypesToJava.insert(std::make_pair(u"token", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:language", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:language", string));
-  xsdTypesToJava.insert(std::make_pair(u"language", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:NMTOKEN", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:NMTOKEN", string));
-  xsdTypesToJava.insert(std::make_pair(u"NMTOKEN", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:Name", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:Name", string));
-  xsdTypesToJava.insert(std::make_pair(u"Name", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:NCName", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:NCName", string));
-  xsdTypesToJava.insert(std::make_pair(u"NCName", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:ID", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:ID", string));
-  xsdTypesToJava.insert(std::make_pair(u"ID", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:IDREF", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:IDREF", string));
-  xsdTypesToJava.insert(std::make_pair(u"IDREF", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:ENTITY", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:ENTITY", string));
-  xsdTypesToJava.insert(std::make_pair(u"ENTITY", string));
-  xsdTypesToJava.insert(std::make_pair(u"xsd:untypedAtomic", string));
-  xsdTypesToJava.insert(std::make_pair(u"xs:untypedAtomic", string));
-  xsdTypesToJava.insert(std::make_pair(u"untypedAtomic", string));
+  xsdTypesToJava.emplace("xsd:anyURI", string);
+  xsdTypesToJava.emplace("xs:anyURI", string);
+  xsdTypesToJava.emplace("anyURI", string);
+  xsdTypesToJava.emplace("xsd:bool", "Boolean");
+  xsdTypesToJava.emplace("xs:bool", "Boolean");
+  xsdTypesToJava.emplace("bool", "Boolean");
+  xsdTypesToJava.emplace("xsd:date", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:date", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("date", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:dateTime", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:dateTime", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("dateTime", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:time", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:time", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("time", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:duration", duration);
+  xsdTypesToJava.emplace("xs:duration", duration);
+  xsdTypesToJava.emplace("duration", duration);
+  xsdTypesToJava.emplace("xsd:dayTimeDuration", duration);
+  xsdTypesToJava.emplace("xs:dayTimeDuration", duration);
+  xsdTypesToJava.emplace("dayTimeDuration", duration);
+  xsdTypesToJava.emplace("xsd:yearMonthDuration", duration);
+  xsdTypesToJava.emplace("xs:yearMonthDuration", duration);
+  xsdTypesToJava.emplace("yearMonthDuration", duration);
+  xsdTypesToJava.emplace("xsd:gDay", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:gDay", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("gDay", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:gMonth", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:gMonth", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("gMonth", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:gMonthDay", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:gMonthDay", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("gMonthDay", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:gYear", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:gYear", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("gYear", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:gYearMonth", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xs:gYearMonth", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("gYearMonth", xmlGregorianCalendar);
+  xsdTypesToJava.emplace("xsd:decimal", "BigDecimal");
+  xsdTypesToJava.emplace("xs:decimal", "BigDecimal");
+  xsdTypesToJava.emplace("decimal", "BigDecimal");
+  xsdTypesToJava.emplace("xsd:integer", bigInteger);
+  xsdTypesToJava.emplace("xs:integer", bigInteger);
+  xsdTypesToJava.emplace("integer", bigInteger);
+  xsdTypesToJava.emplace("xsd:nonPositiveInteger", bigInteger);
+  xsdTypesToJava.emplace("xs:nonPositiveInteger", bigInteger);
+  xsdTypesToJava.emplace("nonPositiveInteger", bigInteger);
+  xsdTypesToJava.emplace("xsd:negativeInteger", bigInteger);
+  xsdTypesToJava.emplace("xs:negativeInteger", bigInteger);
+  xsdTypesToJava.emplace("negativeInteger", bigInteger);
+  xsdTypesToJava.emplace("xsd:long", longString);
+  xsdTypesToJava.emplace("xs:long", longString);
+  xsdTypesToJava.emplace("long", longString);
+  xsdTypesToJava.emplace("xsd:int", integer);
+  xsdTypesToJava.emplace("xs:int", integer);
+  xsdTypesToJava.emplace("int", integer);
+  xsdTypesToJava.emplace("xsd:short", shortString);
+  xsdTypesToJava.emplace("xs:short", shortString);
+  xsdTypesToJava.emplace("short", shortString);
+  xsdTypesToJava.emplace("xsd:byte", byteString);
+  xsdTypesToJava.emplace("xs:byte", byteString);
+  xsdTypesToJava.emplace("byte", byteString);
+  xsdTypesToJava.emplace("xsd:nonNegativeInteger", bigInteger);
+  xsdTypesToJava.emplace("xs:nonNegativeInteger", bigInteger);
+  xsdTypesToJava.emplace("nonNegativeInteger", bigInteger);
+  xsdTypesToJava.emplace("xsd:unsignedLong", bigInteger);
+  xsdTypesToJava.emplace("xs:unsignedLong", bigInteger);
+  xsdTypesToJava.emplace("unsignedLong", bigInteger);
+  xsdTypesToJava.emplace("xsd:unsignedInt", longString);
+  xsdTypesToJava.emplace("xs:unsignedInt", longString);
+  xsdTypesToJava.emplace("unsignedInt", longString);
+  xsdTypesToJava.emplace("xsd:unsignedShort", integer);
+  xsdTypesToJava.emplace("xs:unsignedShort", integer);
+  xsdTypesToJava.emplace("unsignedShort", integer);
+  xsdTypesToJava.emplace("xsd:unsignedByte", shortString);
+  xsdTypesToJava.emplace("xs:unsignedByte", shortString);
+  xsdTypesToJava.emplace("unsignedByte", shortString);
+  xsdTypesToJava.emplace("xsd:positiveInteger", bigInteger);
+  xsdTypesToJava.emplace("xs:positiveInteger", bigInteger);
+  xsdTypesToJava.emplace("positiveInteger", bigInteger);
+  xsdTypesToJava.emplace("xsd:double", "Double");
+  xsdTypesToJava.emplace("xs:double", "Double");
+  xsdTypesToJava.emplace("double", "Double");
+  xsdTypesToJava.emplace("xsd:float", "Float");
+  xsdTypesToJava.emplace("xs:float", "Float");
+  xsdTypesToJava.emplace("float", "Float");
+  xsdTypesToJava.emplace("xsd:QName", qName);
+  xsdTypesToJava.emplace("xs:QName", qName);
+  xsdTypesToJava.emplace("QName", qName);
+  xsdTypesToJava.emplace("xsd:NOTATION", qName);
+  xsdTypesToJava.emplace("xs:NOTATION", qName);
+  xsdTypesToJava.emplace("NOTATION", qName);
+  xsdTypesToJava.emplace("xsd:string", string);
+  xsdTypesToJava.emplace("xs:string", string);
+  xsdTypesToJava.emplace("string", string);
+  xsdTypesToJava.emplace("xsd:normalizedString", string);
+  xsdTypesToJava.emplace("xs:normalizedString", string);
+  xsdTypesToJava.emplace("normalizedString", string);
+  xsdTypesToJava.emplace("xsd:token", string);
+  xsdTypesToJava.emplace("xs:token", string);
+  xsdTypesToJava.emplace("token", string);
+  xsdTypesToJava.emplace("xsd:language", string);
+  xsdTypesToJava.emplace("xs:language", string);
+  xsdTypesToJava.emplace("language", string);
+  xsdTypesToJava.emplace("xsd:NMTOKEN", string);
+  xsdTypesToJava.emplace("xs:NMTOKEN", string);
+  xsdTypesToJava.emplace("NMTOKEN", string);
+  xsdTypesToJava.emplace("xsd:Name", string);
+  xsdTypesToJava.emplace("xs:Name", string);
+  xsdTypesToJava.emplace("Name", string);
+  xsdTypesToJava.emplace("xsd:NCName", string);
+  xsdTypesToJava.emplace("xs:NCName", string);
+  xsdTypesToJava.emplace("NCName", string);
+  xsdTypesToJava.emplace("xsd:ID", string);
+  xsdTypesToJava.emplace("xs:ID", string);
+  xsdTypesToJava.emplace("ID", string);
+  xsdTypesToJava.emplace("xsd:IDREF", string);
+  xsdTypesToJava.emplace("xs:IDREF", string);
+  xsdTypesToJava.emplace("IDREF", string);
+  xsdTypesToJava.emplace("xsd:ENTITY", string);
+  xsdTypesToJava.emplace("xs:ENTITY", string);
+  xsdTypesToJava.emplace("ENTITY", string);
+  xsdTypesToJava.emplace("xsd:untypedAtomic", string);
+  xsdTypesToJava.emplace("xs:untypedAtomic", string);
+  xsdTypesToJava.emplace("untypedAtomic", string);
 
   return xsdTypesToJava;
 }
 
+#define CONCAT(a, b) a##b
+#define CONCAT_NS(a, b) a::b
 
-const std::map<std::u16string, ConfigEntryData> ParserConfig::getParseMappers(void)
+#define MAKE_PARSEMAP_ENTRY_HELPER(ClassName, TagId, Function) \
+  parseMappers.emplace(std::make_pair(CONCAT_NS(ClassName,TagId), ConfigEntryData { CONCAT_NS(ClassName, parse), Function(ClassName) } ))
+
+
+#define MAKE_PARSEMAP_ENTRY_NULLPTR(ClassName) nullptr
+
+#define MAKE_PARSEMAP_ENTRY_FUNCTION(ClassName) \
+                          [](std::shared_ptr<XsdAbstractElement> element) { \
+                              return std::static_pointer_cast<XsdAbstractElementVisitor>( \
+                                        std::make_shared<CONCAT(ClassName, Visitor)> \
+                                            (std::static_pointer_cast<ClassName>(element) \
+                                          ) ); }
+
+#define MAKE_PARSEMAP_ENTRY_ANNOTATED_FUNCTION(ClassName) \
+  MAKE_PARSEMAP_ENTRY_FUNCTION(XsdAnnotatedElements)
+
+#define MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, Function) \
+  MAKE_PARSEMAP_ENTRY_HELPER(ClassName, XSD_TAG, Function); \
+  MAKE_PARSEMAP_ENTRY_HELPER(ClassName, XS_TAG, Function); \
+  MAKE_PARSEMAP_ENTRY_HELPER(ClassName, TAG, Function)
+
+
+#define MAKE_PARSEMAP_ENTRY(ClassName) \
+  MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_FUNCTION);
+
+#define MAKE_PARSEMAP_ENTRY_NULL(ClassName) \
+  MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_NULLPTR);
+
+#define MAKE_PARSEMAP_ENTRY_ANNOTATED(ClassName) \
+  MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_ANNOTATED_FUNCTION);
+
+
+//
+//parseMappers.insert(std::make_pair(XsdInclude::XS_TAG, new ConfigEntryData(XsdInclude::parse, elem -> new XsdAnnotatedElementsVisitor((XsdInclude) elem))));
+
+const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
 {
-  std::map<std::u16string, ConfigEntryData> parseMappers;
+  std::map<std::string_view, ConfigEntryData> parseMappers;
 
-  parseMappers.insert(std::make_pair(XsdSchema::XSD_TAG, new ConfigEntryData(XsdSchema::parse, elem -> new XsdSchemaVisitor((XsdSchema) elem))));
-  parseMappers.insert(std::make_pair(XsdSchema::XS_TAG, new ConfigEntryData(XsdSchema::parse, elem -> new XsdSchemaVisitor((XsdSchema) elem))));
-  parseMappers.insert(std::make_pair(XsdSchema::TAG, new ConfigEntryData(XsdSchema::parse, elem -> new XsdSchemaVisitor((XsdSchema) elem))));
-  parseMappers.insert(std::make_pair(XsdAll::XSD_TAG, new ConfigEntryData(XsdAll::parse, elem -> new XsdAllVisitor((XsdAll) elem))));
-  parseMappers.insert(std::make_pair(XsdAll::XS_TAG, new ConfigEntryData(XsdAll::parse, elem -> new XsdAllVisitor((XsdAll) elem))));
-  parseMappers.insert(std::make_pair(XsdAll::TAG, new ConfigEntryData(XsdAll::parse, elem -> new XsdAllVisitor((XsdAll) elem))));
-  parseMappers.insert(std::make_pair(XsdAttribute::XSD_TAG, new ConfigEntryData(XsdAttribute::parse, elem -> new XsdAttributeVisitor((XsdAttribute) elem))));
-  parseMappers.insert(std::make_pair(XsdAttribute::XS_TAG, new ConfigEntryData(XsdAttribute::parse, elem -> new XsdAttributeVisitor((XsdAttribute) elem))));
-  parseMappers.insert(std::make_pair(XsdAttribute::TAG, new ConfigEntryData(XsdAttribute::parse, elem -> new XsdAttributeVisitor((XsdAttribute) elem))));
-  parseMappers.insert(std::make_pair(XsdAttributeGroup::XSD_TAG, new ConfigEntryData(XsdAttributeGroup::parse, elem -> new XsdAttributeGroupVisitor((XsdAttributeGroup) elem))));
-  parseMappers.insert(std::make_pair(XsdAttributeGroup::XS_TAG, new ConfigEntryData(XsdAttributeGroup::parse, elem -> new XsdAttributeGroupVisitor((XsdAttributeGroup) elem))));
-  parseMappers.insert(std::make_pair(XsdAttributeGroup::TAG, new ConfigEntryData(XsdAttributeGroup::parse, elem -> new XsdAttributeGroupVisitor((XsdAttributeGroup) elem))));
-  parseMappers.insert(std::make_pair(XsdChoice::XSD_TAG, new ConfigEntryData(XsdChoice::parse, elem -> new XsdChoiceVisitor((XsdChoice) elem))));
-  parseMappers.insert(std::make_pair(XsdChoice::XS_TAG, new ConfigEntryData(XsdChoice::parse, elem -> new XsdChoiceVisitor((XsdChoice) elem))));
-  parseMappers.insert(std::make_pair(XsdChoice::TAG, new ConfigEntryData(XsdChoice::parse, elem -> new XsdChoiceVisitor((XsdChoice) elem))));
-  parseMappers.insert(std::make_pair(XsdComplexType::XSD_TAG, new ConfigEntryData(XsdComplexType::parse, elem -> new XsdComplexTypeVisitor((XsdComplexType) elem))));
-  parseMappers.insert(std::make_pair(XsdComplexType::XS_TAG, new ConfigEntryData(XsdComplexType::parse, elem -> new XsdComplexTypeVisitor((XsdComplexType) elem))));
-  parseMappers.insert(std::make_pair(XsdComplexType::TAG, new ConfigEntryData(XsdComplexType::parse, elem -> new XsdComplexTypeVisitor((XsdComplexType) elem))));
-  parseMappers.insert(std::make_pair(XsdElement::XSD_TAG, new ConfigEntryData(XsdElement::parse, elem -> new XsdElementVisitor((XsdElement) elem))));
-  parseMappers.insert(std::make_pair(XsdElement::XS_TAG, new ConfigEntryData(XsdElement::parse, elem -> new XsdElementVisitor((XsdElement) elem))));
-  parseMappers.insert(std::make_pair(XsdElement::TAG, new ConfigEntryData(XsdElement::parse, elem -> new XsdElementVisitor((XsdElement) elem))));
-  parseMappers.insert(std::make_pair(XsdGroup::XSD_TAG, new ConfigEntryData(XsdGroup::parse, elem -> new XsdGroupVisitor((XsdGroup) elem))));
-  parseMappers.insert(std::make_pair(XsdGroup::XS_TAG, new ConfigEntryData(XsdGroup::parse, elem -> new XsdGroupVisitor((XsdGroup) elem))));
-  parseMappers.insert(std::make_pair(XsdGroup::TAG, new ConfigEntryData(XsdGroup::parse, elem -> new XsdGroupVisitor((XsdGroup) elem))));
-  parseMappers.insert(std::make_pair(XsdInclude::XSD_TAG, new ConfigEntryData(XsdInclude::parse, elem -> new XsdAnnotatedElementsVisitor((XsdInclude) elem))));
-  parseMappers.insert(std::make_pair(XsdInclude::XS_TAG, new ConfigEntryData(XsdInclude::parse, elem -> new XsdAnnotatedElementsVisitor((XsdInclude) elem))));
-  parseMappers.insert(std::make_pair(XsdInclude::TAG, new ConfigEntryData(XsdInclude::parse, elem -> new XsdAnnotatedElementsVisitor((XsdInclude) elem))));
-  parseMappers.insert(std::make_pair(XsdImport::XSD_TAG, new ConfigEntryData(XsdImport::parse, elem -> new XsdAnnotatedElementsVisitor((XsdImport) elem))));
-  parseMappers.insert(std::make_pair(XsdImport::XS_TAG, new ConfigEntryData(XsdImport::parse, elem -> new XsdAnnotatedElementsVisitor((XsdImport) elem))));
-  parseMappers.insert(std::make_pair(XsdImport::TAG, new ConfigEntryData(XsdImport::parse, elem -> new XsdAnnotatedElementsVisitor((XsdImport) elem))));
-  parseMappers.insert(std::make_pair(XsdSequence::XSD_TAG, new ConfigEntryData(XsdSequence::parse, elem -> new XsdSequenceVisitor((XsdSequence) elem))));
-  parseMappers.insert(std::make_pair(XsdSequence::XS_TAG, new ConfigEntryData(XsdSequence::parse, elem -> new XsdSequenceVisitor((XsdSequence) elem))));
-  parseMappers.insert(std::make_pair(XsdSequence::TAG, new ConfigEntryData(XsdSequence::parse, elem -> new XsdSequenceVisitor((XsdSequence) elem))));
-  parseMappers.insert(std::make_pair(XsdSimpleType::XSD_TAG, new ConfigEntryData(XsdSimpleType::parse, elem -> new XsdSimpleTypeVisitor((XsdSimpleType) elem))));
-  parseMappers.insert(std::make_pair(XsdSimpleType::XS_TAG, new ConfigEntryData(XsdSimpleType::parse, elem -> new XsdSimpleTypeVisitor((XsdSimpleType) elem))));
-  parseMappers.insert(std::make_pair(XsdSimpleType::TAG, new ConfigEntryData(XsdSimpleType::parse, elem -> new XsdSimpleTypeVisitor((XsdSimpleType) elem))));
-  parseMappers.insert(std::make_pair(XsdList::XSD_TAG, new ConfigEntryData(XsdList::parse, elem -> new XsdListVisitor((XsdList) elem))));
-  parseMappers.insert(std::make_pair(XsdList::XS_TAG, new ConfigEntryData(XsdList::parse, elem -> new XsdListVisitor((XsdList) elem))));
-  parseMappers.insert(std::make_pair(XsdList::TAG, new ConfigEntryData(XsdList::parse, elem -> new XsdListVisitor((XsdList) elem))));
-  parseMappers.insert(std::make_pair(XsdRestriction::XSD_TAG, new ConfigEntryData(XsdRestriction::parse, elem -> new XsdRestrictionsVisitor((XsdRestriction) elem))));
-  parseMappers.insert(std::make_pair(XsdRestriction::XS_TAG, new ConfigEntryData(XsdRestriction::parse, elem -> new XsdRestrictionsVisitor((XsdRestriction) elem))));
-  parseMappers.insert(std::make_pair(XsdRestriction::TAG, new ConfigEntryData(XsdRestriction::parse, elem -> new XsdRestrictionsVisitor((XsdRestriction) elem))));
-  parseMappers.insert(std::make_pair(XsdUnion::XSD_TAG, new ConfigEntryData(XsdUnion::parse, elem -> new XsdUnionVisitor((XsdUnion) elem))));
-  parseMappers.insert(std::make_pair(XsdUnion::XS_TAG, new ConfigEntryData(XsdUnion::parse, elem -> new XsdUnionVisitor((XsdUnion) elem))));
-  parseMappers.insert(std::make_pair(XsdUnion::TAG, new ConfigEntryData(XsdUnion::parse, elem -> new XsdUnionVisitor((XsdUnion) elem))));
 
-  parseMappers.insert(std::make_pair(XsdAnnotation::XSD_TAG, new ConfigEntryData(XsdAnnotation::parse, elem -> new XsdAnnotationVisitor((XsdAnnotation) elem))));
-  parseMappers.insert(std::make_pair(XsdAnnotation::XS_TAG, new ConfigEntryData(XsdAnnotation::parse, elem -> new XsdAnnotationVisitor((XsdAnnotation) elem))));
-  parseMappers.insert(std::make_pair(XsdAnnotation::TAG, new ConfigEntryData(XsdAnnotation::parse, elem -> new XsdAnnotationVisitor((XsdAnnotation) elem))));
-  parseMappers.insert(std::make_pair(XsdAppInfo::XSD_TAG, new ConfigEntryData(XsdAppInfo::parse, null)));
-  parseMappers.insert(std::make_pair(XsdAppInfo::XS_TAG, new ConfigEntryData(XsdAppInfo::parse, null)));
-  parseMappers.insert(std::make_pair(XsdAppInfo::TAG, new ConfigEntryData(XsdAppInfo::parse, null)));
-  parseMappers.insert(std::make_pair(XsdComplexContent::XSD_TAG, new ConfigEntryData(XsdComplexContent::parse, elem -> new XsdComplexContentVisitor((XsdComplexContent) elem))));
-  parseMappers.insert(std::make_pair(XsdComplexContent::XS_TAG, new ConfigEntryData(XsdComplexContent::parse, elem -> new XsdComplexContentVisitor((XsdComplexContent) elem))));
-  parseMappers.insert(std::make_pair(XsdComplexContent::TAG, new ConfigEntryData(XsdComplexContent::parse, elem -> new XsdComplexContentVisitor((XsdComplexContent) elem))));
-  parseMappers.insert(std::make_pair(XsdDocumentation::XSD_TAG, new ConfigEntryData(XsdDocumentation::parse, null)));
-  parseMappers.insert(std::make_pair(XsdDocumentation::XS_TAG, new ConfigEntryData(XsdDocumentation::parse, null)));
-  parseMappers.insert(std::make_pair(XsdDocumentation::TAG, new ConfigEntryData(XsdDocumentation::parse, null)));
-  parseMappers.insert(std::make_pair(XsdExtension::XSD_TAG, new ConfigEntryData(XsdExtension::parse, elem -> new XsdExtensionVisitor((XsdExtension) elem))));
-  parseMappers.insert(std::make_pair(XsdExtension::XS_TAG, new ConfigEntryData(XsdExtension::parse, elem -> new XsdExtensionVisitor((XsdExtension) elem))));
-  parseMappers.insert(std::make_pair(XsdExtension::TAG, new ConfigEntryData(XsdExtension::parse, elem -> new XsdExtensionVisitor((XsdExtension) elem))));
-  parseMappers.insert(std::make_pair(XsdSimpleContent::XSD_TAG, new ConfigEntryData(XsdSimpleContent::parse, elem -> new XsdSimpleContentVisitor((XsdSimpleContent) elem))));
-  parseMappers.insert(std::make_pair(XsdSimpleContent::XS_TAG, new ConfigEntryData(XsdSimpleContent::parse, elem -> new XsdSimpleContentVisitor((XsdSimpleContent) elem))));
-  parseMappers.insert(std::make_pair(XsdSimpleContent::TAG, new ConfigEntryData(XsdSimpleContent::parse, elem -> new XsdSimpleContentVisitor((XsdSimpleContent) elem))));
+//  parseMappers.emplace(std::make_pair(CONCAT_NS(XsdAppInfo, XSD_TAG), ConfigEntryData { CONCAT_NS(XsdAppInfo, parse), nullptr } ));
+//  MAKE_PARSEMAP_ENTRY_HELPER(XsdAppInfo, XSD_TAG, MAKE_PARSEMAP_ENTRY_NULLPTR)
 
-  parseMappers.insert(std::make_pair(XsdEnumeration::XSD_TAG, new ConfigEntryData(XsdEnumeration::parse, elem -> new XsdAnnotatedElementsVisitor((XsdEnumeration) elem))));
-  parseMappers.insert(std::make_pair(XsdEnumeration::XS_TAG, new ConfigEntryData(XsdEnumeration::parse, elem -> new XsdAnnotatedElementsVisitor((XsdEnumeration) elem))));
-  parseMappers.insert(std::make_pair(XsdEnumeration::TAG, new ConfigEntryData(XsdEnumeration::parse, elem -> new XsdAnnotatedElementsVisitor((XsdEnumeration) elem))));
-  parseMappers.insert(std::make_pair(XsdFractionDigits::XSD_TAG, new ConfigEntryData(XsdFractionDigits::parse, elem -> new XsdAnnotatedElementsVisitor((XsdFractionDigits) elem))));
-  parseMappers.insert(std::make_pair(XsdFractionDigits::XS_TAG, new ConfigEntryData(XsdFractionDigits::parse, elem -> new XsdAnnotatedElementsVisitor((XsdFractionDigits) elem))));
-  parseMappers.insert(std::make_pair(XsdFractionDigits::TAG, new ConfigEntryData(XsdFractionDigits::parse, elem -> new XsdAnnotatedElementsVisitor((XsdFractionDigits) elem))));
-  parseMappers.insert(std::make_pair(XsdLength::XSD_TAG, new ConfigEntryData(XsdLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdLength) elem))));
-  parseMappers.insert(std::make_pair(XsdLength::XS_TAG, new ConfigEntryData(XsdLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdLength) elem))));
-  parseMappers.insert(std::make_pair(XsdLength::TAG, new ConfigEntryData(XsdLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdLength) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxExclusive::XSD_TAG, new ConfigEntryData(XsdMaxExclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxExclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxExclusive::XS_TAG, new ConfigEntryData(XsdMaxExclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxExclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxExclusive::TAG, new ConfigEntryData(XsdMaxExclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxExclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxInclusive::XSD_TAG, new ConfigEntryData(XsdMaxInclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxInclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxInclusive::XS_TAG, new ConfigEntryData(XsdMaxInclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxInclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxInclusive::TAG, new ConfigEntryData(XsdMaxInclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxInclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxLength::XSD_TAG, new ConfigEntryData(XsdMaxLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxLength) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxLength::XS_TAG, new ConfigEntryData(XsdMaxLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxLength) elem))));
-  parseMappers.insert(std::make_pair(XsdMaxLength::TAG, new ConfigEntryData(XsdMaxLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMaxLength) elem))));
-  parseMappers.insert(std::make_pair(XsdMinExclusive::XSD_TAG, new ConfigEntryData(XsdMinExclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinExclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMinExclusive::XS_TAG, new ConfigEntryData(XsdMinExclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinExclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMinExclusive::TAG, new ConfigEntryData(XsdMinExclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinExclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMinInclusive::XSD_TAG, new ConfigEntryData(XsdMinInclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinInclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMinInclusive::XS_TAG, new ConfigEntryData(XsdMinInclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinInclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMinInclusive::TAG, new ConfigEntryData(XsdMinInclusive::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinInclusive) elem))));
-  parseMappers.insert(std::make_pair(XsdMinLength::XSD_TAG, new ConfigEntryData(XsdMinLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinLength) elem))));
-  parseMappers.insert(std::make_pair(XsdMinLength::XS_TAG, new ConfigEntryData(XsdMinLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinLength) elem))));
-  parseMappers.insert(std::make_pair(XsdMinLength::TAG, new ConfigEntryData(XsdMinLength::parse, elem -> new XsdAnnotatedElementsVisitor((XsdMinLength) elem))));
-  parseMappers.insert(std::make_pair(XsdPattern::XSD_TAG, new ConfigEntryData(XsdPattern::parse, elem -> new XsdAnnotatedElementsVisitor((XsdPattern) elem))));
-  parseMappers.insert(std::make_pair(XsdPattern::XS_TAG, new ConfigEntryData(XsdPattern::parse, elem -> new XsdAnnotatedElementsVisitor((XsdPattern) elem))));
-  parseMappers.insert(std::make_pair(XsdPattern::TAG, new ConfigEntryData(XsdPattern::parse, elem -> new XsdAnnotatedElementsVisitor((XsdPattern) elem))));
-  parseMappers.insert(std::make_pair(XsdTotalDigits::XSD_TAG, new ConfigEntryData(XsdTotalDigits::parse, elem -> new XsdAnnotatedElementsVisitor((XsdTotalDigits) elem))));
-  parseMappers.insert(std::make_pair(XsdTotalDigits::XS_TAG, new ConfigEntryData(XsdTotalDigits::parse, elem -> new XsdAnnotatedElementsVisitor((XsdTotalDigits) elem))));
-  parseMappers.insert(std::make_pair(XsdTotalDigits::TAG, new ConfigEntryData(XsdTotalDigits::parse, elem -> new XsdAnnotatedElementsVisitor((XsdTotalDigits) elem))));
-  parseMappers.insert(std::make_pair(XsdWhiteSpace::XSD_TAG, new ConfigEntryData(XsdWhiteSpace::parse, elem -> new XsdAnnotatedElementsVisitor((XsdWhiteSpace) elem))));
-  parseMappers.insert(std::make_pair(XsdWhiteSpace::XS_TAG, new ConfigEntryData(XsdWhiteSpace::parse, elem -> new XsdAnnotatedElementsVisitor((XsdWhiteSpace) elem))));
-  parseMappers.insert(std::make_pair(XsdWhiteSpace::TAG, new ConfigEntryData(XsdWhiteSpace::parse, elem -> new XsdAnnotatedElementsVisitor((XsdWhiteSpace) elem))));
+  MAKE_PARSEMAP_ENTRY_NULL(XsdAppInfo);
+  MAKE_PARSEMAP_ENTRY_NULL(XsdDocumentation);
+
+  MAKE_PARSEMAP_ENTRY(XsdSchema);
+  MAKE_PARSEMAP_ENTRY(XsdAll);
+  MAKE_PARSEMAP_ENTRY(XsdAttribute);
+  MAKE_PARSEMAP_ENTRY(XsdAttributeGroup);
+  MAKE_PARSEMAP_ENTRY(XsdChoice);
+  MAKE_PARSEMAP_ENTRY(XsdComplexType);
+  MAKE_PARSEMAP_ENTRY(XsdElement);
+  MAKE_PARSEMAP_ENTRY(XsdGroup);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdInclude);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdImport);
+  MAKE_PARSEMAP_ENTRY(XsdSequence);
+  MAKE_PARSEMAP_ENTRY(XsdSimpleType);
+  MAKE_PARSEMAP_ENTRY(XsdList);
+  MAKE_PARSEMAP_ENTRY(XsdRestriction);
+  MAKE_PARSEMAP_ENTRY(XsdUnion);
+  MAKE_PARSEMAP_ENTRY(XsdAnnotation);
+  MAKE_PARSEMAP_ENTRY(XsdComplexContent);
+  MAKE_PARSEMAP_ENTRY(XsdExtension);
+  MAKE_PARSEMAP_ENTRY(XsdSimpleContent);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdEnumeration);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdFractionDigits);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdLength);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMaxExclusive);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMaxInclusive);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMaxLength);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMinExclusive);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMinInclusive);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMinLength);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdPattern);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdTotalDigits);
+  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdWhiteSpace);
 
   return parseMappers;
 }

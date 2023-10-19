@@ -112,7 +112,7 @@ void XsdAttribute::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
 
     if (std::dynamic_pointer_cast<XsdSimpleType>(element) &&
         m_simpleType &&
-        compareReference(elementWrapper, m_type.value()))
+        compareReference(elementWrapper, m_type))
     {
         m_simpleType = elementWrapper;
     }

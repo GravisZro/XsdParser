@@ -8,11 +8,8 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
+
 #include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
-
-
-#include <map>
-#include <functional>
 
 /**
  * States the maximum value that a given type might take, including the respective value. The value is defined
@@ -31,7 +28,8 @@ private:
      * Indicates if the value is fixed.
      */
     bool m_fixed;
-
+public:
+    using XsdStringRestrictions::clone;
     XsdMaxInclusive(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
                     VisitorFunctionReference visitorFunction)
@@ -41,7 +39,7 @@ private:
     if(m_attributesMap.contains(*FIXED_TAG))
       m_fixed = AttributeValidations::validateBoolean(elementFieldsMapParam.at(*FIXED_TAG));
   }
-
+public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);

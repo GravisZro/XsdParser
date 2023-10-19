@@ -36,21 +36,18 @@ public:
   void visit(std::shared_ptr<XsdList> element)
     {
         XsdAnnotatedElementsVisitor::visit(element);
-
         m_owner->setList(element);
     }
 
   void visit(std::shared_ptr<XsdUnion> element)
     {
         XsdAnnotatedElementsVisitor::visit(element);
-
         m_owner->setUnion(element);
     }
 
   void visit(std::shared_ptr<XsdRestriction> element)
     {
         XsdAnnotatedElementsVisitor::visit(element);
-
         m_owner->setRestriction(element);
     }
 };

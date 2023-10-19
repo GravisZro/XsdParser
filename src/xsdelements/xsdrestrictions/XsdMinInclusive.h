@@ -5,14 +5,11 @@
 #include <core/utils/ParseData.h>
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
-#include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
-
-#include <map>
-#include <functional>
+#include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
 /**
  * States the minimum value that a given type might take, including the respective value. The value is defined
@@ -31,7 +28,8 @@ private:
      * Indicates if the value is fixed.
      */
     bool m_fixed;
-
+public:
+    using XsdStringRestrictions::clone;
     XsdMinInclusive(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
                     VisitorFunctionReference visitorFunction)

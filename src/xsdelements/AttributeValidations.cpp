@@ -106,8 +106,8 @@ std::string AttributeValidations::getFormDefaultValue(std::shared_ptr<XsdAbstrac
   if (!parent)
     return {};
 
-  if (auto p = std::dynamic_pointer_cast<XsdSchema>(parent); p)
-    return p->getElementFormDefault().value();
+  if (auto x = std::dynamic_pointer_cast<XsdSchema>(parent); x)
+    return x->getElementFormDefault().value();
   return getFormDefaultValue(parent->getParent());
 }
 
@@ -123,8 +123,8 @@ std::string AttributeValidations::getFinalDefaultValue(std::shared_ptr<XsdAbstra
   if (!parent)
     return {};
 
-  if (auto p = std::dynamic_pointer_cast<XsdSchema>(parent); p)
-    return p->getFinalDefault().value();
+  if (auto x = std::dynamic_pointer_cast<XsdSchema>(parent); x)
+    return x->getFinalDefault().value();
   return getFinalDefaultValue(parent->getParent());
 }
 
@@ -140,7 +140,7 @@ std::string AttributeValidations::getBlockDefaultValue(std::shared_ptr<XsdAbstra
   if (!parent)
     return {};
 
-  if (auto p = std::dynamic_pointer_cast<XsdSchema>(parent); p)
-    return p->getBlockDefault().value();
+  if (auto x = std::dynamic_pointer_cast<XsdSchema>(parent); x)
+    return x->getBlockDefault().value();
   return getBlockDefaultValue(parent->getParent());
 }

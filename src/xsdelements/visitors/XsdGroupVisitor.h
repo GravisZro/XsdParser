@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <xsdelements/XsdGroup.h>
 #include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
 
 /**
@@ -31,8 +31,7 @@ public:
 
   void visit(std::shared_ptr<XsdMultipleElements> element)
     {
-        super.visit(element);
-
+        XsdAnnotatedElementsVisitor::visit(element);
         m_owner->setChildElement(element);
     }
-}
+};

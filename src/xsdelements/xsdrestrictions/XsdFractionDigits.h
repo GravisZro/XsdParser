@@ -8,11 +8,8 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
+
 #include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
-
-
-#include <map>
-#include <functional>
 
 /**
  * States the number of fraction digits allowed in a numeric type. The value is defined as an {@link int}.
@@ -24,7 +21,8 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:fractionDigits";
     constexpr static const std::string_view TAG = "fractionDigits";
 
-private:
+public:
+  using XsdIntegerRestrictions::clone;
   XsdFractionDigits(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
                     VisitorFunctionReference visitorFunction)

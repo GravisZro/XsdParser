@@ -29,14 +29,14 @@ private:
      * Specifies the language used in the {@link XsdAnnotationChildren#content}
      */
     std::string m_xmlLang;
-
+public:
     XsdDocumentation(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap)
         : XsdAnnotationChildren(parser, attributesMap)
     {
       if(attributesMap.contains(*XML_LANG_TAG))
         m_xmlLang = attributesMap.at(*XML_LANG_TAG);
     }
-private:
+public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdAnnotationChildren::accept(xsdAbstractElementVisitor);

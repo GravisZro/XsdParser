@@ -40,4 +40,4 @@ public:
 
         m_owner->setSimpleType(element);
     }
-}
+};
