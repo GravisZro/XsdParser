@@ -23,6 +23,7 @@
 
 #include <core/XsdParserCore.h>
 
+
 XsdSimpleType::XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
               VisitorFunctionReference visitorFunction)
@@ -90,7 +91,7 @@ std::shared_ptr<XsdSimpleType> XsdSimpleType::clone(StringMap placeHolderAttribu
     placeHolderAttributes.merge(m_attributesMap);
     placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = std::make_shared<XsdSimpleType>(m_parent, m_parser, placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = std::make_shared<XsdSimpleType>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
 
     if (m_xsd_union)
         elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(m_xsd_union->clone(m_xsd_union->getAttributesMap(), elementCopy));
@@ -163,8 +164,8 @@ std::list<std::shared_ptr<XsdRestriction>> XsdSimpleType::getAllRestrictions(voi
     }
 
     std::list<std::shared_ptr<XsdRestriction>> rvals;
-    for(auto& value : std::views::values(restrictions))
-      rvals.push_back(value);
+    for(auto& pair : restrictions)
+      rvals.push_back(pair.second);
     return rvals;
 }
 

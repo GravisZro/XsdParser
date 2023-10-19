@@ -55,11 +55,8 @@ public:
   std::shared_ptr<XsdMinInclusive> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(m_attributesMap);
-
         auto elementCopy = std::make_shared<XsdMinInclusive>(getParser(), placeHolderAttributes, m_visitorFunction);
-
         elementCopy->setParent(nullptr);
-
         return elementCopy;
     }
 

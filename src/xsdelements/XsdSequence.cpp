@@ -36,7 +36,7 @@ std::shared_ptr<XsdSequence> XsdSequence::clone(StringMap placeHolderAttributes)
     auto elementCopy = std::make_shared<XsdSequence>(getParser(), placeHolderAttributes, m_visitorFunction);
 
     for(auto& element : getElements())
-        elementCopy->m_elements.push_back(ReferenceBase::clone(m_parser, element, elementCopy));
+        elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
     elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
     elementCopy->setParent(nullptr);

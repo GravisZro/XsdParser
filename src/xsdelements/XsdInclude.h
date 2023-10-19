@@ -28,16 +28,7 @@ private:
      */
     SchemaLocation m_schemaLocation;
 public:
-    XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
-    {
-      if(attributesMap.contains(*SCHEMA_LOCATION))
-      {
-        for(auto location : std::views::split(attributesMap.at(*SCHEMA_LOCATION), '\n'))
-          m_schemaLocation.insert(location.data());
-        parser->addLocationToParse(m_schemaLocation);
-      }
-    }
+    XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
 public:
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {

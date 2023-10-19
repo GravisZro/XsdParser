@@ -17,6 +17,6 @@ public:
 
   std::shared_ptr<XsdNamedElements> clone([[maybe_unused]] StringMap placeHolderAttributes)
     {
-        return std::make_shared<XsdBuiltInDataType>(m_parser, m_attributesMap, m_parent);
+        return std::make_shared<XsdBuiltInDataType>(getParser(), m_attributesMap, m_parent);
     }
 };

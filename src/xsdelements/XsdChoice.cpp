@@ -30,7 +30,7 @@ std::shared_ptr<XsdChoice> XsdChoice::clone(StringMap placeHolderAttributes)
 
     auto elementCopy = std::make_shared<XsdChoice>(getParser(), placeHolderAttributes, m_visitorFunction);
     for(auto& element : getElements())
-        elementCopy->m_elements.push_back(ReferenceBase::clone(m_parser, element, elementCopy));
+        elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
     elementCopy->setParent(nullptr);
 

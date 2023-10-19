@@ -55,12 +55,10 @@ public:
      */
   std::shared_ptr<XsdAll> clone(StringMap placeHolderAttributes);
 
-    // @SuppressWarnings("unused")
   int getMinOccurs(void) {
         return m_minOccurs;
     }
 
-    // @SuppressWarnings("unused")
   int getMaxOccurs(void) {
         return m_maxOccurs;
     }

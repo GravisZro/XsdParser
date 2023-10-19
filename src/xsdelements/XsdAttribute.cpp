@@ -85,9 +85,9 @@ std::shared_ptr<XsdAttribute> XsdAttribute::clone(StringMap placeHolderAttribute
     placeHolderAttributes.erase(*TYPE_TAG);
     placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = std::make_shared<XsdAttribute>(m_parent, m_parser, placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = std::make_shared<XsdAttribute>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
 
-    elementCopy->m_simpleType = ReferenceBase::clone(m_parser, m_simpleType, elementCopy);
+    elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
     elementCopy->m_type = m_type;
     elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
     elementCopy->m_parent = nullptr;

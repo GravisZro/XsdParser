@@ -27,8 +27,7 @@ void XsdMultipleElements::replaceUnsolvedElements(std::shared_ptr<NamedConcreteE
     if (std::dynamic_pointer_cast<XsdGroup>(elementWrapper->getElement()))
     {
         m_elements.push_back(elementWrapper);
-        std::remove_if(std::begin(m_elements), std::end(m_elements),
-                       [elementWrapper](std::shared_ptr<ReferenceBase> e)
+        m_elements.remove_if([elementWrapper](std::shared_ptr<ReferenceBase> e)
         {
           auto x = std::dynamic_pointer_cast<UnsolvedReference>(e);
           return x && compareReference(elementWrapper, x);

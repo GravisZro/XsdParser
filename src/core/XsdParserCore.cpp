@@ -6,6 +6,8 @@
 #include <xsdelements/XsdInclude.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 
+#include <algorithm>
+
 ParserConfig XsdParserCore::m_config;
 std::map<std::string_view, ConfigEntryData> XsdParserCore::m_parseMappers = m_config.getParseMappers();
 StringMap XsdParserCore::m_xsdTypesToJava = m_config.getXsdTypesToJava();
@@ -76,8 +78,10 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
     for(auto& xsdImport : schema->getChildrenImports())
       schema->resolveNameSpace(xsdImport->getNamespace(), xsdImport->getSchemaLocation());
 
-    for(auto key : std::views::keys(schema->getNamespaces()))
-      schema->resolveNameSpace(key, schema->getFileLocation());
+    for(auto pair : schema->getNamespaces())
+      schema->resolveNameSpace(pair.first, schema->getFileLocation());
+//    for(auto key : std::views::keys(schema->getNamespaces()))
+//      schema->resolveNameSpace(key, schema->getFileLocation());
   }
 
   for(auto& pair : m_parseElements)
@@ -177,7 +181,6 @@ void XsdParserCore::replaceUnsolvedImportedReference(std::map<std::string, std::
 
 void XsdParserCore::resolveInnerRefs(void)
 {
-  auto fileNameList = std::views::keys(m_parseElements);
   std::map<SchemaLocation, bool> doneList;
 
   while(std::ranges::any_of(doneList, [](auto& pair) { return pair.second == false; }))
@@ -254,8 +257,7 @@ void XsdParserCore::resolveInnerRefs(void)
         bool unsolvedReferenceListNotEmpty = false;
         do
         {
-          std::ranges::remove_if(unsolvedReferenceList,
-                                 [this](auto& u)
+          unsolvedReferenceList.remove_if([this](auto& u)
           { return std::ranges::any_of(m_parserUnsolvedElementsMap,
                                        [u](auto u1) { return u == u1->getUnsolvedReference(); });
           });
@@ -277,7 +279,7 @@ void XsdParserCore::resolveInnerRefs(void)
 
         if (unsolvedReferenceListNotEmpty)
           for(auto& includedFile : includedLocations)
-            if (!std::ranges::contains(fileNameList, includedFile))
+            if(!m_parseElements.contains(includedFile))
               doneList[includedFile] = false;
       }
     }
@@ -404,6 +406,5 @@ void XsdParserCore::addUnsolvedReference(std::shared_ptr<UnsolvedReference> unso
 void XsdParserCore::addLocationToParse(SchemaLocation schemaLocation)
 {
   m_schemaLocations.insert(schemaLocation);
-  for(auto& location : schemaLocation)
-    m_schemaLocationsMap.emplace(location, m_currentFile);
+  m_schemaLocationsMap.emplace(schemaLocation, m_currentFile);
 }

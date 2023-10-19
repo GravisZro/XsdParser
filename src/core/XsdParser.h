@@ -17,7 +17,7 @@
  */
 class XsdParser : public XsdParserCore
 {
-
+public:
     /**
      * The XsdParser constructor will parse the XSD file with the {@code filepath} and will also parse all the subsequent
      * XSD files with their path present in xsd:import and xsd:include tags. After parsing all the XSD files present it
@@ -58,4 +58,7 @@ private:
 
 
   pugi::xml_node getSchemaNode(SchemaLocation fileLocation);
+
+private:
+  std::map<std::string, pugi::xml_document> m_documents;
 };

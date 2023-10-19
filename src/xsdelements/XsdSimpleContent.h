@@ -56,10 +56,10 @@ public:
     {
         placeHolderAttributes.merge(m_attributesMap);
 
-        auto elementCopy = std::make_shared<XsdSimpleContent>(m_parser, placeHolderAttributes, m_visitorFunction);
+        auto elementCopy = std::make_shared<XsdSimpleContent>(getParser(), placeHolderAttributes, m_visitorFunction);
 
-        elementCopy->m_restriction = ReferenceBase::clone(m_parser, m_restriction, elementCopy);
-        elementCopy->m_extension = ReferenceBase::clone(m_parser, m_extension, elementCopy);
+        elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
+        elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
         elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
         elementCopy->m_parent = nullptr;
 

@@ -126,7 +126,7 @@ public:
         placeHolderAttributes.merge(m_attributesMap);
         placeHolderAttributes.erase(*REF_TAG);
 
-        auto elementCopy = std::make_shared<XsdGroup>(m_parent, m_parser, placeHolderAttributes, m_visitorFunction);
+        auto elementCopy = std::make_shared<XsdGroup>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
 
         if (m_childElement)
             elementCopy->m_childElement = std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->clone(m_childElement->getAttributesMap(), elementCopy));

@@ -10,6 +10,7 @@
 
 #include <xsdelements/XsdSchema.h>
 
+#include <algorithm>
 
 XsdAbstractElement::XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                                        StringMap attributesMap,
@@ -84,9 +85,7 @@ void XsdAbstractElement::replaceUnsolvedElements(std::shared_ptr<NamedConcreteEl
   if (!element_list.empty())
   {
     std::list<std::shared_ptr<UnsolvedReference>> unsolved_refs;
-    std::remove_if(std::begin(element_list),
-                   std::end(element_list),
-                   [element](std::shared_ptr<ReferenceBase> e)
+    element_list.remove_if([element](std::shared_ptr<ReferenceBase> e)
     {
       auto unsolved = std::dynamic_pointer_cast<UnsolvedReference>(e);
       return unsolved == nullptr || !compareReference(element, unsolved);
@@ -104,7 +103,7 @@ void XsdAbstractElement::replaceUnsolvedElements(std::shared_ptr<NamedConcreteEl
                             std::end(element_list),
                             std::static_pointer_cast<ReferenceBase>(oldElement));
       assert(iter != std::end(element_list));
-      *iter = ReferenceBase::clone(m_parser, std::static_pointer_cast<ReferenceBase>(element), oldElement->getParent());
+      *iter = ReferenceBase::clone(getParser(), std::static_pointer_cast<ReferenceBase>(element), oldElement->getParent());
     }
   }
 }
@@ -136,9 +135,7 @@ std::list<std::shared_ptr<XsdAbstractElement>> XsdAbstractElement::getXsdElement
 
   if(!element_list.empty())
   {
-    std::remove_if(std::begin(element_list),
-                   std::end(element_list),
-                   [](std::shared_ptr<ReferenceBase> element) { return std::dynamic_pointer_cast<ConcreteElement>(element) == nullptr; });
+    element_list.remove_if([](std::shared_ptr<ReferenceBase> element) { return std::dynamic_pointer_cast<ConcreteElement>(element) == nullptr; });
 
     std::transform(std::begin(element_list),
                    std::end(element_list),
@@ -172,7 +169,9 @@ std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(std::shared_ptr<XsdA
   if (!element)
     return nullptr;
 
-  if (std::ranges::contains(hierarchy, element))
+  if (std::ranges::contains(std::begin(hierarchy),
+                    std::end(hierarchy),
+                    element))
   {
     throw new ParsingException("There is a circular reference in the Xsd Element tree. Please submit an issue with the xsd file being parsed to the project page.");
   }

@@ -3,6 +3,8 @@
 #include <xsdelements/XsdAttribute.h>
 #include <xsdelements/XsdAttributeGroup.h>
 
+#include <algorithm>
+
 /**
  * @return A list of all {@link XsdAttribute} objects contained in the current {@link XsdAttributeGroup} instance,
  * either directly or present in its children {@link XsdAttributeGroup} in the
@@ -28,17 +30,17 @@ std::shared_ptr<XsdNamedElements> XsdAttributeGroup::clone(StringMap placeHolder
   placeHolderAttributes.merge(m_attributesMap);
   placeHolderAttributes.erase(*REF_TAG);
 
-  auto elementCopy = std::make_shared<XsdAttributeGroup>(m_parent, m_parser, placeHolderAttributes, m_visitorFunction);
+  auto elementCopy = std::make_shared<XsdAttributeGroup>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
 
   std::transform(std::begin(m_attributes), std::end(m_attributes),
                  std::end(elementCopy->m_attributes),
                  [this, elementCopy](std::shared_ptr<ReferenceBase> attributeReference)
-  { return ReferenceBase::clone(m_parser, attributeReference, elementCopy); });
+  { return ReferenceBase::clone(getParser(), attributeReference, elementCopy); });
 
   std::transform(std::begin(m_attributeGroups), std::end(m_attributeGroups),
                  std::end(elementCopy->m_attributeGroups),
                  [this, elementCopy](std::shared_ptr<ReferenceBase> attributeGroupReference)
-  { return ReferenceBase::clone(m_parser, attributeGroupReference, elementCopy); });
+  { return ReferenceBase::clone(getParser(), attributeGroupReference, elementCopy); });
 
   elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
   elementCopy->m_parent = nullptr;

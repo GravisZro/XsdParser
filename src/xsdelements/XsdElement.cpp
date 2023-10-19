@@ -33,9 +33,9 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
     }
     else
     {
-      auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), m_parser, StringMap{}, visitorFunction);
+      auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), getParser(), StringMap{}, visitorFunction);
       m_type = std::make_shared<UnsolvedReference>(typeString, e);
-      m_parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_type));
+      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_type));
     }
   }
 
@@ -51,9 +51,9 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
 
   if (localSubstitutionGroup)
   {
-    auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), m_parser, StringMap{}, visitorFunction);
+    auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), getParser(), StringMap{}, visitorFunction);
     m_substitutionGroup = std::make_shared<UnsolvedReference>(localSubstitutionGroup.value(), std::static_pointer_cast<XsdNamedElements>(e));
-    m_parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_substitutionGroup));
+    getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_substitutionGroup));
   }
 
   if(attributesMap.contains(*DEFAULT_TAG))
@@ -148,27 +148,27 @@ std::shared_ptr<XsdElement> XsdElement::clone(StringMap placeHolderAttributes)
     placeHolderAttributes.erase(*TYPE_TAG);
     placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = std::make_shared<XsdElement>(m_parent, m_parser, placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = std::make_shared<XsdElement>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
 
     if (m_simpleType){
-        elementCopy->m_simpleType = ReferenceBase::clone(m_parser, m_simpleType, elementCopy);
+        elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
     }
 
     if (m_complexType){
-        elementCopy->m_complexType = ReferenceBase::clone(m_parser, m_complexType, elementCopy);
+        elementCopy->m_complexType = ReferenceBase::clone(getParser(), m_complexType, elementCopy);
     }
 
     if (m_type)
     {
         if (std::dynamic_pointer_cast<ConcreteElement>(m_type))
         {
-            elementCopy->m_type = ReferenceBase::clone(m_parser, m_type, elementCopy);
+            elementCopy->m_type = ReferenceBase::clone(getParser(), m_type, elementCopy);
         }
         else
         {
           elementCopy->m_type = std::make_shared<UnsolvedReference>(std::static_pointer_cast<UnsolvedReference>(m_type)->getRef().value(),
-                                                                    std::make_shared<XsdElement>(elementCopy, m_parser, StringMap{}, m_visitorFunction));
-          m_parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(elementCopy->m_type));
+                                                                    std::make_shared<XsdElement>(elementCopy, getParser(), StringMap{}, m_visitorFunction));
+          getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(elementCopy->m_type));
         }
     }
 

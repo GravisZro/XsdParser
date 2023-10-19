@@ -121,12 +121,14 @@ SOURCES += \
   src/xsdelements/XsdElement.cpp \
   src/xsdelements/XsdExtension.cpp \
   src/xsdelements/XsdImport.cpp \
+  src/xsdelements/XsdInclude.cpp \
   src/xsdelements/XsdMultipleElements.cpp \
   src/xsdelements/XsdNamedElements.cpp \
   src/xsdelements/XsdRestriction.cpp \
   src/xsdelements/XsdSchema.cpp \
   src/xsdelements/XsdSequence.cpp \
   src/xsdelements/XsdSimpleType.cpp \
+  src/xsdelements/XsdUnion.cpp \
   src/xsdelements/elementswrapper/ConcreteElement.cpp \
   src/xsdelements/elementswrapper/NamedConcreteElement.cpp \
   src/xsdelements/elementswrapper/ReferenceBase.cpp \

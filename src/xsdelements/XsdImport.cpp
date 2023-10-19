@@ -12,7 +12,7 @@ XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser, StringMap attributes
   if(attributesMap.contains(*SCHEMA_LOCATION))
   {
     m_schemaLocation = attributesMap.at(*SCHEMA_LOCATION);
-    m_parser->addLocationToParse(m_schemaLocation);
+    getParser()->addLocationToParse(m_schemaLocation);
   }
 }
 

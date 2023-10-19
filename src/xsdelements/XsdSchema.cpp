@@ -45,8 +45,9 @@ XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
   if(attributesMap.contains(*XMLNS))
     m_xmlns = attributesMap.at(*XMLNS);
 
-  for (auto& key : std::views::keys(attributesMap))
+  for (auto& pair : attributesMap)
   {
+    auto& key = pair.first;
     if (key.starts_with(XMLNS) &&
         key != "xmlns:xs" &&
         key != "xmlns:xsd")

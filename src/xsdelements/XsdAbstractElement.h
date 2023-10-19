@@ -133,7 +133,10 @@ public:
      */
     std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes)
     {
-      return std::shared_ptr<XsdAbstractElement>(this);
+      placeHolderAttributes.merge(m_attributesMap);
+      auto copyElement = std::make_shared<XsdAbstractElement>(getParser(), placeHolderAttributes, m_visitorFunction);
+      copyElement->setCloneOf(std::shared_ptr<XsdAbstractElement>(this));
+      return copyElement;
     }
 
     /**
@@ -164,9 +167,7 @@ public:
 
   static std::shared_ptr<ReferenceBase> xsdParseSkeleton(pugi::xml_node node, std::shared_ptr<XsdAbstractElement> element);
 
-  std::shared_ptr<XsdParserCore> getParser(void) {
-        return m_parser;
-    }
+  std::shared_ptr<XsdParserCore> getParser(void) const { return m_parser; }
 
     /**
      * Converts a {@link DOMNamedNodeMap} to a {@link Map} object. This is meant to simplify the manipulation of the
@@ -248,7 +249,7 @@ public:
      * @param node The {@link DOMNode} containing either a {@link XsdAppInfo} or {@link XsdDocumentation}.
      * @return The textual value contained in the {@link DOMNode} parameter.
      */
-    static std::string xsdRawContentParse(pugi::xml_node node)
+    static std::string xsdRawContentParse([[maybe_unused]] pugi::xml_node node)
     {
 #if 0
         StringBuilder stringBuilder = new StringBuilder();

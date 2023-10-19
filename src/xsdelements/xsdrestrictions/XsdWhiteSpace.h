@@ -55,11 +55,8 @@ public:
   std::shared_ptr<XsdWhiteSpace> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(m_attributesMap);
-
         auto elementCopy = std::make_shared<XsdWhiteSpace>(getParser(), placeHolderAttributes, m_visitorFunction);
-
         elementCopy->setParent(nullptr);
-
         return elementCopy;
     }
 

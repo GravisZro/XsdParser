@@ -62,7 +62,7 @@ public:
     {
         placeHolderAttributes.merge(m_attributesMap);
 
-        auto elementCopy = std::make_shared<XsdList>(m_parser, placeHolderAttributes, m_visitorFunction);
+        auto elementCopy = std::make_shared<XsdList>(getParser(), placeHolderAttributes, m_visitorFunction);
 
         if (m_simpleType)
             elementCopy->m_simpleType = std::static_pointer_cast<XsdSimpleType>(m_simpleType->XsdAbstractElement::clone(m_simpleType->getAttributesMap(), elementCopy));

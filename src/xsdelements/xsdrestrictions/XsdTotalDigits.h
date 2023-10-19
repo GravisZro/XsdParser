@@ -47,11 +47,8 @@ public:
   std::shared_ptr<XsdTotalDigits> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(m_attributesMap);
-
         auto elementCopy = std::make_shared<XsdTotalDigits>(getParser(), placeHolderAttributes, m_visitorFunction);
-
         elementCopy->setParent(nullptr);
-
         return elementCopy;
     }
 

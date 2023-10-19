@@ -1,9 +1,10 @@
 #pragma once
 
-
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/enums/XsdEnum.h>
 #include <xsdelements/exceptions/ParsingException.h>
+
+#include <algorithm>
 
 class AttributeValidations
 {
@@ -28,7 +29,7 @@ public:
         for(auto& val : T::getValues())
           enumValue = val;
 
-        if(!enumValue)
+        if(enumValue)
           return enumValue;
 
         std::string possibleValues;

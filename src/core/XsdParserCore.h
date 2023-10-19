@@ -164,9 +164,9 @@ public:
       m_parseElements.at(m_currentFile).push_back(wrappedElement);
   }
 
-    static void updateConfig(ParserConfig config) {
-        m_xsdTypesToJava = config.getXsdTypesToJava();
-        m_parseMappers = config.getParseMappers();
-    }
-
+  static void updateConfig(ParserConfig config)
+  {
+    m_xsdTypesToJava = config.getXsdTypesToJava();
+    m_parseMappers = config.getParseMappers();
+  }
 };

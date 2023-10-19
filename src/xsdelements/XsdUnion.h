@@ -49,42 +49,13 @@ public:
         visitorParam->visit(std::shared_ptr<XsdUnion>(this));
     }
 
-    /**
-     * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-     * {@link UnsolvedReference} objects in the reference solving process.
-     * @param placeHolderAttributes The additional attributes to add to the clone.
-     * @return A copy of the object from which is called upon.
-     */
-  std::shared_ptr<XsdUnion> clone(StringMap placeHolderAttributes)
-    {
-        placeHolderAttributes.merge(m_attributesMap);
-
-        auto elementCopy = std::make_shared<XsdUnion>(m_parser, placeHolderAttributes, m_visitorFunction);
-
-        if (m_simpleTypeList.empty())
-        {
-          for(auto& simpleType : m_simpleTypeList)
-            elementCopy->m_simpleTypeList.push_back(
-                std::static_pointer_cast<XsdSimpleType>(
-                    simpleType->clone(simpleType->getAttributesMap(), elementCopy)));
-        }
-
-        elementCopy->m_parent = nullptr;
-
-        return elementCopy;
-    }
+  std::shared_ptr<XsdUnion> clone(StringMap placeHolderAttributes);
 
   std::list<std::shared_ptr<XsdSimpleType>> getUnionElements(){
         return m_simpleTypeList;
     }
 
-  std::list<std::string> getMemberTypesList(void)
-  {
-    std::list<std::string> rval;
-    for(auto val : std::ranges::views::split(m_memberTypes, " "))
-      rval.push_back(val.data());
-    return rval;
-  }
+  std::list<std::string> getMemberTypesList(void);
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
