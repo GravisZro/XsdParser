@@ -1,11 +1,14 @@
 #ifndef COMMONTYPES_H
 #define COMMONTYPES_H
 
+#include <algorithm>
 #include <string>
 #include <map>
 #include <list>
 #include <functional>
 #include <memory>
+#include <optional>
+#include <ranges>
 
 #include "SchemaLocation.h"
 

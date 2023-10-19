@@ -1,7 +1,7 @@
 #pragma once
 
 
-//#include <core/XsdParserCore.h>
+
 #include <core/utils/NamespaceInfo.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/enums/BlockDefaultEnum.h>

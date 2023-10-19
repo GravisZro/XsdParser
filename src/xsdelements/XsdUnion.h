@@ -1,8 +1,6 @@
 #pragma once
 
-//#include <core/XsdParserCore.h>
 #include <core/utils/ParseData.h>
-#include <ranges>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>

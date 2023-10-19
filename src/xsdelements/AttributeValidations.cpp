@@ -2,8 +2,6 @@
 
 #include <xsdelements/XsdSchema.h>
 
-
-
 /**
  * Checks if the maxOccurs attribute is unbounded or an {@link int} value.
  * @param value The possible maxOccurs value.
@@ -12,14 +10,12 @@
  */
 std::string AttributeValidations::maxOccursValidation(std::string elementName, std::string value)
 {
-    if (value == "unbounded")
-        return value;
-
-    validateNonNegativeInteger(elementName, *XsdAbstractElement::MAX_OCCURS_TAG, value);
+  if (value == "unbounded")
     return value;
+
+  validateNonNegativeInteger(elementName, *XsdAbstractElement::MAX_OCCURS_TAG, value);
+  return value;
 }
-
-
 
 /**
  * Validates if a given std::string is a non negative {@link int}. Throws an exception if the {@link std::string} isn't a non
@@ -31,20 +27,17 @@ std::string AttributeValidations::maxOccursValidation(std::string elementName, s
  */
 int AttributeValidations::validateNonNegativeInteger(std::string elementName, std::string attributeName, std::string value)
 {
-    try {
-        //value = value.trim();
-
-        int intValue = -1;//int.parseInt(value);
-
-        if (intValue < 0){
-            throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a non negative integer. (greater or equal than 0)");
-        }
-
-        return intValue;
-    } catch (...)
+  try
   {
-        throw new ParsingException("The " + elementName + " " + attributeName + "  attribute should be a non negative integer.");
+    int intValue = std::stoi(value.c_str());
+    if (intValue < 0){
+      throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a non negative integer. (greater or equal than 0)");
     }
+    return intValue;
+  } catch (...)
+  {
+    throw new ParsingException("The " + elementName + " " + attributeName + "  attribute should be a non negative integer.");
+  }
 }
 
 
@@ -60,8 +53,7 @@ int AttributeValidations::validatePositiveInteger(std::string elementName, std::
 {
   try
   {
-    int intValue = 0;//int.parseInt(value);
-
+    int intValue = std::stoi(value.c_str());
     if (intValue <= 0){
         throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a positive integer. (greater than 0)");
     }
@@ -82,12 +74,11 @@ int AttributeValidations::validatePositiveInteger(std::string elementName, std::
  * @param value The value to be parsed to a {@link double} object.
  * @return The parsed {@link double} value.
  */
-static double validateDouble(std::string elementName, std::string attributeName, std::string value)
+double AttributeValidations::validateDouble(std::string elementName, std::string attributeName, std::string value)
 {
   try
   {
-    throw "";
-    return 0.0;//double.parseDouble(value);
+    return std::stod(value.c_str());
   } catch (...)
   {
     throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a numeric value.");

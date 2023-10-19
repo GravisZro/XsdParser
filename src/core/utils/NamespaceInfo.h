@@ -1,7 +1,6 @@
 #pragma once
 
 #include <core/utils/CommonTypes.h>
-#include <optional>
 
 class NamespaceInfo
 {

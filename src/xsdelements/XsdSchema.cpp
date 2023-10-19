@@ -1,7 +1,5 @@
 #include "XsdSchema.h"
 
-#include <ranges>
-
 #include <xsdelements/XsdInclude.h>
 #include <xsdelements/XsdImport.h>
 #include <xsdelements/XsdAnnotation.h>

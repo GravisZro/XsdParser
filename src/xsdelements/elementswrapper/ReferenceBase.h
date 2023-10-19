@@ -1,15 +1,13 @@
 #pragma once
 
 #include <xsdelements/XsdAbstractElement.h>
-#include <string>
+
+class XsdParserCore;
 
 /**
  * An abstract class that is meant to wrap all the {@link XsdAbstractElement} objects. Its hierarchy is meant to help
  * in the reference solving process.
  */
-
-class XsdParserCore;
-
 class ReferenceBase
 {
 protected:

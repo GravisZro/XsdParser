@@ -2,7 +2,6 @@
 
 #include <core/utils/CommonTypes.h>
 #include <core/utils/CommonOperations.h>
-#include <optional>
 
 /**
  * A shared interface for all the {@link Enum} classes of this solution.

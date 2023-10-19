@@ -10,6 +10,7 @@
 
 #include <xsdelements/XsdSchema.h>
 
+
 XsdAbstractElement::XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                                        StringMap attributesMap,
                                        VisitorFunctionReference visitorFunction)

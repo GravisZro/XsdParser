@@ -70,7 +70,7 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
 
 void XsdComplexType::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
-    XsdComplexType::replaceUnsolvedElements(element);
+    XsdNamedElements::replaceUnsolvedElements(element);
     std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->replaceUnsolvedAttributes(m_parser, element, std::shared_ptr<XsdComplexType>(this));
 
     if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_childElement);

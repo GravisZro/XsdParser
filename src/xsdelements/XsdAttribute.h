@@ -1,7 +1,7 @@
 #pragma once
 
 
-//#include <core/XsdParserCore.h>
+
 /*
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>

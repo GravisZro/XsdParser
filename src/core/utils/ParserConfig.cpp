@@ -1,4 +1,4 @@
-#pragma once
+#include "ParserConfig.h"
 
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAll.h>
@@ -65,11 +65,7 @@
 #include <xsdelements/xsdrestrictions/XsdTotalDigits.h>
 #include <xsdelements/xsdrestrictions/XsdWhiteSpace.h>
 
-
 #include <core/utils/ParserConfig.h>
-#include <unordered_map>
-#include <map>
-#include <string_view>
 
 const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
 {
@@ -249,17 +245,9 @@ const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
 #define MAKE_PARSEMAP_ENTRY_ANNOTATED(ClassName) \
   MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_ANNOTATED_FUNCTION);
 
-
-//
-//parseMappers.insert(std::make_pair(XsdInclude::XS_TAG, new ConfigEntryData(XsdInclude::parse, elem -> new XsdAnnotatedElementsVisitor((XsdInclude) elem))));
-
 const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
 {
   std::map<std::string_view, ConfigEntryData> parseMappers;
-
-
-//  parseMappers.emplace(std::make_pair(CONCAT_NS(XsdAppInfo, XSD_TAG), ConfigEntryData { CONCAT_NS(XsdAppInfo, parse), nullptr } ));
-//  MAKE_PARSEMAP_ENTRY_HELPER(XsdAppInfo, XSD_TAG, MAKE_PARSEMAP_ENTRY_NULLPTR)
 
   MAKE_PARSEMAP_ENTRY_NULL(XsdAppInfo);
   MAKE_PARSEMAP_ENTRY_NULL(XsdDocumentation);

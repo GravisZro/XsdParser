@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 /**

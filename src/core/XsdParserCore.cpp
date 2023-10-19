@@ -1,10 +1,5 @@
 #include "XsdParserCore.h"
 
-#include <vector>
-#include <algorithm>
-#include <ranges>
-#include <filesystem>
-
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdSchema.h>
 #include <xsdelements/XsdImport.h>

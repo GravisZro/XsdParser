@@ -1,6 +1,6 @@
 #pragma once
 
-//#include <core/XsdParserCore.h>
+
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>

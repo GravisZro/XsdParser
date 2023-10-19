@@ -1,7 +1,5 @@
 #pragma once
 
-#include <ranges>
-
 #include <core/utils/CommonOperations.h>
 #include <core/XsdParserCore.h>
 #include <core/utils/ParseData.h>

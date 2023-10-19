@@ -1,7 +1,7 @@
 #pragma once
 
 
-//#include <core/XsdParserCore.h>
+
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>

@@ -5,23 +5,11 @@
 
 #include <core/utils/ConfigEntryData.h>
 
-//#include <xsdelements/XsdSchema.h>
-/*
-#include <xsdelements/elementswrapper/ConcreteElement.h>
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
-*/
 #include <xsdelements/exceptions/ParentAvailableException.h>
 #include <xsdelements/exceptions/ParsingException.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
-
-#include <string_view>
-#include <list>
-#include <algorithm>
 #include <cassert>
-
 
 class XsdParserCore;
 class XsdSchema;
@@ -108,6 +96,7 @@ public:
                        StringMap attributesMap,
                        VisitorFunctionReference visitorFunction);
 
+    virtual ~XsdAbstractElement(void) = default;
 public:
   StringMap& getAttributesMap(void) {
         return m_attributesMap;

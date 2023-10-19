@@ -1,7 +1,5 @@
 #include "XsdMultipleElements.h"
 
-#include <algorithm>
-
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdGroup.h>

@@ -1,8 +1,5 @@
 #include "XsdSimpleType.h"
 
-#include <ranges>
-#include <type_traits>
-
 #include <xsdelements/xsdrestrictions/XsdEnumeration.h>
 #include <xsdelements/xsdrestrictions/XsdFractionDigits.h>
 #include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>

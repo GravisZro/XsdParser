@@ -4,9 +4,9 @@
 #include <string>
 #include "ConfigEntryData.h"
 
-class ParserConfig
+struct ParserConfig
 {
-public:
+  virtual ~ParserConfig(void) = default;
   virtual const StringMap getXsdTypesToJava(void);
   virtual const std::map<std::string_view, ConfigEntryData> getParseMappers(void);
 };
