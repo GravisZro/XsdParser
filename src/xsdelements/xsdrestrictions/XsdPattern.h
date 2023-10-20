@@ -33,7 +33,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::shared_ptr<XsdPattern>(this));
+        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdPattern>(this));
     }
 
     /**

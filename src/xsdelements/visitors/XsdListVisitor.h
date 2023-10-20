@@ -36,7 +36,7 @@ public:
         XsdAnnotatedElementsVisitor::visit(element);
 
         if (m_owner->getItemType())
-            throw new ParsingException(XsdList::XSD_TAG + " element: The element cannot have both the itemType attribute and a " + XsdSimpleType::XSD_TAG + " element as content at the same time." );
+            throw ParsingException(XsdList::XSD_TAG + " element: The element cannot have both the itemType attribute and a " + XsdSimpleType::XSD_TAG + " element as content at the same time." );
 
         m_owner->setSimpleType(element);
     }

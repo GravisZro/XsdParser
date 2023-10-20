@@ -46,7 +46,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdUnion>(this));
+        visitorParam->visit(nondeleted_ptr<XsdUnion>(this));
     }
 
   std::shared_ptr<XsdUnion> clone(StringMap placeHolderAttributes);

@@ -36,9 +36,9 @@ public:
 private:
   void rule1(void)
   {
-        if (!m_name && m_attributesMap.contains(*REF_TAG))
+        if (m_name && m_attributesMap.contains(*REF_TAG))
         {
-          throw new ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
+          throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
         }
 
     }

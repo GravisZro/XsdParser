@@ -36,7 +36,7 @@ public:
         for(auto& val : T::getValues())
           possibleValues += val + ",  ";
 
-      throw new ParsingException("The attribute " + *T::getVariableName() + " doesn't support the value \"" + value + "\".\n" +
+      throw ParsingException("The attribute " + *T::getVariableName() + " doesn't support the value \"" + value + "\".\n" +
                                  "The possible values for the " + *T::getVariableName() + " attribute are:\n" +
                                  possibleValues.substr(0, possibleValues.length() - 2));
     }
@@ -70,7 +70,7 @@ public:
   static int validateRequiredNonNegativeInteger(std::string elementName, std::string attributeName, std::optional<std::string> value)
   {
     if(!value)
-      throw new ParsingException(attributeMissingMessage(elementName, attributeName));
+      throw ParsingException(attributeMissingMessage(elementName, attributeName));
     return validateNonNegativeInteger(elementName, attributeName, value.value());
   }
 
@@ -96,7 +96,7 @@ public:
   static int validateRequiredPositiveInteger(std::string elementName, std::string attributeName, std::string value)
   {
     if (value.empty())
-      throw new ParsingException(attributeMissingMessage(elementName, attributeName));
+      throw ParsingException(attributeMissingMessage(elementName, attributeName));
 
         return validatePositiveInteger(elementName, attributeName, value);
     }
@@ -128,7 +128,7 @@ public:
   static double validateRequiredDouble(std::string elementName, std::string attributeName, std::string value)
   {
     if (value.empty())
-      throw new ParsingException(attributeMissingMessage(elementName, attributeName));
+      throw ParsingException(attributeMissingMessage(elementName, attributeName));
     return validateDouble(elementName, attributeName, value);
   }
 

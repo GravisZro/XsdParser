@@ -49,7 +49,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdAttributeGroup>(this));
+        visitorParam->visit(nondeleted_ptr<XsdAttributeGroup>(this));
     }
 
   std::list<std::shared_ptr<ReferenceBase>> getElements(void);

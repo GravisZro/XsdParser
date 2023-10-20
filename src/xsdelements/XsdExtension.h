@@ -42,7 +42,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdExtension>(this));
+        visitorParam->visit(nondeleted_ptr<XsdExtension>(this));
     }
 
   std::shared_ptr<XsdExtension> clone(StringMap placeHolderAttributes);

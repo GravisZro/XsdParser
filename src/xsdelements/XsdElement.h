@@ -151,7 +151,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdElement>(this));
+        visitorParam->visit(nondeleted_ptr<XsdElement>(this));
     }
 
   std::shared_ptr<XsdElement> clone(StringMap placeHolderAttributes);

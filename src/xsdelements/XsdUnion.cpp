@@ -32,5 +32,7 @@ std::list<std::string> XsdUnion::getMemberTypesList(void)
   std::list<std::string> rval; // TODO
   for(auto val : std::ranges::views::split(m_memberTypes, " "))
     rval.push_back(val.data());
+  rval.unique();
+  rval.remove_if([](const std::string& val){ return val.empty(); });
   return rval;
 }

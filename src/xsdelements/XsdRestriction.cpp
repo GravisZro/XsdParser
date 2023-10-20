@@ -44,7 +44,7 @@ XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap 
         {
             StringMap attributes;
             attributes.emplace(NAME_TAG, m_baseString.value());
-            m_base = ReferenceBase::createFromXsd(std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdBuiltInDataType>(parser, attributes, std::shared_ptr<XsdRestriction>(this))));
+            m_base = ReferenceBase::createFromXsd(std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdBuiltInDataType>(parser, attributes, nondeleted_ptr<XsdRestriction>(this))));
         } else {
             auto parseMappers = XsdParserCore::getParseMappers();
 
@@ -55,11 +55,11 @@ XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap 
               config = parseMappers.at(*XsdElement::XS_TAG);
 
             if (config.parserFunction && config.visitorFunction)
-                throw new ParsingException("Invalid Parsing Configuration for XsdElement.");
+                throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
             m_base = std::make_shared<UnsolvedReference>(m_baseString.value(),
                                                          std::make_shared<XsdElement>(
-                                                           std::shared_ptr<XsdAbstractElement>(this),
+                                                           nondeleted_ptr<XsdAbstractElement>(this),
                                                            getParser(),
                                                            StringMap{},
                                                            config.visitorFunction));
@@ -73,7 +73,7 @@ void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElemen
   {
       XsdAnnotatedElements::replaceUnsolvedElements(element);
 
-      std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, std::shared_ptr<XsdAbstractElement>(this));
+      std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, nondeleted_ptr<XsdAbstractElement>(this));
 
       std::shared_ptr<XsdNamedElements> elem = element->getElement();
 

@@ -31,12 +31,12 @@ int AttributeValidations::validateNonNegativeInteger(std::string elementName, st
   {
     int intValue = std::stoi(value.c_str());
     if (intValue < 0){
-      throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a non negative integer. (greater or equal than 0)");
+      throw ParsingException("The " + elementName + " " + attributeName + " attribute should be a non negative integer. (greater or equal than 0)");
     }
     return intValue;
   } catch (...)
   {
-    throw new ParsingException("The " + elementName + " " + attributeName + "  attribute should be a non negative integer.");
+    throw ParsingException("The " + elementName + " " + attributeName + "  attribute should be a non negative integer.");
   }
 }
 
@@ -55,13 +55,13 @@ int AttributeValidations::validatePositiveInteger(std::string elementName, std::
   {
     int intValue = std::stoi(value.c_str());
     if (intValue <= 0){
-        throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a positive integer. (greater than 0)");
+        throw ParsingException("The " + elementName + " " + attributeName + " attribute should be a positive integer. (greater than 0)");
     }
     return intValue;
   }
   catch (...)
   {
-    throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a positive integer.");
+    throw ParsingException("The " + elementName + " " + attributeName + " attribute should be a positive integer.");
   }
 }
 
@@ -81,7 +81,7 @@ double AttributeValidations::validateDouble(std::string elementName, std::string
     return std::stod(value.c_str());
   } catch (...)
   {
-    throw new ParsingException("The " + elementName + " " + attributeName + " attribute should be a numeric value.");
+    throw ParsingException("The " + elementName + " " + attributeName + " attribute should be a numeric value.");
   }
 }
 

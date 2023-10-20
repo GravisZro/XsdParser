@@ -49,7 +49,7 @@ public:
     void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdList>(this));
+        visitorParam->visit(nondeleted_ptr<XsdList>(this));
     }
 
     /**

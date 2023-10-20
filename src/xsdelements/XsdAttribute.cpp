@@ -68,7 +68,7 @@ std::optional<std::string> XsdAttribute::getFormDefaultValue(std::shared_ptr<Xsd
 void XsdAttribute::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
   XsdNamedElements::accept(visitorParam);
-  visitorParam->visit(std::shared_ptr<XsdAttribute>(this));
+  visitorParam->visit(nondeleted_ptr<XsdAttribute>(this));
 }
 
 
@@ -89,7 +89,7 @@ std::shared_ptr<XsdAttribute> XsdAttribute::clone(StringMap placeHolderAttribute
 
     elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
     elementCopy->m_type = m_type;
-    elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
+    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
     elementCopy->m_parent = nullptr;
 
     return elementCopy;

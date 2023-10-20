@@ -135,7 +135,7 @@ public:
     {
       placeHolderAttributes.merge(m_attributesMap);
       auto copyElement = std::make_shared<XsdAbstractElement>(getParser(), placeHolderAttributes, m_visitorFunction);
-      copyElement->setCloneOf(std::shared_ptr<XsdAbstractElement>(this));
+      copyElement->setCloneOf(nondeleted_ptr<XsdAbstractElement>(this));
       return copyElement;
     }
 
@@ -212,7 +212,7 @@ public:
         if (!m_parentAvailable)
         {
             if (enforceParentAvailability)
-                throw new ParentAvailableException("The parent of this element isn't available to avoid circular memory dependencies.");
+                throw ParentAvailableException("The parent of this element isn't available to avoid circular memory dependencies.");
             else
               return nullptr;
         }
@@ -272,7 +272,7 @@ public:
                 stringBuilder.append(output);
             }
         } catch (Exception e){
-            throw new ParsingException(e.getMessage());
+            throw ParsingException(e.getMessage());
         }
 
         return stringBuilder.toString();

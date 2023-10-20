@@ -22,7 +22,7 @@ XsdAbstractElement::XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
 
     if(visitorFunction)
     {
-        m_visitor = visitorFunction(std::shared_ptr<XsdAbstractElement>(this));
+        m_visitor = visitorFunction(nondeleted_ptr<XsdAbstractElement>(this));
     }
 }
 
@@ -150,7 +150,7 @@ std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(void)
   std::shared_ptr<XsdSchema> schema;
   try
   {
-    schema = getXsdSchema(std::shared_ptr<XsdAbstractElement>(this), {});
+    schema = getXsdSchema(nondeleted_ptr<XsdAbstractElement>(this), {});
   }
   catch (...)
   {
@@ -159,12 +159,13 @@ std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(void)
 
   if(!schema)
   {
-    throw new ParsingException("The parent is null while searching for the XsdSchema. Please submit an issue with the xsd file being parsed to the project page.");
+    throw ParsingException("The parent is null while searching for the XsdSchema. Please submit an issue with the xsd file being parsed to the project page.");
   }
   return schema;
 }
 
-std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(std::shared_ptr<XsdAbstractElement> element, std::list<std::shared_ptr<XsdAbstractElement>> hierarchy)
+std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(std::shared_ptr<XsdAbstractElement> element,
+                                                            std::list<std::shared_ptr<XsdAbstractElement>> hierarchy)
 {
   if (!element)
     return nullptr;
@@ -173,7 +174,7 @@ std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(std::shared_ptr<XsdA
                     std::end(hierarchy),
                     element))
   {
-    throw new ParsingException("There is a circular reference in the Xsd Element tree. Please submit an issue with the xsd file being parsed to the project page.");
+    throw ParsingException("There is a circular reference in the Xsd Element tree. Please submit an issue with the xsd file being parsed to the project page.");
   }
 
   if (auto schema = std::dynamic_pointer_cast<XsdSchema>(element); schema)

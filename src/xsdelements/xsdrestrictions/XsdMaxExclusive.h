@@ -44,7 +44,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::shared_ptr<XsdMaxExclusive>(this));
+        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdMaxExclusive>(this));
     }
 
     /**

@@ -17,6 +17,7 @@ HEADERS += \
   src/core/utils/ConfigEntryData.h \
   src/core/utils/DefaultParserConfig.h \
   src/core/utils/NamespaceInfo.h \
+  src/core/utils/NonDeletedPtr.h \
   src/core/utils/ParseData.h \
   src/core/utils/ParserConfig.h \
   src/core/utils/SchemaLocation.h \

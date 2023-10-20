@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include <core/utils/NamespaceInfo.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/enums/BlockDefaultEnum.h>
@@ -9,12 +7,6 @@
 #include <xsdelements/enums/FormEnum.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
-
-
-#include <unordered_map>
-#include <list>
-#include <map>
-#include <functional>
 
 class XsdAbstractElement;
 class XsdAbstractElementVisitor;
@@ -199,7 +191,8 @@ public:
         return m_fileLocation;
     }
 
-  void setFileLocation(SchemaLocation filePath) {
-        m_fileLocation = filePath;
-    }
+  void setFileLocation(SchemaLocation filePath)
+  {
+    m_fileLocation = filePath;
+  }
 };

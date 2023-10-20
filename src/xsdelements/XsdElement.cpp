@@ -21,7 +21,6 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
     m_minOccurs(1),
     m_maxOccurs("1")
 {
-  std::string typeString = attributesMap.at(*TYPE_TAG);
   if (attributesMap.contains(*TYPE_TAG))
   {
     std::string typeString = attributesMap.at(*TYPE_TAG);
@@ -29,11 +28,11 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
     {
       StringMap attributes;
       attributes.emplace(*NAME_TAG, typeString);
-      m_type = ReferenceBase::createFromXsd(std::make_shared<XsdBuiltInDataType>(parser, attributes, std::shared_ptr<XsdAbstractElement>(this)));
+      m_type = ReferenceBase::createFromXsd(std::make_shared<XsdBuiltInDataType>(parser, attributes, nondeleted_ptr<XsdAbstractElement>(this)));
     }
     else
     {
-      auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), getParser(), StringMap{}, visitorFunction);
+      auto e = std::make_shared<XsdElement>(nondeleted_ptr<XsdAbstractElement>(this), getParser(), StringMap{}, visitorFunction);
       m_type = std::make_shared<UnsolvedReference>(typeString, e);
       getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_type));
     }
@@ -51,7 +50,7 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
 
   if (localSubstitutionGroup)
   {
-    auto e = std::make_shared<XsdElement>(std::shared_ptr<XsdAbstractElement>(this), getParser(), StringMap{}, visitorFunction);
+    auto e = std::make_shared<XsdElement>(nondeleted_ptr<XsdAbstractElement>(this), getParser(), StringMap{}, visitorFunction);
     m_substitutionGroup = std::make_shared<UnsolvedReference>(localSubstitutionGroup.value(), std::static_pointer_cast<XsdNamedElements>(e));
     getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_substitutionGroup));
   }
@@ -93,15 +92,17 @@ XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
  */
 void XsdElement::rule7(void)
 {
-  if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && m_attributesMap.contains(*FORM_TAG))
-    throw new ParsingException(*XSD_TAG + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
+  if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && m_attributesMap.contains(*FORM_TAG))
+    throw ParsingException(*XSD_TAG + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
-void XsdElement::rule6(void) {
+void XsdElement::rule6(void)
+{
     //fixed 	Optional. Specifies a fixed value for the element (can only be used if the element's content is a simple type or text only)
 }
 
-void XsdElement::rule5(void) {
+void XsdElement::rule5(void)
+{
     // default 	Optional. Specifies a default value for the element (can only be used if the element's content is a simple type or text only)
 }
 
@@ -112,7 +113,7 @@ void XsdElement::rule5(void) {
 void XsdElement::rule4(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && m_substitutionGroup)
-    throw new ParsingException(*XSD_TAG + " element: The " + SUBSTITUTION_GROUP_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*XSD_TAG + " element: The " + SUBSTITUTION_GROUP_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
 /**
@@ -122,7 +123,7 @@ void XsdElement::rule4(void)
 void XsdElement::rule3(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && m_attributesMap.contains(*REF_TAG))
-    throw new ParsingException(*XSD_TAG + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*XSD_TAG + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
 /**
@@ -132,7 +133,7 @@ void XsdElement::rule3(void)
 void XsdElement::rule2(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && !m_name)
-    throw new ParsingException(*XSD_TAG + " element: The " + NAME_TAG + " attribute is required when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*XSD_TAG + " element: The " + NAME_TAG + " attribute is required when the parent of the " + xsdElementIsXsdSchema);
 }
 
 
@@ -172,7 +173,7 @@ std::shared_ptr<XsdElement> XsdElement::clone(StringMap placeHolderAttributes)
         }
     }
 
-    elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
+    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
     elementCopy->m_parent = nullptr;
 
     return elementCopy;

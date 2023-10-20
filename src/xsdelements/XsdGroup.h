@@ -85,23 +85,24 @@ private:
      */
     void rule2(void)
     {
-        if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && !m_name)
-            throw new ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
+        if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && m_name)
+            throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
     }
 
     /**
      * Asserts if the current has no value for its name attribute while being a direct child of the top level XsdSchema element,
      * which is required. Throws an exception if no name is present.
      */
-    void rule3(void) {
+    void rule3(void)
+    {
         if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && !m_name)
-            throw new ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
+            throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdGroup>(this));
+        visitorParam->visit(nondeleted_ptr<XsdGroup>(this));
     }
 
     /**
@@ -139,7 +140,7 @@ public:
         m_childElement = childElement;
         for(auto& childElementObj : childElement->getElements())
           childElementObj->getElement()->setParent(childElement);
-        m_childElement->setParent(std::shared_ptr<XsdGroup>(this));
+        m_childElement->setParent(nondeleted_ptr<XsdGroup>(this));
     }
 
   std::shared_ptr<XsdMultipleElements> getChildElement(void) {

@@ -111,7 +111,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdRestriction>(this));
+        visitorParam->visit(nondeleted_ptr<XsdRestriction>(this));
     }
 
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);

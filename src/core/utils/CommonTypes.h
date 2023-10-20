@@ -9,6 +9,7 @@
 #include <optional>
 
 #include "SchemaLocation.h"
+#include "NonDeletedPtr.h"
 
 class XsdAbstractElementVisitor;
 class XsdAbstractElement;

@@ -29,7 +29,7 @@ XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attr
         {
             StringMap attributes;
             attributes.emplace(NAME_TAG, baseValue);
-            m_base = ReferenceBase::createFromXsd(std::make_shared<XsdBuiltInDataType>(parser, attributes, std::shared_ptr<XsdExtension>(this)));
+            m_base = ReferenceBase::createFromXsd(std::make_shared<XsdBuiltInDataType>(parser, attributes, nondeleted_ptr<XsdExtension>(this)));
         }
         else
         {
@@ -42,11 +42,11 @@ XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attr
               config = parseMappers.at(*XsdElement::XS_TAG);
 
             if (!config.parserFunction || !config.visitorFunction)
-                throw new ParsingException("Invalid Parsing Configuration for XsdElement.");
+                throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
             m_base = std::make_shared<UnsolvedReference>(baseValue,
                                                          std::make_shared<XsdElement>(
-                                                           std::shared_ptr<XsdAbstractElement>(this),
+                                                           nondeleted_ptr<XsdAbstractElement>(this),
                                                            getParser(),
                                                            StringMap{},
                                                            config.visitorFunction));
@@ -82,7 +82,7 @@ void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
         compareReference(element, x))
         m_childElement = element;
 
-    std::static_pointer_cast<XsdExtensionVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, std::shared_ptr<XsdExtension>(this));
+    std::static_pointer_cast<XsdExtensionVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, nondeleted_ptr<XsdExtension>(this));
 }
 
 /**
@@ -109,7 +109,7 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
 
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
     elementCopy->m_base = m_base;
-    elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
+    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
     elementCopy->m_parent = nullptr;
 
     return elementCopy;

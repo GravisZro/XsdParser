@@ -44,7 +44,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdMultipleElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdChoice>(this));
+        visitorParam->visit(nondeleted_ptr<XsdChoice>(this));
     }
 
   std::shared_ptr<XsdChoice> clone(StringMap placeHolderAttributes);

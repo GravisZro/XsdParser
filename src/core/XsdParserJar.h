@@ -70,24 +70,24 @@ class XsdParserJar : public XsdParserCore
 //                ConfigEntryData xsdSchemaConfig = parseMappers.getOrDefault(XsdSchema::XSD_TAG, parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
 //
 //                if (xsdSchemaConfig == null){
-//                    throw new ParserConfigurationException("XsdSchema not correctly configured.");
+//                    throw ParserConfigurationException("XsdSchema not correctly configured.");
 //                }
 //
-//                xsdSchemaConfig.parserFunction( ParseData { std::shared_ptr<XsdParserCore>(this), schemaNode, xsdSchemaConfig.visitorFunction }));
+//                xsdSchemaConfig.parserFunction( ParseData { nondeleted_ptr<XsdParserCore>(this), schemaNode, xsdSchemaConfig.visitorFunction }));
 //            } else {
-//                throw new ParsingException("The top level element of a XSD file should be the xsd:schema node.");
+//                throw ParsingException("The top level element of a XSD file should be the xsd:schema node.");
 //            }
 
             ConfigEntryData xsdSchemaConfig = m_parseMappers.getOrDefault(XsdSchema::XSD_TAG, m_parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
 
             if (xsdSchemaConfig == null){
-                throw new ParserConfigurationException("XsdSchema not correctly configured.");
+                throw ParserConfigurationException("XsdSchema not correctly configured.");
             }
 
-            ReferenceBase schemaReference = xsdSchemaConfig.parserFunction( ParseData { std::shared_ptr<XsdParserCore>(this), getSchemaNode(inputStream), xsdSchemaConfig.visitorFunction }));
+            ReferenceBase schemaReference = xsdSchemaConfig.parserFunction( ParseData { nondeleted_ptr<XsdParserCore>(this), getSchemaNode(inputStream), xsdSchemaConfig.visitorFunction }));
         } catch (SAXException | IOException | ParserConfigurationException e) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "Exception while parsing.", e);
-            throw new RuntimeException(e);
+            throw RuntimeException(e);
         }
     }
 
@@ -107,7 +107,7 @@ private:
             }
         }
 
-        throw new ParsingException("The top level element of a XSD file should be the xsd:schema node.");
+        throw ParsingException("The top level element of a XSD file should be the xsd:schema node.");
     }
 
     /**
@@ -117,7 +117,7 @@ private:
      */
     private void setClassLoader(std::string jarPath) {
         if (!jarPath.endsWith(".jar")){
-            throw new ParsingException("The jarPath received doesn't represent a jar file.");
+            throw ParsingException("The jarPath received doesn't represent a jar file.");
         }
 
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
@@ -128,7 +128,7 @@ private:
             try {
                 url = new URL("file:/" + jarPath);
             } catch (MalformedURLException e) {
-                throw new ParsingException("Invalid jar name.");
+                throw ParsingException("Invalid jar name.");
             }
         }
 

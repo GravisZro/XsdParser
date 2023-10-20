@@ -42,7 +42,7 @@ std::shared_ptr<XsdNamedElements> XsdAttributeGroup::clone(StringMap placeHolder
                  [this, elementCopy](std::shared_ptr<ReferenceBase> attributeGroupReference)
   { return ReferenceBase::clone(getParser(), attributeGroupReference, elementCopy); });
 
-  elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
+  elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
   elementCopy->m_parent = nullptr;
 
   return elementCopy;

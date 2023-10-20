@@ -38,7 +38,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdInclude>(this));
+        visitorParam->visit(nondeleted_ptr<XsdInclude>(this));
     }
 
   SchemaLocation getSchemaLocation(void) {

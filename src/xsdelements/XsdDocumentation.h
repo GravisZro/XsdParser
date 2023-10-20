@@ -40,7 +40,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdAnnotationChildren::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::shared_ptr<XsdDocumentation>(this));
+        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdDocumentation>(this));
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)

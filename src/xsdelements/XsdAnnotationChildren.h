@@ -42,7 +42,7 @@ public:
      */
   XsdAbstractElementVisitor getVisitor(void)
     {
-        throw new VisitorNotFoundException("AppInfo/Documentation can't have children.");
+        throw VisitorNotFoundException("AppInfo/Documentation can't have children.");
     }
 
   std::optional<std::string> getSource(void) {

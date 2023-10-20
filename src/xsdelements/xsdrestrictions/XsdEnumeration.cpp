@@ -12,7 +12,7 @@ XsdEnumeration::XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
 void XsdEnumeration::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
 {
   XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-  xsdAbstractElementVisitor->visit(std::shared_ptr<XsdEnumeration>(this));
+  xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdEnumeration>(this));
 }
 
 /**

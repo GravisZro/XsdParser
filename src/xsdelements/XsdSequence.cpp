@@ -20,7 +20,7 @@ XsdSequence::XsdSequence(std::shared_ptr<XsdParserCore> parser, StringMap attrib
 void XsdSequence::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdMultipleElements::accept(visitorParam);
-    visitorParam->visit(std::shared_ptr<XsdSequence>(this));
+    visitorParam->visit(nondeleted_ptr<XsdSequence>(this));
 }
 
 /**
@@ -38,7 +38,7 @@ std::shared_ptr<XsdSequence> XsdSequence::clone(StringMap placeHolderAttributes)
     for(auto& element : getElements())
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
-    elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
+    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
     elementCopy->setParent(nullptr);
 
     return elementCopy;

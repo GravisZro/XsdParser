@@ -99,9 +99,10 @@ private:
      * Asserts if the current object has a simpleContent as children and contains a value for the mixed attribute, which isn't allowed throwing
      * an exception in that case.
      */
-  void rule2(void) {
+  void rule2(void)
+  {
         if (m_simpleContent && m_attributesMap.contains(*MIXED_TAG)){
-            throw new ParsingException(XSD_TAG + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
+            throw ParsingException(XSD_TAG + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
         }
     }
 
@@ -109,7 +110,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(std::shared_ptr<XsdComplexType>(this));
+        visitorParam->visit(nondeleted_ptr<XsdComplexType>(this));
     }
 
     /**

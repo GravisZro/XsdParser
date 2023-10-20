@@ -13,7 +13,7 @@ XsdAnnotation::XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
 void XsdAnnotation::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdIdentifierElements::accept(visitorParam);
-    visitorParam->visit(std::shared_ptr<XsdAnnotation>(this));
+    visitorParam->visit(nondeleted_ptr<XsdAnnotation>(this));
 }
 
 std::list<std::shared_ptr<XsdAppInfo>>& XsdAnnotation::getAppInfoList(void)

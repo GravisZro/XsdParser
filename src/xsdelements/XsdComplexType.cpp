@@ -62,7 +62,7 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
     std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->m_visitor)->setAttributes(clonedAttributes);
     std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->m_visitor)->setAttributeGroups(clonedAttributeGroups);
 
-    elementCopy->m_cloneOf = std::shared_ptr<XsdAbstractElement>(this);
+    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
     elementCopy->m_parent = nullptr;
 
     return elementCopy;
@@ -71,7 +71,7 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
 void XsdComplexType::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
     XsdNamedElements::replaceUnsolvedElements(element);
-    std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, std::shared_ptr<XsdComplexType>(this));
+    std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, nondeleted_ptr<XsdComplexType>(this));
 
     if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_childElement);
         x &&

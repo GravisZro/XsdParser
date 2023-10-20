@@ -5,14 +5,17 @@
 #include <core/utils/ConfigEntryData.h>
 #include <xsdelements/exceptions/ParsingException.h>
 
-
 void XsdParser::parse(std::string filePath)
 {
+  m_currentFile = filePath;
   if(!m_schemaLocations.contains(filePath))
     m_schemaLocations.insert(filePath);
 
   for(auto& schemaLocation : m_schemaLocations)
+  {
+    addLocationToParse(schemaLocation);
     parseLocation(schemaLocation);
+  }
   resolveRefs();
 }
 
@@ -32,16 +35,16 @@ void XsdParser::parseLocation(SchemaLocation fileLocation)
   else if(m_parseMappers.contains(*XsdSchema::XS_TAG))
     xsdSchemaConfig = m_parseMappers.at(*XsdSchema::XS_TAG);
 
-  if (xsdSchemaConfig.parserFunction == nullptr && xsdSchemaConfig.visitorFunction == nullptr)
-    throw new std::runtime_error("XsdSchema not correctly configured.");
+  if (xsdSchemaConfig.parserFunction == nullptr &&
+      xsdSchemaConfig.visitorFunction == nullptr)
+    throw std::runtime_error("XsdSchema not correctly configured.");
 
   auto schemaReference = xsdSchemaConfig.parserFunction(
-                           ParseData { std::shared_ptr<XsdParserCore>(this),
+                           ParseData { nondeleted_ptr<XsdParserCore>(this),
                                        getSchemaNode(fileLocation),
                                        xsdSchemaConfig.visitorFunction});
   std::static_pointer_cast<XsdSchema>(schemaReference->getElement())->setFileLocation(fileLocation);
 }
-
 
 /**
  * This function uses DOM to obtain a list of nodes from a XSD file.
@@ -54,21 +57,31 @@ void XsdParser::parseLocation(SchemaLocation fileLocation)
  */
 pugi::xml_node XsdParser::getSchemaNode(SchemaLocation fileLocation)
 {
-  std::string filePath;
+  SchemaLocation parentLocation = m_schemaLocationsMap.at(fileLocation);
+  std::optional<std::string> filePath;
   for(auto& location : fileLocation)
+  {
     if(std::filesystem::exists(location))
     {
       filePath = location;
       break;
     }
+    else if(std::filesystem::path(location).is_relative())
+    {
+      for(auto& parent_location : parentLocation)
+        if(std::filesystem::exists(std::filesystem::path(parent_location).parent_path() / location))
+          filePath = std::filesystem::path(parent_location).parent_path() / location;
+    }
+  }
+  assert(filePath);
 
-  pugi::xml_document& doc = m_documents[filePath];
-  pugi::xml_parse_result result = m_documents[filePath].load_file(filePath.c_str());
+  pugi::xml_document& doc = m_documents[*filePath];
+  pugi::xml_parse_result result = m_documents[*filePath].load_file(filePath->c_str());
   assert(result);
 
   for(auto& child : doc.children())
     if (isXsdSchema(child))
       return child;
 
-  throw new ParsingException("The top level element of a XSD file should be the xsd:schema node.");
+  throw ParsingException("The top level element of a XSD file should be the xsd:schema node.");
 }

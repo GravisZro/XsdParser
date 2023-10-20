@@ -38,7 +38,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::shared_ptr<XsdMinLength>(this));
+        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdMinLength>(this));
     }
 
     /**
