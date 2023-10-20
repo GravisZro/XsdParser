@@ -170,12 +170,9 @@ std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(std::shared_ptr<XsdA
   if (!element)
     return nullptr;
 
-  if (std::ranges::contains(std::begin(hierarchy),
-                    std::end(hierarchy),
-                    element))
-  {
-    throw ParsingException("There is a circular reference in the Xsd Element tree. Please submit an issue with the xsd file being parsed to the project page.");
-  }
+  for(auto& x : hierarchy)
+    if(x == element)
+      throw ParsingException("There is a circular reference in the Xsd Element tree. Please submit an issue with the xsd file being parsed to the project page.");
 
   if (auto schema = std::dynamic_pointer_cast<XsdSchema>(element); schema)
     return schema;
