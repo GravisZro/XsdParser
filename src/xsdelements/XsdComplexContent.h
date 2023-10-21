@@ -40,7 +40,8 @@ private:
 public: // ctors
     XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
                       StringMap attributesMap,
-                      VisitorFunctionReference visitorFunction);
+                      VisitorFunctionReference visitorFunction,
+                      std::shared_ptr<XsdAbstractElement> parent);
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
@@ -63,7 +64,8 @@ public:
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdComplexContent>(parseData.parserInstance,
                                                         getAttributesMap(parseData.node),
-                                                        parseData.visitorFunction)));
+                                                        parseData.visitorFunction,
+                                                        nullptr)));
   }
 
   void setExtension(std::shared_ptr<ReferenceBase> extension) {

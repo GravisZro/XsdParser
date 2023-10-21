@@ -4,8 +4,11 @@
 #include <xsdelements/XsdRestriction.h>
 #include <xsdelements/AttributeValidations.h>
 
-XsdComplexContent::XsdComplexContent(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction),
+XsdComplexContent::XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
+                                     StringMap attributesMap,
+                                     VisitorFunctionReference visitorFunction,
+                                     std::shared_ptr<XsdAbstractElement> parent)
+  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
     m_mixed(false)
 {
   if(haveAttribute(MIXED_TAG))
@@ -25,12 +28,12 @@ std::shared_ptr<XsdComplexContent> XsdComplexContent::clone(StringMap placeHolde
 
     auto elementCopy = create<XsdComplexContent>(getParser(),
                                                  placeHolderAttributes,
-                                                 m_visitorFunction);
+                                                 m_visitorFunction,
+                                                 nullptr);
 
     elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
     elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

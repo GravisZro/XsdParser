@@ -75,7 +75,8 @@ private:
 public: // ctors
     XsdSchema(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
-              VisitorFunctionReference visitorFunction);
+              VisitorFunctionReference visitorFunction,
+              std::shared_ptr<XsdAbstractElement> parent);
 
 public:
   std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void)

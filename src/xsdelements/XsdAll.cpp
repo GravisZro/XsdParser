@@ -11,9 +11,10 @@
 
 
 XsdAll::XsdAll(std::shared_ptr<XsdParserCore> parser,
-       StringMap attributesMap,
-       VisitorFunctionReference visitorFunction)
-  : XsdMultipleElements(parser, attributesMap, visitorFunction),
+               StringMap attributesMap,
+               VisitorFunctionReference visitorFunction,
+               std::shared_ptr<XsdAbstractElement> parent)
+  : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
     m_minOccurs(1),
     m_maxOccurs(1)
 {
@@ -37,7 +38,8 @@ std::shared_ptr<ReferenceBase> XsdAll::parse(ParseData parseData)
                           std::static_pointer_cast<XsdAbstractElement>(
                             create<XsdAll>(parseData.parserInstance,
                                            getAttributesMap(parseData.node),
-                                           parseData.visitorFunction)));
+                                           parseData.visitorFunction,
+                                           nullptr)));
 }
 
 
@@ -54,13 +56,12 @@ std::shared_ptr<XsdAll> XsdAll::clone(StringMap placeHolderAttributes)
 
     auto elementCopy = create<XsdAll>(getParser(),
                                       placeHolderAttributes,
-                                      m_visitorFunction);
+                                      m_visitorFunction,
+                                      nullptr);
 
     for(auto& element : getElements())
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
-
     return elementCopy;
 }

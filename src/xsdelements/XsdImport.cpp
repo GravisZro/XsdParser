@@ -5,8 +5,9 @@
 
 XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
-                     VisitorFunctionReference visitorFunction)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+                     VisitorFunctionReference visitorFunction,
+                     std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 {
   if(haveAttribute(NAMESPACE))
     m_namespace = getAttribute(NAMESPACE);
@@ -25,5 +26,6 @@ std::shared_ptr<ReferenceBase> XsdImport::parse(ParseData parseData)
                           std::static_pointer_cast<XsdAbstractElement>(
                             create<XsdImport>(parseData.parserInstance,
                                               getAttributesMap(parseData.node),
-                                              parseData.visitorFunction)));
+                                              parseData.visitorFunction,
+                                              nullptr)));
 }

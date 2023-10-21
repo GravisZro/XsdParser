@@ -41,7 +41,8 @@ private:
 public: // ctors
     XsdAll(std::shared_ptr<XsdParserCore> parser,
            StringMap attributesMap,
-           VisitorFunctionReference visitorFunction);
+           VisitorFunctionReference visitorFunction,
+           std::shared_ptr<XsdAbstractElement> parent);
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
 

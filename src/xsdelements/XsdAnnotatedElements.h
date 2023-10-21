@@ -30,7 +30,7 @@ public: // ctors
   XsdAnnotatedElements(std::shared_ptr<XsdParserCore> parser,
                        StringMap elementFieldsMapParam,
                        VisitorFunctionReference visitorFunction,
-                       std::shared_ptr<XsdAbstractElement> parent = nullptr)
+                       std::shared_ptr<XsdAbstractElement> parent)
     : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction, parent) {}
 
 public:

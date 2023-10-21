@@ -28,7 +28,10 @@ private:
      */
     SchemaLocation m_schemaLocation;
 public: // ctors
-    XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
+    XsdInclude(std::shared_ptr<XsdParserCore> parser,
+               StringMap attributesMap,
+               VisitorFunctionReference visitorFunction,
+               std::shared_ptr<XsdAbstractElement> parent);
 public:
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
@@ -36,7 +39,8 @@ public:
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdInclude>(parseData.parserInstance,
                                                  getAttributesMap(parseData.node),
-                                                 parseData.visitorFunction)));
+                                                 parseData.visitorFunction,
+                                                 nullptr)));
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)

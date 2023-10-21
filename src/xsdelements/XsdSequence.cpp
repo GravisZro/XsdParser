@@ -5,8 +5,11 @@
 #include <xsdelements/XsdChoice.h>
 #include <xsdelements/XsdGroup.h>
 
-XsdSequence::XsdSequence(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-  : XsdMultipleElements(parser, attributesMap, visitorFunction),
+XsdSequence::XsdSequence(std::shared_ptr<XsdParserCore> parser,
+                         StringMap attributesMap,
+                         VisitorFunctionReference visitorFunction,
+                         std::shared_ptr<XsdAbstractElement> parent)
+  : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
     m_minOccurs(1),
     m_maxOccurs("1")
 {
@@ -35,13 +38,13 @@ std::shared_ptr<XsdSequence> XsdSequence::clone(StringMap placeHolderAttributes)
 
     auto elementCopy = create<XsdSequence>(getParser(),
                                            placeHolderAttributes,
-                                           m_visitorFunction);
+                                           m_visitorFunction,
+                                           nullptr);
 
     for(auto& element : getElements())
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

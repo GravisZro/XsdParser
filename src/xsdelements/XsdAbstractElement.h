@@ -22,15 +22,6 @@ class UnsolvedReference;
 class XsdAbstractElement : public std::enable_shared_from_this<XsdAbstractElement>
 {
 public:
-  /*
-  template<typename T, typename... Args>
-  static std::shared_ptr<T> create(Args... args)
-  {
-    auto ptr = std::shared_ptr<T>(new T(args...));
-    ptr->T::initialize();
-    return ptr;
-  }
-*/
     constexpr static const std::string_view VALUE_TAG = "value";
     constexpr static const std::string_view ATTRIBUTE_FORM_DEFAULT = "attribtueFormDefault";
     constexpr static const std::string_view ELEMENT_FORM_DEFAULT = "elementFormDefault";
@@ -104,7 +95,7 @@ public: // ctors
     XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                        StringMap attributesMap,
                        VisitorFunctionReference visitorFunction,
-                       std::shared_ptr<XsdAbstractElement> parent = nullptr);
+                       std::shared_ptr<XsdAbstractElement> parent);
 
 public:
   virtual ~XsdAbstractElement(void) = default;

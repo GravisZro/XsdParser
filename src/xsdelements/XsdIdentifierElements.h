@@ -28,7 +28,7 @@ public: // ctors
     XsdIdentifierElements(std::shared_ptr<XsdParserCore> parser,
                           StringMap attributesMap,
                           VisitorFunctionReference visitorFunction,
-                          std::shared_ptr<XsdAbstractElement> parent = nullptr)
+                          std::shared_ptr<XsdAbstractElement> parent)
       : XsdAbstractElement(parser, attributesMap, visitorFunction, parent)
     {
       if(haveAttribute(XsdAbstractElement::ID_TAG))

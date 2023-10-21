@@ -192,13 +192,12 @@ std::shared_ptr<XsdElement> XsdElement::clone(StringMap placeHolderAttributes)
                                   create<XsdElement>(getParser(),
                                                      StringMap{},
                                                      m_visitorFunction,
-                                                     elementCopy));
+                                                     nullptr));
           getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(elementCopy->m_type));
         }
     }
 
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

@@ -107,7 +107,8 @@ std::shared_ptr<ReferenceBase> XsdSimpleType::parse(ParseData parseData)
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdSimpleType>(parseData.parserInstance,
                                                     getAttributesMap(parseData.node),
-                                                    parseData.visitorFunction)));
+                                                    parseData.visitorFunction,
+                                                    nullptr)));
 }
 
 

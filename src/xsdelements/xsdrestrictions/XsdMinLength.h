@@ -28,8 +28,9 @@ public:
 public: // ctors
   XsdMinLength(std::shared_ptr<XsdParserCore> parser,
                StringMap elementFieldsMapParam,
-               VisitorFunctionReference visitorFunction)
-        : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction)
+               VisitorFunctionReference visitorFunction,
+               std::shared_ptr<XsdAbstractElement> parent)
+        : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
   {
     assert(haveAttribute(VALUE_TAG));
     m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
@@ -51,11 +52,10 @@ public:
   std::shared_ptr<XsdMinLength> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdMinLength>(getParser(),
-                                                          placeHolderAttributes,
-                                                          m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
+        return create<XsdMinLength>(getParser(),
+                                    placeHolderAttributes,
+                                    m_visitorFunction,
+                                    nullptr);
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
@@ -64,6 +64,7 @@ public:
                                 std::static_pointer_cast<XsdAbstractElement>(
                                   create<XsdMinLength>(parseData.parserInstance,
                                                        getAttributesMap(parseData.node),
-                                                       parseData.visitorFunction)));
+                                                       parseData.visitorFunction,
+                                                       nullptr)));
     }
 };

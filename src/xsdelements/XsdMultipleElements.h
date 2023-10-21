@@ -37,7 +37,8 @@ protected:
 public: // ctors
     XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
                         StringMap elementFieldsMapParam,
-                        VisitorFunctionReference visitorFunction);
+                        VisitorFunctionReference visitorFunction,
+                        std::shared_ptr<XsdAbstractElement> parent);
 public:
     /**
      * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their

@@ -3,8 +3,11 @@
 #include <ranges>
 
 
-XsdInclude::XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+XsdInclude::XsdInclude(std::shared_ptr<XsdParserCore> parser,
+                       StringMap attributesMap,
+                       VisitorFunctionReference visitorFunction,
+                       std::shared_ptr<XsdAbstractElement> parent)
+  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 {
   if(haveAttribute(SCHEMA_LOCATION))
   {

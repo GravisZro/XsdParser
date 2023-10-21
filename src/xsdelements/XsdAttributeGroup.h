@@ -40,7 +40,7 @@ public:
     XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
                       StringMap attributesMap,
                       VisitorFunctionReference visitorFunction,
-                      std::shared_ptr<XsdAbstractElement> parent = nullptr)
+                      std::shared_ptr<XsdAbstractElement> parent)
       : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 
 public:
@@ -64,7 +64,8 @@ public:
                                 std::static_pointer_cast<XsdAbstractElement>(
                                   create<XsdAttributeGroup>(parseData.parserInstance,
                                                             getAttributesMap(parseData.node),
-                                                            parseData.visitorFunction)));
+                                                            parseData.visitorFunction,
+                                                            nullptr)));
     }
 
   void addAttribute(std::shared_ptr<ReferenceBase> attribute)

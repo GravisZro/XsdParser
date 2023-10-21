@@ -74,7 +74,7 @@ public: // ctors
     XsdAttribute(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
                  VisitorFunctionReference visitorFunction,
-                 std::shared_ptr<XsdAbstractElement> parent = nullptr);
+                 std::shared_ptr<XsdAbstractElement> parent);
 
     virtual void initialize(void) override;
 public:

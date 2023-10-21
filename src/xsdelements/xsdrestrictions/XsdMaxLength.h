@@ -26,8 +26,11 @@ public:
     constexpr static const std::string_view TAG = "maxLength";
 
 public: // ctors
-  XsdMaxLength(std::shared_ptr<XsdParserCore> parser, StringMap elementFieldsMapParam, VisitorFunctionReference visitorFunction)
-        : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction)
+  XsdMaxLength(std::shared_ptr<XsdParserCore> parser,
+               StringMap elementFieldsMapParam,
+               VisitorFunctionReference visitorFunction,
+               std::shared_ptr<XsdAbstractElement> parent)
+        : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
   {
     assert(haveAttribute(VALUE_TAG));
         m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
@@ -48,11 +51,10 @@ public:
   std::shared_ptr<XsdMaxLength> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdMaxLength>(getParser(),
-                                                          placeHolderAttributes,
-                                                          m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
+        return create<XsdMaxLength>(getParser(),
+                                    placeHolderAttributes,
+                                    m_visitorFunction,
+                                    nullptr);
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
@@ -61,6 +63,7 @@ public:
                                 std::static_pointer_cast<XsdAbstractElement>(
                                   create<XsdMaxLength>(parseData.parserInstance,
                                                        getAttributesMap(parseData.node),
-                                                       parseData.visitorFunction)));
+                                                       parseData.visitorFunction,
+                                                       nullptr)));
     }
 };

@@ -33,8 +33,9 @@ private:
 public: // ctors
     XsdMaxExclusive(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
-                    VisitorFunctionReference visitorFunction)
-        : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction),
+                    VisitorFunctionReference visitorFunction,
+                    std::shared_ptr<XsdAbstractElement> parent)
+        : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent),
           m_fixed(false)
   {
     if(haveAttribute(FIXED_TAG))
@@ -54,23 +55,23 @@ public:
      * @return A copy of the object from which is called upon.
      */
   std::shared_ptr<XsdMaxExclusive> clone(StringMap placeHolderAttributes)
-    {
-        placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdMaxExclusive>(getParser(),
-                                                             placeHolderAttributes,
-                                                             m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
-    }
+  {
+    placeHolderAttributes.merge(getAttributesMap());
+    return create<XsdMaxExclusive>(getParser(),
+                                   placeHolderAttributes,
+                                   m_visitorFunction,
+                                   nullptr);
+  }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdMaxExclusive>(parseData.parserInstance,
-                                                          getAttributesMap(parseData.node),
-                                                          parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdMaxExclusive>(parseData.parserInstance,
+                                                      getAttributesMap(parseData.node),
+                                                      parseData.visitorFunction,
+                                                      nullptr)));
+  }
 
   bool isFixed(void) {
         return m_fixed;

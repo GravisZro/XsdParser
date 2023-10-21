@@ -3,14 +3,13 @@
 
 
 #include <core/utils/ParseData.h>
+#include <xsdelements/XsdSimpleType.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
 
-#include <map>
-#include <functional>
 
 /**
  * A class representing the xsd:list element.
@@ -39,8 +38,11 @@ private:
      */
     std::optional<std::string> m_itemType;
 public: // ctors
-    XsdList(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+    XsdList(std::shared_ptr<XsdParserCore> parser,
+            StringMap attributesMap,
+            VisitorFunctionReference visitorFunction,
+            std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
     {
       if(haveAttribute(ITEM_TYPE_TAG))
         m_itemType = getAttribute(ITEM_TYPE_TAG);
@@ -64,12 +66,13 @@ public:
 
         auto elementCopy = create<XsdList>(getParser(),
                                            placeHolderAttributes,
-                                           m_visitorFunction);
+                                           m_visitorFunction,
+                                           nullptr);
 
         if (m_simpleType)
-            elementCopy->m_simpleType = std::static_pointer_cast<XsdSimpleType>(m_simpleType->XsdAbstractElement::clone(m_simpleType->getAttributesMap(), elementCopy));
-
-        elementCopy->setParent(nullptr);
+            elementCopy->m_simpleType = std::static_pointer_cast<XsdSimpleType>(
+                                          m_simpleType->clone(m_simpleType->getAttributesMap(),
+                                                              elementCopy));
 
         return elementCopy;
     }
@@ -80,7 +83,8 @@ public:
                                 std::static_pointer_cast<XsdAbstractElement>(
                                   create<XsdList>(parseData.parserInstance,
                                                   getAttributesMap(parseData.node),
-                                                  parseData.visitorFunction)));
+                                                  parseData.visitorFunction,
+                                                  nullptr)));
     }
 
   std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) {

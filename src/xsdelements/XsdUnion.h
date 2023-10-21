@@ -36,8 +36,11 @@ private:
      */
     std::string m_memberTypes;
 public: // ctors
-    XsdUnion(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+    XsdUnion(std::shared_ptr<XsdParserCore> parser,
+             StringMap attributesMap,
+             VisitorFunctionReference visitorFunction,
+             std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
     {
       if(haveAttribute(MEMBER_TYPES_TAG))
         m_memberTypes = getAttribute(MEMBER_TYPES_TAG);
@@ -63,7 +66,8 @@ public:
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdUnion>(parseData.parserInstance,
                                                getAttributesMap(parseData.node),
-                                               parseData.visitorFunction)));
+                                               parseData.visitorFunction,
+                                               nullptr)));
   }
 
   void add(std::shared_ptr<XsdSimpleType> simpleType) {

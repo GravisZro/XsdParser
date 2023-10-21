@@ -117,7 +117,7 @@ public: // ctors
   XsdElement(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
              VisitorFunctionReference visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent = nullptr);
+             std::shared_ptr<XsdAbstractElement> parent);
   virtual void initialize(void) override;
 private:
     /**
@@ -169,7 +169,8 @@ public:
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdElement>(parseData.parserInstance,
                                                  getAttributesMap(parseData.node),
-                                                 parseData.visitorFunction)));
+                                                 parseData.visitorFunction,
+                                                 nullptr)));
   }
 
   std::optional<std::string> getFinal(void)

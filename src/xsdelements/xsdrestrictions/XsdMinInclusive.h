@@ -32,8 +32,9 @@ private:
 public: // ctors
     XsdMinInclusive(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
-                    VisitorFunctionReference visitorFunction)
-        : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction),
+                    VisitorFunctionReference visitorFunction,
+                    std::shared_ptr<XsdAbstractElement> parent)
+        : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent),
           m_fixed(false)
     {
       if(haveAttribute(FIXED_TAG))
@@ -55,21 +56,21 @@ public:
   std::shared_ptr<XsdMinInclusive> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdMinInclusive>(getParser(),
-                                                             placeHolderAttributes,
-                                                             m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
+        return create<XsdMinInclusive>(getParser(),
+                                       placeHolderAttributes,
+                                       m_visitorFunction,
+                                       nullptr);
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdMinInclusive>(parseData.parserInstance,
-                                                          getAttributesMap(parseData.node),
-                                                          parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdMinInclusive>(parseData.parserInstance,
+                                                      getAttributesMap(parseData.node),
+                                                      parseData.visitorFunction,
+                                                      nullptr)));
+  }
 
   bool isFixed(void) {
         return m_fixed;

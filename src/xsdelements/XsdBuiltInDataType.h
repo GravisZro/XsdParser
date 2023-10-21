@@ -11,9 +11,8 @@ public: // ctors
   XsdBuiltInDataType(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
                      std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, nullptr)
+    : XsdNamedElements(parser, attributesMap, nullptr, parent)
   {
-    setParent(parent);
   }
 public:
   std::shared_ptr<XsdNamedElements> clone([[maybe_unused]] StringMap placeHolderAttributes)

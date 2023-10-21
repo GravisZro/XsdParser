@@ -52,7 +52,7 @@ public: // ctors
     XsdGroup(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
              VisitorFunctionReference visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent = nullptr)
+             std::shared_ptr<XsdAbstractElement> parent)
         : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
           m_minOccurs(1),
           m_maxOccurs("1")
@@ -176,7 +176,8 @@ public:
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdGroup>(parseData.parserInstance,
                                                getAttributesMap(parseData.node),
-                                               parseData.visitorFunction)));
+                                               parseData.visitorFunction,
+                                               nullptr)));
   }
 
   int getMinOccurs(void) {

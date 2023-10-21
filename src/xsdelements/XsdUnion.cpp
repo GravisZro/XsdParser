@@ -14,7 +14,8 @@ std::shared_ptr<XsdUnion> XsdUnion::clone(StringMap placeHolderAttributes)
 
     auto elementCopy = create<XsdUnion>(getParser(),
                                         placeHolderAttributes,
-                                        m_visitorFunction);
+                                        m_visitorFunction,
+                                        nullptr);
 
     if (m_simpleTypeList.empty())
     {
@@ -23,8 +24,6 @@ std::shared_ptr<XsdUnion> XsdUnion::clone(StringMap placeHolderAttributes)
             std::static_pointer_cast<XsdSimpleType>(
                 simpleType->clone(simpleType->getAttributesMap(), elementCopy)));
     }
-
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

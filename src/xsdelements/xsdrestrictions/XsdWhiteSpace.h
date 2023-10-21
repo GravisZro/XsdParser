@@ -30,8 +30,9 @@ private:
 public: // ctors
   XsdWhiteSpace(std::shared_ptr<XsdParserCore> parser,
                 StringMap elementFieldsMapParam,
-                VisitorFunctionReference visitorFunction)
-        : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction),
+                VisitorFunctionReference visitorFunction,
+                std::shared_ptr<XsdAbstractElement> parent)
+        : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent),
           m_fixed(false)
   {
     if(elementFieldsMapParam.contains(*FIXED_TAG))
@@ -55,11 +56,10 @@ public:
   std::shared_ptr<XsdWhiteSpace> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdWhiteSpace>(getParser(),
-                                                           placeHolderAttributes,
-                                                           m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
+        return create<XsdWhiteSpace>(getParser(),
+                                     placeHolderAttributes,
+                                     m_visitorFunction,
+                                     nullptr);
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
@@ -68,7 +68,8 @@ public:
                                 std::static_pointer_cast<XsdAbstractElement>(
                                   create<XsdWhiteSpace>(parseData.parserInstance,
                                                         getAttributesMap(parseData.node),
-                                                        parseData.visitorFunction)));
+                                                        parseData.visitorFunction,
+                                                        nullptr)));
     }
 
   bool isFixed(void) {

@@ -43,7 +43,8 @@ private:
 public: // ctors
     XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
                   StringMap elementFieldsMapParam,
-                  VisitorFunctionReference visitorFunction);
+                  VisitorFunctionReference visitorFunction,
+                  std::shared_ptr<XsdAbstractElement> parent);
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
 

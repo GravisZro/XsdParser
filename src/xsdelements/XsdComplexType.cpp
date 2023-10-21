@@ -46,7 +46,7 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
     auto elementCopy = create<XsdComplexType>(getParser(),
                                               placeHolderAttributes,
                                               m_visitorFunction,
-                                              getParent());
+                                              nullptr);
 
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
 
@@ -69,7 +69,6 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
     std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributeGroups(clonedAttributeGroups);
 
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

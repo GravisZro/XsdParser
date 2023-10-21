@@ -17,8 +17,9 @@
 
 XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
-                     VisitorFunctionReference visitorFunction)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction),
+                     VisitorFunctionReference visitorFunction,
+                     std::shared_ptr<XsdAbstractElement> parent)
+  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
     m_attributeFormDefault(FormEnum::UNQUALIFIED),
     m_elementFormDefault(FormEnum::UNQUALIFIED),
     m_blockDefault(BlockDefaultEnum::DEFAULT),
@@ -72,7 +73,8 @@ std::shared_ptr<ReferenceBase> XsdSchema::parse(ParseData parseData)
                                            std::static_pointer_cast<XsdAbstractElement>(
                                              create<XsdSchema>(parseData.parserInstance,
                                                                getAttributesMap(parseData.node),
-                                                               parseData.visitorFunction)));
+                                                               parseData.visitorFunction,
+                                                               nullptr)));
       auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
 
       std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();

@@ -53,7 +53,7 @@ public: // ctors
     XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
                   StringMap attributesMap,
                   VisitorFunctionReference visitorFunction,
-                  std::shared_ptr<XsdAbstractElement> parent = nullptr);
+                  std::shared_ptr<XsdAbstractElement> parent);
 public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.

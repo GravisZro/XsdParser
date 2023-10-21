@@ -36,7 +36,8 @@ private:
 public: // ctors
     XsdExtension(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
-                 VisitorFunctionReference visitorFunction);
+                 VisitorFunctionReference visitorFunction,
+                 std::shared_ptr<XsdAbstractElement> parent);
 
     virtual void initialize(void) override;
 public:

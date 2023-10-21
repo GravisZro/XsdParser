@@ -3,9 +3,10 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 XsdEnumeration::XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
-               StringMap elementFieldsMapParam,
-               VisitorFunctionReference visitorFunction)
-      : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction)
+                               StringMap elementFieldsMapParam,
+                               VisitorFunctionReference visitorFunction,
+                               std::shared_ptr<XsdAbstractElement> parent)
+      : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
 {
 }
 
@@ -24,11 +25,10 @@ void XsdEnumeration::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstra
 std::shared_ptr<XsdEnumeration> XsdEnumeration::clone(StringMap placeHolderAttributes)
 {
   placeHolderAttributes.merge(getAttributesMap());
-  auto elementCopy = create<XsdEnumeration>(getParser(),
-                                            placeHolderAttributes,
-                                            m_visitorFunction);
-  elementCopy->setParent(nullptr);
-  return elementCopy;
+  return create<XsdEnumeration>(getParser(),
+                                placeHolderAttributes,
+                                m_visitorFunction,
+                                nullptr);
 }
 
 std::shared_ptr<ReferenceBase> XsdEnumeration::parse(ParseData parseData)
@@ -37,5 +37,6 @@ std::shared_ptr<ReferenceBase> XsdEnumeration::parse(ParseData parseData)
                           std::static_pointer_cast<XsdAbstractElement>(
                             create<XsdEnumeration>(parseData.parserInstance,
                                                    getAttributesMap(parseData.node),
-                                                   parseData.visitorFunction)));
+                                                   parseData.visitorFunction,
+                                                   nullptr)));
 }

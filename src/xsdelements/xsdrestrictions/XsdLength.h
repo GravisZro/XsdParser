@@ -25,8 +25,9 @@ public:
 public: // ctors
   XsdLength(std::shared_ptr<XsdParserCore> parser,
             StringMap elementFieldsMapParam,
-            VisitorFunctionReference visitorFunction)
-    : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction)
+            VisitorFunctionReference visitorFunction,
+            std::shared_ptr<XsdAbstractElement> parent)
+    : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
   {
     assert(haveAttribute(VALUE_TAG));
     m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
@@ -45,21 +46,21 @@ public:
      * @return A copy of the object from which is called upon.
      */
   std::shared_ptr<XsdLength> clone(StringMap placeHolderAttributes)
-    {
-        placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdLength>(getParser(),
-                                                       placeHolderAttributes,
-                                                       m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
-    }
+  {
+    placeHolderAttributes.merge(getAttributesMap());
+    return create<XsdLength>(getParser(),
+                             placeHolderAttributes,
+                             m_visitorFunction,
+                             nullptr);
+  }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdLength>(parseData.parserInstance,
-                                                    getAttributesMap(parseData.node),
-                                                    parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdLength>(parseData.parserInstance,
+                                                getAttributesMap(parseData.node),
+                                                parseData.visitorFunction,
+                                                nullptr)));
+  }
 };

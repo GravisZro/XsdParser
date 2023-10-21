@@ -20,8 +20,9 @@
 
 XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser,
                            StringMap attributesMap,
-                           VisitorFunctionReference visitorFunction)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+                           VisitorFunctionReference visitorFunction,
+                           std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 { }
 
 void XsdExtension::initialize(void)
@@ -108,7 +109,8 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
 
     auto elementCopy = create<XsdExtension>(getParser(),
                                             placeHolderAttributes,
-                                            m_visitorFunction);
+                                            m_visitorFunction,
+                                            nullptr);
 
     for(auto& attribute : getXsdAttributes())
     {
@@ -131,7 +133,6 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
     elementCopy->m_base = m_base;
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }
@@ -197,8 +198,9 @@ std::shared_ptr<ReferenceBase> XsdExtension::parse(ParseData parseData)
     return xsdParseSkeleton(parseData.node,
                             std::static_pointer_cast<XsdAbstractElement>(
                               create<XsdExtension>(parseData.parserInstance,
-                                getAttributesMap(parseData.node),
-                                parseData.visitorFunction)));
+                                                   getAttributesMap(parseData.node),
+                                                   parseData.visitorFunction,
+                                                   nullptr)));
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void) {

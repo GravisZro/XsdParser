@@ -52,7 +52,8 @@ void XsdAttribute::initialize(void)
                        std::static_pointer_cast<XsdNamedElements>(
                          create<XsdSimpleType>(getParser(),
                                                StringMap{},
-                                               XsdAttributeVisitorFunction)));
+                                               XsdAttributeVisitorFunction,
+                                               nullptr)));
       getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_simpleType));
   }
 }
@@ -95,12 +96,11 @@ std::shared_ptr<XsdAttribute> XsdAttribute::clone(StringMap placeHolderAttribute
     auto elementCopy = create<XsdAttribute>(getParser(),
                                             placeHolderAttributes,
                                             m_visitorFunction,
-                                            getParent());
+                                            nullptr);
 
     elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
     elementCopy->m_type = m_type;
     elementCopy->setCloneOf(shared_from_this());
-    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }
@@ -149,5 +149,6 @@ std::shared_ptr<ReferenceBase> XsdAttribute::parse(ParseData parseData)
                               std::static_pointer_cast<XsdAbstractElement>(
                                 create<XsdAttribute>(parseData.parserInstance,
                                                      getAttributesMap(parseData.node),
-                                                     parseData.visitorFunction)));
+                                                     parseData.visitorFunction,
+                                                     nullptr)));
 }

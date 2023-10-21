@@ -32,8 +32,9 @@ protected:
 public: // ctors
     XsdIntegerRestrictions(std::shared_ptr<XsdParserCore> parser,
                            StringMap elementFieldsMapParam,
-                           VisitorFunctionReference visitorFunction)
-      : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction),
+                           VisitorFunctionReference visitorFunction,
+                           std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent),
         m_fixed(false)
     {
       if(elementFieldsMapParam.contains(*FIXED_TAG))

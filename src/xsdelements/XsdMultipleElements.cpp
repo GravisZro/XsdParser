@@ -9,8 +9,9 @@
 
 XsdMultipleElements::XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
                                          StringMap elementFieldsMapParam,
-                                         VisitorFunctionReference visitorFunction)
-  : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction) { }
+                                         VisitorFunctionReference visitorFunction,
+                                         std::shared_ptr<XsdAbstractElement> parent)
+  : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent) { }
 
 /**
  * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their

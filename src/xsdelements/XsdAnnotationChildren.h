@@ -30,7 +30,7 @@ private:
 public: // ctors
     XsdAnnotationChildren(std::shared_ptr<XsdParserCore> parser,
                           StringMap attributesMap)
-      : XsdAbstractElement(parser, attributesMap, nullptr)
+      : XsdAbstractElement(parser, attributesMap, nullptr, nullptr)
   {
       if(haveAttribute(SOURCE_TAG))
         m_source = getAttribute(SOURCE_TAG);

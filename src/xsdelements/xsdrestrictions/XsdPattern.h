@@ -26,8 +26,9 @@ public:
 public: // ctors
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
              StringMap elementFieldsMapParam,
-             VisitorFunctionReference visitorFunction)
-    : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction)
+             VisitorFunctionReference visitorFunction,
+             std::shared_ptr<XsdAbstractElement> parent)
+    : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
   { }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
@@ -45,11 +46,10 @@ public:
   std::shared_ptr<XsdPattern> clone(StringMap placeHolderAttributes)
     {
         placeHolderAttributes.merge(getAttributesMap());
-        auto elementCopy = create<XsdPattern>(getParser(),
-                                                        placeHolderAttributes,
-                                                        m_visitorFunction);
-        elementCopy->setParent(nullptr);
-        return elementCopy;
+        return create<XsdPattern>(getParser(),
+                                  placeHolderAttributes,
+                                  m_visitorFunction,
+                                  nullptr);
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
@@ -58,6 +58,7 @@ public:
                                 std::static_pointer_cast<XsdAbstractElement>(
                                   create<XsdPattern>(parseData.parserInstance,
                                                      getAttributesMap(parseData.node),
-                                                     parseData.visitorFunction)));
+                                                     parseData.visitorFunction,
+                                                     nullptr)));
     }
 };

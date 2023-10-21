@@ -120,7 +120,8 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
       auto elementCopy = create<XsdRestriction>(getParser(),
                                                 placeHolderAttributes,
-                                                m_visitorFunction);
+                                                m_visitorFunction,
+                                                nullptr);
 
       if (!m_enumeration.empty())
       {
@@ -175,7 +176,6 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
       if (m_group)
           elementCopy->m_group = ReferenceBase::clone(getParser(), m_group, elementCopy);
 
-      elementCopy->setParent(nullptr);
       elementCopy->m_base = m_base;
 
       return elementCopy;
