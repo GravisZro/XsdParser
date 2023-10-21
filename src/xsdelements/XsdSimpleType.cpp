@@ -26,7 +26,7 @@
 
 XsdSimpleType::XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
                              StringMap attributesMap,
-                             VisitorFunctionReference visitorFunction,
+                             VisitorFunctionType visitorFunction,
                              std::shared_ptr<XsdAbstractElement> parent)
   : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
 {
@@ -100,17 +100,6 @@ std::shared_ptr<XsdSimpleType> XsdSimpleType::clone(StringMap placeHolderAttribu
 
     return elementCopy;
 }
-
-std::shared_ptr<ReferenceBase> XsdSimpleType::parse(ParseData parseData)
-{
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdSimpleType>(parseData.parserInstance,
-                                                    getAttributesMap(parseData.node),
-                                                    parseData.visitorFunction,
-                                                    nullptr)));
-}
-
 
 std::shared_ptr<XsdList> XsdSimpleType::getList(void)
 {

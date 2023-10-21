@@ -18,13 +18,14 @@ std::shared_ptr<XsdAbstractElementVisitor> XsdAttributeVisitorFunction(std::shar
 
 XsdAttribute::XsdAttribute(std::shared_ptr<XsdParserCore> parser,
                            StringMap attributesMap,
-                           VisitorFunctionReference visitorFunction,
+                           VisitorFunctionType visitorFunction,
                            std::shared_ptr<XsdAbstractElement> parent)
   : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
 { }
 
 void XsdAttribute::initialize(void)
 {
+  XsdNamedElements::initialize();
   m_form = getFormDefaultValue(getParent());
 
   if(haveAttribute(DEFAULT_ELEMENT_TAG))
@@ -143,12 +144,3 @@ std::list<std::shared_ptr<XsdRestriction>> XsdAttribute::getAllRestrictions(void
   return {};
 }
 
-std::shared_ptr<ReferenceBase> XsdAttribute::parse(ParseData parseData)
-{
-      return xsdParseSkeleton(parseData.node,
-                              std::static_pointer_cast<XsdAbstractElement>(
-                                create<XsdAttribute>(parseData.parserInstance,
-                                                     getAttributesMap(parseData.node),
-                                                     parseData.visitorFunction,
-                                                     nullptr)));
-}

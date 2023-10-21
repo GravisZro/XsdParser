@@ -18,8 +18,7 @@ class XsdAnnotatedElements : public XsdIdentifierElements
 {
 public:
   using XsdIdentifierElements::clone;
-  using XsdIdentifierElements::initialize;
-
+  
 private:
     /**
      * The {@link XsdAnnotation} that is annotating the concrete instances of this class.
@@ -29,7 +28,7 @@ private:
 public: // ctors
   XsdAnnotatedElements(std::shared_ptr<XsdParserCore> parser,
                        StringMap elementFieldsMapParam,
-                       VisitorFunctionReference visitorFunction,
+                       VisitorFunctionType visitorFunction,
                        std::shared_ptr<XsdAbstractElement> parent)
     : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction, parent) {}
 

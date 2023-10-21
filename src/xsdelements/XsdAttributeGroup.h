@@ -39,12 +39,12 @@ private:
 public:
     XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
                       StringMap attributesMap,
-                      VisitorFunctionReference visitorFunction,
+                      VisitorFunctionType visitorFunction,
                       std::shared_ptr<XsdAbstractElement> parent)
       : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdNamedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
@@ -56,17 +56,6 @@ public:
   std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void);
   std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void);
   std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
-
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdAttributeGroup>(parseData.parserInstance,
-                                                            getAttributesMap(parseData.node),
-                                                            parseData.visitorFunction,
-                                                            nullptr)));
-    }
 
   void addAttribute(std::shared_ptr<ReferenceBase> attribute)
   {

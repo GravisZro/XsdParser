@@ -9,5 +9,5 @@ struct ParseData
 {
   std::shared_ptr<XsdParserCore> parserInstance;
   pugi::xml_node node;
-  VisitorFunctionReference visitorFunction;
+  VisitorFunctionType visitorFunction;
 };

@@ -73,6 +73,7 @@ void XsdAbstractElementVisitor::visit(std::shared_ptr<XsdSequence> element)
 
 void XsdAbstractElementVisitor::visit(std::shared_ptr<XsdNamedElements> element)
 {
+  assert(element);
   std::shared_ptr<ReferenceBase> referenceBase = ReferenceBase::createFromXsd(std::static_pointer_cast<XsdAbstractElement>(element));
   if(auto x = std::dynamic_pointer_cast<UnsolvedReference>(referenceBase); x)
     element->getParser()->addUnsolvedReference(x);

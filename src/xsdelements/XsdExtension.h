@@ -36,14 +36,14 @@ private:
 public: // ctors
     XsdExtension(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
-                 VisitorFunctionReference visitorFunction,
+                 VisitorFunctionType visitorFunction,
                  std::shared_ptr<XsdAbstractElement> parent);
 
     virtual void initialize(void) override;
 public:
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdExtension>(shared_from_this()));
@@ -57,7 +57,7 @@ public:
   std::shared_ptr<XsdSimpleType> getBaseAsSimpleType(void);
   std::shared_ptr<XsdBuiltInDataType> getBaseAsBuiltInDataType(void);
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+  
 
   std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
   std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);

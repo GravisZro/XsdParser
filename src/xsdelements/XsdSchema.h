@@ -16,7 +16,6 @@ class XsdSchema : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  using XsdAnnotatedElements::initialize;
     constexpr static const std::string_view XSD_TAG = "xsd:schema";
     constexpr static const std::string_view XS_TAG = "xs:schema";
     constexpr static const std::string_view TAG = "schema";
@@ -75,7 +74,7 @@ private:
 public: // ctors
     XsdSchema(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
-              VisitorFunctionReference visitorFunction,
+              VisitorFunctionType visitorFunction,
               std::shared_ptr<XsdAbstractElement> parent);
 
 public:
@@ -86,9 +85,9 @@ public:
 
   std::list<std::shared_ptr<ReferenceBase>> getElements(void);
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+  
 
-private:
+public:
   void updatePrefixLocations(std::map<std::string, SchemaLocation> prefixLocations)
   {
     for(auto& pair : prefixLocations)

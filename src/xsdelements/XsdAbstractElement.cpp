@@ -14,7 +14,7 @@
 
 XsdAbstractElement::XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                                        StringMap attributesMap,
-                                       VisitorFunctionReference visitorFunction,
+                                       VisitorFunctionType visitorFunction,
                                        std::shared_ptr<XsdAbstractElement> parent)
 {
     m_parser = parser;
@@ -37,7 +37,8 @@ void XsdAbstractElement::initialize(void)
  */
 void XsdAbstractElement::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
 {
-    setParent(xsdAbstractElementVisitor->getOwner());
+  assert(xsdAbstractElementVisitor);
+  setParent(xsdAbstractElementVisitor->getOwner());
 }
 
 /**

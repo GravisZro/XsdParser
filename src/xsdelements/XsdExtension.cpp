@@ -20,7 +20,7 @@
 
 XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser,
                            StringMap attributesMap,
-                           VisitorFunctionReference visitorFunction,
+                           VisitorFunctionType visitorFunction,
                            std::shared_ptr<XsdAbstractElement> parent)
     : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 { }
@@ -51,7 +51,7 @@ void XsdExtension::initialize(void)
             else if(parseMappers.contains(*XsdElement::XS_TAG))
               config = parseMappers.at(*XsdElement::XS_TAG);
 
-            if (!config.parserFunction || !config.visitorFunction)
+            if (config.parserFunction == nullptr || config.visitorFunction == nullptr)
                 throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
             m_base = create<UnsolvedReference>(baseValue,
@@ -187,20 +187,10 @@ return nullptr;
  */
 std::shared_ptr<XsdBuiltInDataType> XsdExtension::getBaseAsBuiltInDataType(void)
 {
-if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
-  if(auto x = std::dynamic_pointer_cast<XsdBuiltInDataType>(m_base->getElement()); x)
-    return x;
-return nullptr;
-}
-
-std::shared_ptr<ReferenceBase> XsdExtension::parse(ParseData parseData)
-{
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdExtension>(parseData.parserInstance,
-                                                   getAttributesMap(parseData.node),
-                                                   parseData.visitorFunction,
-                                                   nullptr)));
+  if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
+    if(auto x = std::dynamic_pointer_cast<XsdBuiltInDataType>(m_base->getElement()); x)
+      return x;
+  return nullptr;
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void) {

@@ -39,10 +39,10 @@ private:
 public: // ctors
     XsdChoice(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
-              VisitorFunctionReference visitorFunction,
+              VisitorFunctionType visitorFunction,
               std::shared_ptr<XsdAbstractElement> parent);
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdMultipleElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdChoice>(shared_from_this()));
@@ -50,15 +50,6 @@ public:
 
   std::shared_ptr<XsdChoice> clone(StringMap placeHolderAttributes);
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdChoice>(parseData.parserInstance,
-                                                getAttributesMap(parseData.node),
-                                                parseData.visitorFunction,
-                                                nullptr)));
-  }
 
   int getMinOccurs(void) {
         return m_minOccurs;

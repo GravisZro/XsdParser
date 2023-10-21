@@ -52,7 +52,7 @@ private:
 public: // ctors
     XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
                   StringMap attributesMap,
-                  VisitorFunctionReference visitorFunction,
+                  VisitorFunctionType visitorFunction,
                   std::shared_ptr<XsdAbstractElement> parent);
 public:
     /**
@@ -73,7 +73,7 @@ private:
      */
     void rule3(void);
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
     /**
      * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
      * {@link UnsolvedReference} objects in the reference solving process.
@@ -82,7 +82,7 @@ public:
      */
   std::shared_ptr<XsdSimpleType> clone(StringMap placeHolderAttributes);
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+  
 
   std::shared_ptr<XsdRestriction> getRestriction(void) {
         return m_restriction;

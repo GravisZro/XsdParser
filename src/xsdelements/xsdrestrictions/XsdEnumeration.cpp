@@ -4,7 +4,7 @@
 
 XsdEnumeration::XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
                                StringMap elementFieldsMapParam,
-                               VisitorFunctionReference visitorFunction,
+                               VisitorFunctionType visitorFunction,
                                std::shared_ptr<XsdAbstractElement> parent)
       : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
 {
@@ -29,14 +29,4 @@ std::shared_ptr<XsdEnumeration> XsdEnumeration::clone(StringMap placeHolderAttri
                                 placeHolderAttributes,
                                 m_visitorFunction,
                                 nullptr);
-}
-
-std::shared_ptr<ReferenceBase> XsdEnumeration::parse(ParseData parseData)
-{
-  return xsdParseSkeleton(parseData.node,
-                          std::static_pointer_cast<XsdAbstractElement>(
-                            create<XsdEnumeration>(parseData.parserInstance,
-                                                   getAttributesMap(parseData.node),
-                                                   parseData.visitorFunction,
-                                                   nullptr)));
 }

@@ -48,7 +48,7 @@ std::shared_ptr<ReferenceBase> ReferenceBase::clone(std::shared_ptr<XsdParserCor
                                                     std::shared_ptr<ReferenceBase> originalReference,
                                                     std::shared_ptr<XsdAbstractElement> parent)
 {
-    if (!originalReference)
+    if (originalReference == nullptr)
       return nullptr;
 
     std::shared_ptr<XsdAbstractElement> originalElement = originalReference->getElement();
@@ -56,19 +56,17 @@ std::shared_ptr<ReferenceBase> ReferenceBase::clone(std::shared_ptr<XsdParserCor
     if (auto original = std::dynamic_pointer_cast<UnsolvedReference>(originalReference); original)
     {
       assert(original->getRef());
-        StringMap originalElementAttributesMap = originalElement->getAttributesMap();
-        StringMap clonedOriginalElementAttributesMap = originalElementAttributesMap;
-        clonedOriginalElementAttributesMap.emplace(XsdAbstractElement::REF_TAG, original->getRef().value());
+        StringMap clonedAttributesMap = originalElement->getAttributesMap();
+        clonedAttributesMap.emplace(XsdAbstractElement::REF_TAG, original->getRef().value());
 
-        std::shared_ptr<XsdNamedElements> clonedElement = std::static_pointer_cast<XsdNamedElements>(originalElement->clone(clonedOriginalElementAttributesMap));
+        auto clonedElement = std::static_pointer_cast<XsdNamedElements>(
+                               originalElement->clone(clonedAttributesMap));
         clonedElement->getAttributesMap().emplace(XsdAbstractElement::REF_TAG, original->getRef().value());
         clonedElement->setCloneOf(originalElement);
         clonedElement->setParent(parent);
 
         auto unsolvedClonedElement = create<UnsolvedReference>(clonedElement);
-
         parser->addUnsolvedReference(unsolvedClonedElement);
-
         return unsolvedClonedElement;
     }
     else {

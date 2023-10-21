@@ -5,7 +5,7 @@
 
 XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
-                     VisitorFunctionReference visitorFunction,
+                     VisitorFunctionType visitorFunction,
                      std::shared_ptr<XsdAbstractElement> parent)
     : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 {
@@ -19,13 +19,3 @@ XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser,
   }
 }
 
-
-std::shared_ptr<ReferenceBase> XsdImport::parse(ParseData parseData)
-{
-  return xsdParseSkeleton(parseData.node,
-                          std::static_pointer_cast<XsdAbstractElement>(
-                            create<XsdImport>(parseData.parserInstance,
-                                              getAttributesMap(parseData.node),
-                                              parseData.visitorFunction,
-                                              nullptr)));
-}

@@ -116,7 +116,7 @@ private:
 public: // ctors
   XsdElement(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
-             VisitorFunctionReference visitorFunction,
+             VisitorFunctionType visitorFunction,
              std::shared_ptr<XsdAbstractElement> parent);
   virtual void initialize(void) override;
 private:
@@ -142,7 +142,7 @@ private:
     void rule3(void);
     void rule2(void);
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdNamedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdElement>(shared_from_this()));
@@ -162,16 +162,6 @@ public:
   std::shared_ptr<XsdComplexType> getTypeAsComplexType(void);
   std::shared_ptr<XsdSimpleType> getTypeAsSimpleType(void);
   std::shared_ptr<XsdBuiltInDataType> getTypeAsBuiltInDataType(void);
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdElement>(parseData.parserInstance,
-                                                 getAttributesMap(parseData.node),
-                                                 parseData.visitorFunction,
-                                                 nullptr)));
-  }
 
   std::optional<std::string> getFinal(void)
   {

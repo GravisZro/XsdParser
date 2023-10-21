@@ -30,20 +30,11 @@ private:
 public: // ctors
     XsdInclude(std::shared_ptr<XsdParserCore> parser,
                StringMap attributesMap,
-               VisitorFunctionReference visitorFunction,
+               VisitorFunctionType visitorFunction,
                std::shared_ptr<XsdAbstractElement> parent);
 public:
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdInclude>(parseData.parserInstance,
-                                                 getAttributesMap(parseData.node),
-                                                 parseData.visitorFunction,
-                                                 nullptr)));
-  }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdInclude>(shared_from_this()));

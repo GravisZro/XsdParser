@@ -6,7 +6,7 @@
 
 XsdAnnotation::XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
                              StringMap elementFieldsMapParam,
-                             VisitorFunctionReference visitorFunction,
+                             VisitorFunctionType visitorFunction,
                              std::shared_ptr<XsdAbstractElement> parent)
   : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction, parent)
 { }
@@ -35,14 +35,4 @@ void XsdAnnotation::add(std::shared_ptr<XsdAppInfo> appInfo)
 void XsdAnnotation::add(std::shared_ptr<XsdDocumentation> documentation)
 {
     m_documentations.push_back(documentation);
-}
-
-std::shared_ptr<ReferenceBase> XsdAnnotation::parse(ParseData parseData)
-{
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdAnnotation>(parseData.parserInstance,
-                                                    getAttributesMap(parseData.node),
-                                                    parseData.visitorFunction,
-                                                    nullptr)));
 }

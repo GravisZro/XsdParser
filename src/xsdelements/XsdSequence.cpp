@@ -7,7 +7,7 @@
 
 XsdSequence::XsdSequence(std::shared_ptr<XsdParserCore> parser,
                          StringMap attributesMap,
-                         VisitorFunctionReference visitorFunction,
+                         VisitorFunctionType visitorFunction,
                          std::shared_ptr<XsdAbstractElement> parent)
   : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
     m_minOccurs(1),

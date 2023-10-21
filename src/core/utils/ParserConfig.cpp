@@ -1,6 +1,7 @@
 #include "ParserConfig.h"
 
 #include <xsdelements/AttributeValidations.h>
+#include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdAll.h>
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/XsdAnnotationChildren.h>
@@ -71,15 +72,15 @@ const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
 {
   std::map<std::string, std::string> xsdTypesToJava;
 
-  std::string_view string = "std::string";
-  std::string_view xmlGregorianCalendar = "XMLGregorianCalendar";
-  std::string_view duration = "Duration";
-  std::string_view bigInteger = "BigInteger";
-  std::string_view integer = "Integer";
-  std::string_view shortString = "Short";
-  std::string_view qName = "QName";
-  std::string_view longString = "Long";
-  std::string_view byteString = "Byte";
+  constexpr std::string_view string = "std::string";
+  constexpr std::string_view xmlGregorianCalendar = "XMLGregorianCalendar";
+  constexpr std::string_view duration = "Duration";
+  constexpr std::string_view bigInteger = "BigInteger";
+  constexpr std::string_view integer = "Integer";
+  constexpr std::string_view shortString = "Short";
+  constexpr std::string_view qName = "QName";
+  constexpr std::string_view longString = "Long";
+  constexpr std::string_view byteString = "Byte";
 
   xsdTypesToJava.emplace("xsd:anyURI", string);
   xsdTypesToJava.emplace("xs:anyURI", string);
@@ -211,78 +212,118 @@ const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
   return xsdTypesToJava;
 }
 
-#define CONCAT(a, b) a##b
-#define CONCAT_NS(a, b) a::b
+static StringMap generateAttributeMap(pugi::xml_node node)
+{
+  StringMap attributesMapped;
+  for(auto& attr : node.attributes())
+    attributesMapped.emplace(std::make_pair(attr.name(), attr.value()));
+  return attributesMapped;
+}
 
-#define MAKE_PARSEMAP_ENTRY_HELPER(ClassName, TagId, Function) \
-  parseMappers.emplace(std::make_pair(CONCAT_NS(ClassName,TagId), ConfigEntryData { CONCAT_NS(ClassName, parse), Function(ClassName) } ))
+template<typename T>
+static std::shared_ptr<ReferenceBase> genericParser(const ParseData& parseData)
+{
+  return XsdAbstractElement::xsdParseSkeleton(parseData.node,
+                                              std::static_pointer_cast<XsdAbstractElement>(
+                                                create<T>(parseData.parserInstance,
+                                                          generateAttributeMap(parseData.node),
+                                                          parseData.visitorFunction,
+                                                          nullptr)));
+}
+
+template<typename T>
+static std::shared_ptr<ReferenceBase> annotatedParser(const ParseData& parseData)
+{
+  return XsdAnnotationChildren::xsdAnnotationChildrenParse(parseData.node,
+                                                        std::static_pointer_cast<XsdAnnotationChildren>(
+                                                          create<T>(parseData.parserInstance,
+                                                                    generateAttributeMap(parseData.node))));
+}
 
 
-#define MAKE_PARSEMAP_ENTRY_NULLPTR(ClassName) nullptr
+static std::shared_ptr<ReferenceBase> schemaParser(const ParseData& parseData)
+{
+  auto xsdSchemaRef = genericParser<XsdSchema>(parseData);
+  auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
 
-#define MAKE_PARSEMAP_ENTRY_FUNCTION(ClassName) \
-                          [](std::shared_ptr<XsdAbstractElement> element) { \
-                              return std::static_pointer_cast<XsdAbstractElementVisitor>( \
-                                        create<CONCAT(ClassName, Visitor)> \
-                                            (std::static_pointer_cast<ClassName>(element) \
-                                          ) ); }
+  std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
 
-#define MAKE_PARSEMAP_ENTRY_ANNOTATED_FUNCTION(ClassName) \
-  MAKE_PARSEMAP_ENTRY_FUNCTION(XsdAnnotatedElements)
+  std::map<std::string, SchemaLocation> prefixLocations;
+  for(auto& nspair : xsdSchema->getNamespaces())
+    for(auto& import : importsList)
+      if(import->getNamespace() == nspair.second.getName() && import->getSchemaLocation())
+      {
+        prefixLocations.emplace(nspair.first, import->getSchemaLocation());
+        break;
+      }
 
-#define MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, Function) \
-  MAKE_PARSEMAP_ENTRY_HELPER(ClassName, XSD_TAG, Function); \
-  MAKE_PARSEMAP_ENTRY_HELPER(ClassName, XS_TAG, Function); \
-  MAKE_PARSEMAP_ENTRY_HELPER(ClassName, TAG, Function)
+  xsdSchema->updatePrefixLocations(prefixLocations);
+  return xsdSchemaRef;
+}
 
+template<typename ClassType, typename VisitorType>
+static std::shared_ptr<XsdAbstractElementVisitor> genericVisitor(std::shared_ptr<XsdAbstractElement> element)
+{
+  return std::static_pointer_cast<XsdAbstractElementVisitor>(
+        create<VisitorType>(
+          std::static_pointer_cast<ClassType>(element)));
+}
 
-#define MAKE_PARSEMAP_ENTRY(ClassName) \
-  MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_FUNCTION);
+template<typename T>
+static void addEntry(std::map<std::string_view, ConfigEntryData>& mapper, ConfigEntryData entry)
+{
+  mapper.emplace(std::make_pair(T::XSD_TAG, entry ));
+  mapper.emplace(std::make_pair(T::XS_TAG, entry ));
+  mapper.emplace(std::make_pair(T::TAG, entry ));
+}
 
-#define MAKE_PARSEMAP_ENTRY_NULL(ClassName) \
-  MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_NULLPTR);
+template<typename T, typename V>
+static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
+  { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, V> }); }
 
-#define MAKE_PARSEMAP_ENTRY_ANNOTATED(ClassName) \
-  MAKE_PARSEMAP_ENTRY_ALL_TAGS(ClassName, MAKE_PARSEMAP_ENTRY_ANNOTATED_FUNCTION);
+template<typename T>
+static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
+  { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<XsdAnnotatedElements, XsdAnnotatedElementsVisitor> }); }
+
 
 const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
 {
-  std::map<std::string_view, ConfigEntryData> parseMappers;
+  std::map<std::string_view, ConfigEntryData> mappers;
 
-  MAKE_PARSEMAP_ENTRY_NULL(XsdAppInfo);
-  MAKE_PARSEMAP_ENTRY_NULL(XsdDocumentation);
+  addEntry<XsdSchema>(mappers, ConfigEntryData { schemaParser, genericVisitor<XsdSchema, XsdSchemaVisitor> });
 
-  MAKE_PARSEMAP_ENTRY(XsdSchema);
-  MAKE_PARSEMAP_ENTRY(XsdAll);
-  MAKE_PARSEMAP_ENTRY(XsdAttribute);
-  MAKE_PARSEMAP_ENTRY(XsdAttributeGroup);
-  MAKE_PARSEMAP_ENTRY(XsdChoice);
-  MAKE_PARSEMAP_ENTRY(XsdComplexType);
-  MAKE_PARSEMAP_ENTRY(XsdElement);
-  MAKE_PARSEMAP_ENTRY(XsdGroup);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdInclude);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdImport);
-  MAKE_PARSEMAP_ENTRY(XsdSequence);
-  MAKE_PARSEMAP_ENTRY(XsdSimpleType);
-  MAKE_PARSEMAP_ENTRY(XsdList);
-  MAKE_PARSEMAP_ENTRY(XsdRestriction);
-  MAKE_PARSEMAP_ENTRY(XsdUnion);
-  MAKE_PARSEMAP_ENTRY(XsdAnnotation);
-  MAKE_PARSEMAP_ENTRY(XsdComplexContent);
-  MAKE_PARSEMAP_ENTRY(XsdExtension);
-  MAKE_PARSEMAP_ENTRY(XsdSimpleContent);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdEnumeration);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdFractionDigits);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdLength);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMaxExclusive);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMaxInclusive);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMaxLength);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMinExclusive);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMinInclusive);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdMinLength);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdPattern);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdTotalDigits);
-  MAKE_PARSEMAP_ENTRY_ANNOTATED(XsdWhiteSpace);
+  addEntry<XsdAppInfo>(mappers, ConfigEntryData { annotatedParser<XsdAppInfo>, nullptr });
+  addEntry<XsdDocumentation>(mappers, ConfigEntryData { annotatedParser<XsdDocumentation>, nullptr });
 
-  return parseMappers;
+  addGenericEntry<XsdAll, XsdAllVisitor>(mappers);
+  addGenericEntry<XsdAttribute, XsdAttributeVisitor>(mappers);
+  addGenericEntry<XsdAttributeGroup, XsdAttributeGroupVisitor>(mappers);
+  addGenericEntry<XsdChoice, XsdChoiceVisitor>(mappers);
+  addGenericEntry<XsdComplexType, XsdComplexTypeVisitor>(mappers);
+  addGenericEntry<XsdElement, XsdElementVisitor>(mappers);
+  addGenericEntry<XsdGroup, XsdGroupVisitor>(mappers);
+  addGenericEntry<XsdSequence, XsdSequenceVisitor>(mappers);
+  addGenericEntry<XsdSimpleType, XsdSimpleTypeVisitor>(mappers);
+  addGenericEntry<XsdList, XsdListVisitor>(mappers);
+  addGenericEntry<XsdRestriction, XsdRestrictionVisitor>(mappers);
+  addGenericEntry<XsdUnion, XsdUnionVisitor>(mappers);
+  addGenericEntry<XsdAnnotation, XsdAnnotationVisitor>(mappers);
+  addGenericEntry<XsdExtension, XsdExtensionVisitor>(mappers);
+  addGenericEntry<XsdSimpleContent, XsdSimpleContentVisitor>(mappers);
+
+  addAnnotatedEntry<XsdInclude>(mappers);
+  addAnnotatedEntry<XsdImport>(mappers);
+  addAnnotatedEntry<XsdEnumeration>(mappers);
+  addAnnotatedEntry<XsdFractionDigits>(mappers);
+  addAnnotatedEntry<XsdLength>(mappers);
+  addAnnotatedEntry<XsdMaxExclusive>(mappers);
+  addAnnotatedEntry<XsdMaxInclusive>(mappers);
+  addAnnotatedEntry<XsdMinExclusive>(mappers);
+  addAnnotatedEntry<XsdMinInclusive>(mappers);
+  addAnnotatedEntry<XsdMinLength>(mappers);
+  addAnnotatedEntry<XsdPattern>(mappers);
+  addAnnotatedEntry<XsdTotalDigits>(mappers);
+  addAnnotatedEntry<XsdWhiteSpace>(mappers);
+
+  return mappers;
 }

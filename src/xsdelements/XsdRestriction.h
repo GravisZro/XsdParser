@@ -99,12 +99,12 @@ private:
 public: // ctors
   XsdRestriction(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
-                 VisitorFunctionReference visitorFunction,
+                 VisitorFunctionType visitorFunction,
                  std::shared_ptr<XsdAbstractElement> parent);
 
   virtual void initialize(void) override;
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdRestriction>(shared_from_this()));
@@ -112,16 +112,6 @@ public:
 
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
   std::shared_ptr<XsdRestriction> clone(StringMap placeHolderAttributes);
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdRestriction>(parseData.parserInstance,
-                                                     getAttributesMap(parseData.node),
-                                                     parseData.visitorFunction,
-                                                     nullptr)));
-  }
 
   std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
   std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);

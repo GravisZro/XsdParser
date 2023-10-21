@@ -38,7 +38,7 @@ private:
 public: // ctors
     XsdUnion(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
-             VisitorFunctionReference visitorFunction,
+             VisitorFunctionType visitorFunction,
              std::shared_ptr<XsdAbstractElement> parent)
       : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
     {
@@ -46,7 +46,7 @@ public: // ctors
         m_memberTypes = getAttribute(MEMBER_TYPES_TAG);
     }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdUnion>(shared_from_this()));
@@ -59,16 +59,6 @@ public:
     }
 
   std::list<std::string> getMemberTypesList(void);
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdUnion>(parseData.parserInstance,
-                                               getAttributesMap(parseData.node),
-                                               parseData.visitorFunction,
-                                               nullptr)));
-  }
 
   void add(std::shared_ptr<XsdSimpleType> simpleType) {
         m_simpleTypeList.push_back(simpleType);

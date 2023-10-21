@@ -35,16 +35,16 @@ private:
 public: // ctors
     XsdImport(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
-              VisitorFunctionReference visitorFunction,
+              VisitorFunctionType visitorFunction,
               std::shared_ptr<XsdAbstractElement> parent);
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdImport>(shared_from_this()));
     }
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+
 
   std::optional<std::string> getNamespace(void) {
         return m_namespace;

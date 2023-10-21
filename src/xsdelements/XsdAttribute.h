@@ -73,7 +73,7 @@ private:
 public: // ctors
     XsdAttribute(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
-                 VisitorFunctionReference visitorFunction,
+                 VisitorFunctionType visitorFunction,
                  std::shared_ptr<XsdAbstractElement> parent);
 
     virtual void initialize(void) override;
@@ -111,7 +111,7 @@ private:
         }
     }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
   std::shared_ptr<XsdAttribute> clone(StringMap placeHolderAttributes);
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper);
 
@@ -139,5 +139,5 @@ public:
 
   std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void);
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+  
 };

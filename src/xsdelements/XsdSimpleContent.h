@@ -39,11 +39,11 @@ private:
 public:
     XsdSimpleContent(std::shared_ptr<XsdParserCore> parser,
                      StringMap elementFieldsMapParam,
-                     VisitorFunctionReference visitorFunction,
+                     VisitorFunctionType visitorFunction,
                      std::shared_ptr<XsdAbstractElement> parent)
         : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent) { }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdSimpleContent>(shared_from_this()));
@@ -83,16 +83,6 @@ public:
     if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_restriction); x)
       return std::static_pointer_cast<XsdRestriction>(x->getElement());
     return nullptr;
-  }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdSimpleContent>(parseData.parserInstance,
-                                                       getAttributesMap(parseData.node),
-                                                       parseData.visitorFunction,
-                                                       nullptr)));
   }
 
   void setRestriction(std::shared_ptr<ReferenceBase> restriction) {

@@ -41,12 +41,12 @@ private:
 public: // ctors
     XsdAll(std::shared_ptr<XsdParserCore> parser,
            StringMap attributesMap,
-           VisitorFunctionReference visitorFunction,
+           VisitorFunctionType visitorFunction,
            std::shared_ptr<XsdAbstractElement> parent);
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
 
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+  
 
     /**
      * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace

@@ -37,7 +37,7 @@ public: // ctors
         m_xmlLang = getAttribute(XML_LANG_TAG);
     }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {
         XsdAnnotationChildren::accept(xsdAbstractElementVisitor);
         xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdDocumentation>(shared_from_this()));

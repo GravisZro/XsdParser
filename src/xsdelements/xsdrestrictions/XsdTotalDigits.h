@@ -25,7 +25,7 @@ public:
 public: // ctors
   XsdTotalDigits(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
-                 VisitorFunctionReference visitorFunction,
+                 VisitorFunctionType visitorFunction,
                  std::shared_ptr<XsdAbstractElement> parent)
         : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
   {
@@ -34,7 +34,7 @@ public: // ctors
     }
 
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {
         XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);
         xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdTotalDigits>(shared_from_this()));
@@ -53,15 +53,5 @@ public:
                                       placeHolderAttributes,
                                       m_visitorFunction,
                                       nullptr);
-    }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdTotalDigits>(parseData.parserInstance,
-                                                         getAttributesMap(parseData.node),
-                                                         parseData.visitorFunction,
-                                                         nullptr)));
     }
 };

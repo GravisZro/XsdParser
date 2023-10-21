@@ -17,7 +17,7 @@ class XsdIdentifierElements : public XsdAbstractElement
 {
 public:
   using XsdAbstractElement::clone;
-  using XsdAbstractElement::initialize;
+  
 private:
     /**
      * Specifies a unique ID for the element.
@@ -27,7 +27,7 @@ private:
 public: // ctors
     XsdIdentifierElements(std::shared_ptr<XsdParserCore> parser,
                           StringMap attributesMap,
-                          VisitorFunctionReference visitorFunction,
+                          VisitorFunctionType visitorFunction,
                           std::shared_ptr<XsdAbstractElement> parent)
       : XsdAbstractElement(parser, attributesMap, visitorFunction, parent)
     {

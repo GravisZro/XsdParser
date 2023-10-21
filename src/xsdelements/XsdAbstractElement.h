@@ -90,11 +90,11 @@ private:
   bool m_parentAvailable;
 
 protected:
-    VisitorFunctionReference m_visitorFunction;
+    VisitorFunctionType m_visitorFunction;
 public: // ctors
     XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                        StringMap attributesMap,
-                       VisitorFunctionReference visitorFunction,
+                       VisitorFunctionType visitorFunction,
                        std::shared_ptr<XsdAbstractElement> parent);
 
 public:
@@ -136,7 +136,7 @@ public:
      * field.
      * @param xsdAbstractElementVisitor The visitor that is visiting the current instance.
      */
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor);
+  virtual void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor);
 
   std::list<std::shared_ptr<ReferenceBase>> getElements(void) { return {}; }
 

@@ -76,7 +76,7 @@ private:
 public: // ctors
     XsdComplexType(std::shared_ptr<XsdParserCore> parser,
                    StringMap elementFieldsMapParam,
-                   VisitorFunctionReference visitorFunction,
+                   VisitorFunctionType visitorFunction,
                    std::shared_ptr<XsdAbstractElement> parent);
 public:
     /**
@@ -101,7 +101,7 @@ private:
     }
 
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdNamedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdComplexType>(shared_from_this()));
@@ -144,17 +144,6 @@ public:
   bool isElementAbstract(void) {
         return m_elementAbstract;
     }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdComplexType>(parseData.parserInstance,
-                                                     getAttributesMap(parseData.node),
-                                                     parseData.visitorFunction,
-                                                     nullptr)));
-  }
-
 
   void setChildElement(std::shared_ptr<ReferenceBase> childElement) {
         m_childElement = childElement;

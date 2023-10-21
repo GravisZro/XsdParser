@@ -26,12 +26,12 @@ public:
 public: // ctors
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
              StringMap elementFieldsMapParam,
-             VisitorFunctionReference visitorFunction,
+             VisitorFunctionType visitorFunction,
              std::shared_ptr<XsdAbstractElement> parent)
     : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
   { }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);
         xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdPattern>(shared_from_this()));
@@ -50,15 +50,5 @@ public:
                                   placeHolderAttributes,
                                   m_visitorFunction,
                                   nullptr);
-    }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdPattern>(parseData.parserInstance,
-                                                     getAttributesMap(parseData.node),
-                                                     parseData.visitorFunction,
-                                                     nullptr)));
     }
 };

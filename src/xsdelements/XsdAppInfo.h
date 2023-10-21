@@ -34,7 +34,7 @@ public: // ctors
       : XsdAnnotationChildren(parser, elementFieldsMapParam) { }
 
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotationChildren::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdAppInfo>(shared_from_this()));

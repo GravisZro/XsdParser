@@ -51,7 +51,7 @@ private:
 public: // ctors
     XsdGroup(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
-             VisitorFunctionReference visitorFunction,
+             VisitorFunctionType visitorFunction,
              std::shared_ptr<XsdAbstractElement> parent)
         : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
           m_minOccurs(1),
@@ -97,7 +97,7 @@ private:
             throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
     }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdNamedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdGroup>(shared_from_this()));
@@ -169,16 +169,6 @@ public:
   std::shared_ptr<XsdSequence> getChildAsSequence(void) {
         return XsdMultipleElements::getChildAsSequence(m_childElement);
     }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdGroup>(parseData.parserInstance,
-                                               getAttributesMap(parseData.node),
-                                               parseData.visitorFunction,
-                                               nullptr)));
-  }
 
   int getMinOccurs(void) {
         return m_minOccurs;

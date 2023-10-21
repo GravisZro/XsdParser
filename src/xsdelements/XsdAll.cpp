@@ -12,7 +12,7 @@
 
 XsdAll::XsdAll(std::shared_ptr<XsdParserCore> parser,
                StringMap attributesMap,
-               VisitorFunctionReference visitorFunction,
+               VisitorFunctionType visitorFunction,
                std::shared_ptr<XsdAbstractElement> parent)
   : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
     m_minOccurs(1),
@@ -29,17 +29,6 @@ void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdMultipleElements::accept(visitorParam);
     visitorParam->visit(std::static_pointer_cast<XsdAll>(shared_from_this()));
-}
-
-
-std::shared_ptr<ReferenceBase> XsdAll::parse(ParseData parseData)
-{
-  return xsdParseSkeleton(parseData.node,
-                          std::static_pointer_cast<XsdAbstractElement>(
-                            create<XsdAll>(parseData.parserInstance,
-                                           getAttributesMap(parseData.node),
-                                           parseData.visitorFunction,
-                                           nullptr)));
 }
 
 

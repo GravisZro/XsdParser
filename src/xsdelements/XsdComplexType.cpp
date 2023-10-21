@@ -10,7 +10,7 @@
 
 XsdComplexType::XsdComplexType(std::shared_ptr<XsdParserCore> parser,
                                StringMap attributesMap,
-                               VisitorFunctionReference visitorFunction,
+                               VisitorFunctionType visitorFunction,
                                std::shared_ptr<XsdAbstractElement> parent)
   : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
     m_elementAbstract(false),

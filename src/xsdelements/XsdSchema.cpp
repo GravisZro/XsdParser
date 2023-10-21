@@ -17,7 +17,7 @@
 
 XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
-                     VisitorFunctionReference visitorFunction,
+                     VisitorFunctionType visitorFunction,
                      std::shared_ptr<XsdAbstractElement> parent)
   : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
     m_attributeFormDefault(FormEnum::UNQUALIFIED),
@@ -66,33 +66,6 @@ std::list<std::shared_ptr<ReferenceBase>> XsdSchema::getElements(void)
     rval.push_back(ReferenceBase::createFromXsd(element));
   return rval;
 }
-
-std::shared_ptr<ReferenceBase> XsdSchema::parse(ParseData parseData)
-{
-      auto xsdSchemaRef = xsdParseSkeleton(parseData.node,
-                                           std::static_pointer_cast<XsdAbstractElement>(
-                                             create<XsdSchema>(parseData.parserInstance,
-                                                               getAttributesMap(parseData.node),
-                                                               parseData.visitorFunction,
-                                                               nullptr)));
-      auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
-
-      std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
-
-      std::map<std::string, SchemaLocation> prefixLocations;
-      for(auto& nspair : xsdSchema->getNamespaces())
-        for(auto& import : importsList)
-          if(import->getNamespace() == nspair.second.getName() && import->getSchemaLocation())
-          {
-            prefixLocations.emplace(nspair.first, import->getSchemaLocation());
-            break;
-          }
-
-      xsdSchema->updatePrefixLocations(prefixLocations);
-      return xsdSchemaRef;
-  }
-
-
 
 void XsdSchema::add(std::shared_ptr<XsdInclude> element) {
       m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));

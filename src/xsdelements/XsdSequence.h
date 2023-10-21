@@ -41,21 +41,11 @@ private:
 public: // ctors
     XsdSequence(std::shared_ptr<XsdParserCore> parser,
                 StringMap attributesMap,
-                VisitorFunctionReference visitorFunction,
+                VisitorFunctionType visitorFunction,
                 std::shared_ptr<XsdAbstractElement> parent);
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
   std::shared_ptr<XsdSequence> clone(StringMap placeHolderAttributes);
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdParseSkeleton(parseData.node,
-                            std::static_pointer_cast<XsdAbstractElement>(
-                              create<XsdSequence>(parseData.parserInstance,
-                                                  getAttributesMap(parseData.node),
-                                                  parseData.visitorFunction,
-                                                  nullptr)));
-  }
 
   int getMinOccurs(void) {
         return m_minOccurs;

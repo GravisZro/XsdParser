@@ -60,7 +60,8 @@ public:
      *                           {@link XsdDocumentation}).
      * @return The annotationChildren wrapped in the correct {@link ReferenceBase} wrapper.
      */
-    static std::shared_ptr<ReferenceBase> xsdAnnotationChildrenParse(pugi::xml_node node, std::shared_ptr<XsdAnnotationChildren> annotationChildren)
+    static std::shared_ptr<ReferenceBase> xsdAnnotationChildrenParse(pugi::xml_node node,
+                                                                     std::shared_ptr<XsdAnnotationChildren> annotationChildren)
     {
         annotationChildren->m_content = xsdRawContentParse(node);
 

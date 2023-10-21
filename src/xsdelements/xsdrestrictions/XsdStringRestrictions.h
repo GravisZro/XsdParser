@@ -24,7 +24,7 @@ private:
 public: // ctors
     XsdStringRestrictions(std::shared_ptr<XsdParserCore> parser,
                           StringMap elementFieldsMapParam,
-                          VisitorFunctionReference visitorFunction,
+                          VisitorFunctionType visitorFunction,
                           std::shared_ptr<XsdAbstractElement> parent)
         : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent)
     {

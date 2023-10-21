@@ -5,7 +5,7 @@
 
 XsdNamedElements::XsdNamedElements(std::shared_ptr<XsdParserCore> parser,
                                    StringMap attributesMap,
-                                   VisitorFunctionReference visitorFunction,
+                                   VisitorFunctionType visitorFunction,
                                    std::shared_ptr<XsdAbstractElement> parent)
   : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 {

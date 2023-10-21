@@ -30,7 +30,7 @@ private:
 public: // ctors
   XsdWhiteSpace(std::shared_ptr<XsdParserCore> parser,
                 StringMap elementFieldsMapParam,
-                VisitorFunctionReference visitorFunction,
+                VisitorFunctionType visitorFunction,
                 std::shared_ptr<XsdAbstractElement> parent)
         : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent),
           m_fixed(false)
@@ -41,7 +41,7 @@ public: // ctors
       m_value = AttributeValidations::belongsToEnum<WhiteSpaceEnum>(elementFieldsMapParam.at(*VALUE_TAG));
   }
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {
         XsdAnnotatedElements::accept(xsdAbstractElementVisitor);
         xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdWhiteSpace>(shared_from_this()));
@@ -60,16 +60,6 @@ public:
                                      placeHolderAttributes,
                                      m_visitorFunction,
                                      nullptr);
-    }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-        return xsdParseSkeleton(parseData.node,
-                                std::static_pointer_cast<XsdAbstractElement>(
-                                  create<XsdWhiteSpace>(parseData.parserInstance,
-                                                        getAttributesMap(parseData.node),
-                                                        parseData.visitorFunction,
-                                                        nullptr)));
     }
 
   bool isFixed(void) {

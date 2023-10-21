@@ -27,11 +27,11 @@ public:
 public: // ctors
   XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
-                 VisitorFunctionReference visitorFunction,
+                 VisitorFunctionType visitorFunction,
                  std::shared_ptr<XsdAbstractElement> parent);
 
 public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor);
+  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override;
     /**
      * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
      * {@link UnsolvedReference} objects in the reference solving process.
@@ -39,5 +39,5 @@ public:
      * @return A copy of the object from which is called upon.
      */
   std::shared_ptr<XsdEnumeration> clone(StringMap placeHolderAttributes);
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData);
+  
 };
