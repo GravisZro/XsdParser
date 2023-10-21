@@ -18,18 +18,27 @@
 #include <core/XsdParserCore.h>
 
 
-XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
+XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser,
+                           StringMap attributesMap,
+                           VisitorFunctionReference visitorFunction)
     : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+{ }
+
+void XsdExtension::initialize(void)
 {
-    if (attributesMap.contains(*BASE_TAG))
+  XsdAnnotatedElements::initialize();
+    if (haveAttribute(BASE_TAG))
     {
-      std::string baseValue = attributesMap.at(*BASE_TAG);
+      std::string baseValue = getAttribute(BASE_TAG);
 
         if (XsdParserCore::getXsdTypesToJava().contains(baseValue))
         {
             StringMap attributes;
             attributes.emplace(NAME_TAG, baseValue);
-            m_base = ReferenceBase::createFromXsd(std::make_shared<XsdBuiltInDataType>(parser, attributes, nondeleted_ptr<XsdExtension>(this)));
+            m_base = ReferenceBase::createFromXsd(
+                       create<XsdBuiltInDataType>(getParser(),
+                         attributes,
+                         shared_from_this()));
         }
         else
         {
@@ -44,12 +53,11 @@ XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attr
             if (!config.parserFunction || !config.visitorFunction)
                 throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
-            m_base = std::make_shared<UnsolvedReference>(baseValue,
-                                                         std::make_shared<XsdElement>(
-                                                           nondeleted_ptr<XsdAbstractElement>(this),
-                                                           getParser(),
-                                                           StringMap{},
-                                                           config.visitorFunction));
+            m_base = create<UnsolvedReference>(baseValue,
+                                               create<XsdElement>(getParser(),
+                                                 StringMap{},
+                                                 config.visitorFunction,
+                                                 shared_from_this()));
             getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
         }
     }
@@ -82,7 +90,10 @@ void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
         compareReference(element, x))
         m_childElement = element;
 
-    std::static_pointer_cast<XsdExtensionVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, nondeleted_ptr<XsdExtension>(this));
+    std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->replaceUnsolvedAttributes(
+          getParser(),
+          element,
+          shared_from_this());
 }
 
 /**
@@ -93,24 +104,34 @@ void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
  */
 std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = std::make_shared<XsdExtension>(getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdExtension>(getParser(),
+                                            placeHolderAttributes,
+                                            m_visitorFunction);
 
     for(auto& attribute : getXsdAttributes())
     {
-        elementCopy->m_visitor->visit(std::static_pointer_cast<XsdAttribute>(attribute->clone(attribute->getAttributesMap(), elementCopy)));
+        elementCopy->getVisitor()->visit(
+              std::static_pointer_cast<XsdAttribute>(
+                attribute->clone(
+                  attribute->getAttributesMap(),
+                  elementCopy)));
     }
 
     for(auto& attributeGroup : getXsdAttributeGroup())
     {
-        elementCopy->m_visitor->visit(std::static_pointer_cast<XsdAttributeGroup>(attributeGroup->clone(attributeGroup->getAttributesMap(), elementCopy)));
+        elementCopy->getVisitor()->visit(
+              std::static_pointer_cast<XsdAttributeGroup>(
+                attributeGroup->clone(
+                  attributeGroup->getAttributesMap(),
+                  elementCopy)));
     }
 
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
     elementCopy->m_base = m_base;
-    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
-    elementCopy->m_parent = nullptr;
+    elementCopy->setCloneOf(shared_from_this());
+    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }
@@ -173,15 +194,19 @@ return nullptr;
 
 std::shared_ptr<ReferenceBase> XsdExtension::parse(ParseData parseData)
 {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdExtension>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdExtension>(parseData.parserInstance,
+                                getAttributesMap(parseData.node),
+                                parseData.visitorFunction)));
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void) {
-    return std::static_pointer_cast<XsdExtensionVisitor>(m_visitor)->getXsdAttributes();
+    return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributes();
 }
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void) {
-    return std::static_pointer_cast<XsdExtensionVisitor>(m_visitor)->getXsdAttributeGroups();
+    return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributeGroups();
 }
 
 std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement()

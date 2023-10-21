@@ -14,16 +14,20 @@
 
 XsdAbstractElement::XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                                        StringMap attributesMap,
-                                       VisitorFunctionReference visitorFunction)
+                                       VisitorFunctionReference visitorFunction,
+                                       std::shared_ptr<XsdAbstractElement> parent)
 {
     m_parser = parser;
     m_attributesMap = attributesMap;
     m_visitorFunction = visitorFunction;
+    setParent(parent);
+}
 
-    if(visitorFunction)
-    {
-        m_visitor = visitorFunction(nondeleted_ptr<XsdAbstractElement>(this));
-    }
+void XsdAbstractElement::initialize(void)
+{
+  assert(shared_from_this());
+  if(m_visitor == nullptr && m_visitorFunction)
+    m_visitor = m_visitorFunction(shared_from_this());
 }
 
 /**
@@ -150,7 +154,7 @@ std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(void)
   std::shared_ptr<XsdSchema> schema;
   try
   {
-    schema = getXsdSchema(nondeleted_ptr<XsdAbstractElement>(this), {});
+    schema = getXsdSchema(shared_from_this(), {});
   }
   catch (...)
   {

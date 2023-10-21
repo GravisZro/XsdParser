@@ -112,24 +112,18 @@ private:
      * Default value is 1. This attribute cannot be used if the parent element is the XsdSchema element.
      */
     std::string m_maxOccurs;
-public:
+
+public: // ctors
   XsdElement(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
-             VisitorFunctionReference visitorFunction);
-
-  XsdElement(std::shared_ptr<XsdAbstractElement> parent,
-             std::shared_ptr<XsdParserCore> parser,
-             StringMap elementFieldsMapParam,
-             VisitorFunctionReference visitorFunction)
-        : XsdElement(parser, elementFieldsMapParam, visitorFunction)
-  {
-    setParent(parent);
-  }
-
+             VisitorFunctionReference visitorFunction,
+             std::shared_ptr<XsdAbstractElement> parent = nullptr);
+  virtual void initialize(void) override;
+private:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  void validateSchemaRules(void)
+  virtual void validateSchemaRules(void) override
     {
         XsdNamedElements::validateSchemaRules();
         rule2();
@@ -151,7 +145,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdElement>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdElement>(shared_from_this()));
     }
 
   std::shared_ptr<XsdElement> clone(StringMap placeHolderAttributes);
@@ -171,7 +165,11 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdElement>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdElement>(parseData.parserInstance,
+                                                 getAttributesMap(parseData.node),
+                                                 parseData.visitorFunction)));
   }
 
   std::optional<std::string> getFinal(void)

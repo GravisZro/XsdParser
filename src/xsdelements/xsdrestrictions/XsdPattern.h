@@ -18,12 +18,12 @@
 class XsdPattern : public XsdStringRestrictions
 {
 public:
+  using XsdStringRestrictions::clone;
   constexpr static const std::string_view XSD_TAG = "xsd:pattern";
   constexpr static const std::string_view XS_TAG = "xs:pattern";
   constexpr static const std::string_view TAG = "pattern";
 
-public:
-  using XsdStringRestrictions::clone;
+public: // ctors
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
              StringMap elementFieldsMapParam,
              VisitorFunctionReference visitorFunction)
@@ -33,7 +33,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdPattern>(this));
+        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdPattern>(shared_from_this()));
     }
 
     /**
@@ -44,14 +44,20 @@ public:
      */
   std::shared_ptr<XsdPattern> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
-        auto elementCopy = std::make_shared<XsdPattern>(getParser(), placeHolderAttributes, m_visitorFunction);
+        placeHolderAttributes.merge(getAttributesMap());
+        auto elementCopy = create<XsdPattern>(getParser(),
+                                                        placeHolderAttributes,
+                                                        m_visitorFunction);
         elementCopy->setParent(nullptr);
         return elementCopy;
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdPattern>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdPattern>(parseData.parserInstance,
+                                                     getAttributesMap(parseData.node),
+                                                     parseData.visitorFunction)));
     }
 };

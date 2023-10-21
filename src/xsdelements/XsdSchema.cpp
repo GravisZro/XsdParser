@@ -24,26 +24,26 @@ XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
     m_blockDefault(BlockDefaultEnum::DEFAULT),
     m_finalDefault(FinalDefaultEnum::DEFAULT)
 {
-  if(attributesMap.contains(*ATTRIBUTE_FORM_DEFAULT))
-    m_attributeFormDefault = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.at(*ATTRIBUTE_FORM_DEFAULT));
+  if(haveAttribute(ATTRIBUTE_FORM_DEFAULT))
+    m_attributeFormDefault = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(ATTRIBUTE_FORM_DEFAULT));
 
-  if(attributesMap.contains(*ELEMENT_FORM_DEFAULT))
-    m_elementFormDefault = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.at(*ELEMENT_FORM_DEFAULT));
+  if(haveAttribute(ELEMENT_FORM_DEFAULT))
+    m_elementFormDefault = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(ELEMENT_FORM_DEFAULT));
 
-  if(attributesMap.contains(*BLOCK_DEFAULT))
-    m_blockDefault = AttributeValidations::belongsToEnum<BlockDefaultEnum>(attributesMap.at(*BLOCK_DEFAULT));
+  if(haveAttribute(BLOCK_DEFAULT))
+    m_blockDefault = AttributeValidations::belongsToEnum<BlockDefaultEnum>(getAttribute(BLOCK_DEFAULT));
 
-  if(attributesMap.contains(*FINAL_DEFAULT))
-    m_finalDefault = AttributeValidations::belongsToEnum<FinalDefaultEnum>(attributesMap.at(*FINAL_DEFAULT));
+  if(haveAttribute(FINAL_DEFAULT))
+    m_finalDefault = AttributeValidations::belongsToEnum<FinalDefaultEnum>(getAttribute(FINAL_DEFAULT));
 
-  if(attributesMap.contains(*TARGET_NAMESPACE))
-    m_targetNamespace = attributesMap.at(*TARGET_NAMESPACE);
+  if(haveAttribute(TARGET_NAMESPACE))
+    m_targetNamespace = getAttribute(TARGET_NAMESPACE);
 
-  if(attributesMap.contains(*VERSION))
-    m_version = attributesMap.at(*VERSION);
+  if(haveAttribute(VERSION))
+    m_version = getAttribute(VERSION);
 
-  if(attributesMap.contains(*XMLNS))
-    m_xmlns = attributesMap.at(*XMLNS);
+  if(haveAttribute(XMLNS))
+    m_xmlns = getAttribute(XMLNS);
 
   for (auto& pair : attributesMap)
   {
@@ -68,13 +68,12 @@ std::list<std::shared_ptr<ReferenceBase>> XsdSchema::getElements(void)
 
 std::shared_ptr<ReferenceBase> XsdSchema::parse(ParseData parseData)
 {
-      std::shared_ptr<ReferenceBase> xsdSchemaRef = xsdParseSkeleton(parseData.node,
-                                                                     std::static_pointer_cast<XsdAbstractElement>(
-                                                                       std::make_shared<XsdSchema>(
-                                                                         parseData.parserInstance,
-                                                                         XsdAbstractElement::getAttributesMap(parseData.node),
-                                                                         parseData.visitorFunction)));
-      std::shared_ptr<XsdSchema> xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
+      auto xsdSchemaRef = xsdParseSkeleton(parseData.node,
+                                           std::static_pointer_cast<XsdAbstractElement>(
+                                             create<XsdSchema>(parseData.parserInstance,
+                                                               getAttributesMap(parseData.node),
+                                                               parseData.visitorFunction)));
+      auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
 
       std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
 

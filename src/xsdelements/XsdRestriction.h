@@ -96,22 +96,18 @@ private:
      * The name of the type where this instance restrictions should be applied.
      */
     std::optional<std::string> m_baseString;
-public:
-  XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
-public:
-  XsdRestriction(std::shared_ptr<XsdAbstractElement> parent,
-                 std::shared_ptr<XsdParserCore> parser,
+public: // ctors
+  XsdRestriction(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
-                 VisitorFunctionReference visitorFunction)
-  : XsdRestriction(parser, elementFieldsMapParam, visitorFunction)
-  {
-    setParent(parent);
-  }
+                 VisitorFunctionReference visitorFunction,
+                 std::shared_ptr<XsdAbstractElement> parent = nullptr);
 
+  virtual void initialize(void) override;
+public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdRestriction>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdRestriction>(shared_from_this()));
     }
 
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
@@ -119,8 +115,12 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdRestriction>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdRestriction>(parseData.parserInstance,
+                                                     getAttributesMap(parseData.node),
+                                                     parseData.visitorFunction)));
+  }
 
   std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
   std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);

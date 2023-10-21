@@ -18,6 +18,7 @@ class XsdAnnotatedElements : public XsdIdentifierElements
 {
 public:
   using XsdIdentifierElements::clone;
+  using XsdIdentifierElements::initialize;
 
 private:
     /**
@@ -25,11 +26,12 @@ private:
      */
   std::shared_ptr<XsdAnnotation> m_annotation;
 
-protected:
+public: // ctors
   XsdAnnotatedElements(std::shared_ptr<XsdParserCore> parser,
                        StringMap elementFieldsMapParam,
-                       VisitorFunctionReference visitorFunction)
-    : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction) {}
+                       VisitorFunctionReference visitorFunction,
+                       std::shared_ptr<XsdAbstractElement> parent = nullptr)
+    : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction, parent) {}
 
 public:
   void setAnnotation(std::shared_ptr<XsdAnnotation> annotation){

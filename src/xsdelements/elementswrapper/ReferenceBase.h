@@ -10,12 +10,12 @@ class XsdParserCore;
  */
 class ReferenceBase
 {
-protected:
-  std::shared_ptr<XsdAbstractElement> m_element;
 public:
-
+  std::shared_ptr<XsdAbstractElement> m_element;
+public: // ctors
     ReferenceBase(std::shared_ptr<XsdAbstractElement> element);
     virtual ~ReferenceBase(void) = default;
+    virtual void initialize(void) { }
 
   std::shared_ptr<XsdAbstractElement> getElement(void);
 
@@ -29,7 +29,9 @@ public:
      */
   static std::shared_ptr<ReferenceBase> createFromXsd(std::shared_ptr<XsdAbstractElement> element);
 
-  static std::shared_ptr<ReferenceBase> clone(std::shared_ptr<XsdParserCore> parser, std::shared_ptr<ReferenceBase> originalReference, std::shared_ptr<XsdAbstractElement> parent);
+  static std::shared_ptr<ReferenceBase> clone(std::shared_ptr<XsdParserCore> parser,
+                                              std::shared_ptr<ReferenceBase> originalReference,
+                                              std::shared_ptr<XsdAbstractElement> parent);
 
   static std::optional<std::string> getRef(std::shared_ptr<XsdAbstractElement> element);
 

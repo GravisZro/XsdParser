@@ -33,16 +33,19 @@ private:
      * instance extends.
      */
     std::shared_ptr<ReferenceBase> m_base;
-public:
-    XsdExtension(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
+public: // ctors
+    XsdExtension(std::shared_ptr<XsdParserCore> parser,
+                 StringMap attributesMap,
+                 VisitorFunctionReference visitorFunction);
 
+    virtual void initialize(void) override;
 public:
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdExtension>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdExtension>(shared_from_this()));
     }
 
   std::shared_ptr<XsdExtension> clone(StringMap placeHolderAttributes);

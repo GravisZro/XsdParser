@@ -12,19 +12,22 @@ class XsdNamedElements : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
+
+private:
     /**
      * The name of the element.
      */
     std::optional<std::string> m_name;
-
+public: // ctors
     XsdNamedElements(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
-                     VisitorFunctionReference visitorFunction);
-
+                     VisitorFunctionReference visitorFunction,
+                     std::shared_ptr<XsdAbstractElement> parent = nullptr);
+public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  void validateSchemaRules(void)
+  virtual void validateSchemaRules(void) override
     {
         rule1();
     }
@@ -36,7 +39,7 @@ public:
 private:
   void rule1(void)
   {
-        if (m_name && m_attributesMap.contains(*REF_TAG))
+        if (m_name && haveAttribute(REF_TAG))
         {
           throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
         }

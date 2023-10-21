@@ -19,12 +19,6 @@
 
 #include <xsdelements/XsdSimpleType.h>
 
-#include <list>
-#include <map>
-#include <functional>
-#include <string_view>
-#include <string>
-
 /**
  * A class representing the xsd:attribute element. It can have a ref attribute and therefore extends from
  * {@link XsdNamedElements}, which serves as a base to every element type that can have a ref attribute.
@@ -76,25 +70,18 @@ private:
      * Specifies how this {@link XsdAttribute} should be used. The possible values are: required, prohibited, optional.
      */
     UsageEnum m_use;
-public:
+public: // ctors
     XsdAttribute(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
-                 VisitorFunctionReference visitorFunction);
+                 VisitorFunctionReference visitorFunction,
+                 std::shared_ptr<XsdAbstractElement> parent = nullptr);
 
-    XsdAttribute(std::shared_ptr<XsdAbstractElement> parent,
-                 std::shared_ptr<XsdParserCore> parser,
-                 StringMap attributesMap,
-                 VisitorFunctionReference visitorFunction)
-      : XsdAttribute(parser, attributesMap, visitorFunction)
-    {
-        setParent(parent);
-    }
-
+    virtual void initialize(void) override;
 public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  void validateSchemaRules(void)
+  virtual void validateSchemaRules(void) override
     {
         XsdNamedElements::validateSchemaRules();
         rule2();
@@ -108,7 +95,7 @@ private:
      */
     void rule3(void)
     {
-        if (m_attributesMap.contains(*REF_TAG) && (m_simpleType || m_form || m_type)){
+        if (haveAttribute(REF_TAG) && (m_simpleType || m_form || m_type)){
             throw ParsingException(XSD_TAG + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
         }
     }

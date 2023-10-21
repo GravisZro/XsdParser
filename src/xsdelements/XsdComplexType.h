@@ -73,22 +73,16 @@ private:
      */
     std::shared_ptr<XsdSimpleContent> m_simpleContent;
 
-public:
-    XsdComplexType(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
-
-    XsdComplexType(std::shared_ptr<XsdAbstractElement> parent,
-                   std::shared_ptr<XsdParserCore> parser,
+public: // ctors
+    XsdComplexType(std::shared_ptr<XsdParserCore> parser,
                    StringMap elementFieldsMapParam,
-                   VisitorFunctionReference visitorFunction)
-      : XsdComplexType(parser, elementFieldsMapParam, visitorFunction)
-    {
-        setParent(parent);
-    }
-
+                   VisitorFunctionReference visitorFunction,
+                   std::shared_ptr<XsdAbstractElement> parent = nullptr);
+public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  void validateSchemaRules(void)
+  virtual void validateSchemaRules(void) override
     {
         XsdNamedElements::validateSchemaRules();
         rule2();
@@ -101,7 +95,7 @@ private:
      */
   void rule2(void)
   {
-        if (m_simpleContent && m_attributesMap.contains(*MIXED_TAG)){
+        if (m_simpleContent && haveAttribute(MIXED_TAG)){
             throw ParsingException(XSD_TAG + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
         }
     }
@@ -110,7 +104,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdComplexType>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdComplexType>(shared_from_this()));
     }
 
     /**
@@ -153,8 +147,12 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdComplexType>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdComplexType>(parseData.parserInstance,
+                                                     getAttributesMap(parseData.node),
+                                                     parseData.visitorFunction)));
+  }
 
 
   void setChildElement(std::shared_ptr<ReferenceBase> childElement) {

@@ -32,13 +32,15 @@ private:
      * that belong to the same XSD language definition.
      */
     SchemaLocation m_schemaLocation;
+public: // ctors
+    XsdImport(std::shared_ptr<XsdParserCore> parser,
+              StringMap attributesMap,
+              VisitorFunctionReference visitorFunction);
 public:
-    XsdImport(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
-
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdImport>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdImport>(shared_from_this()));
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData);

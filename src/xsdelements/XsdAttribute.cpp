@@ -12,41 +12,48 @@
 std::shared_ptr<XsdAbstractElementVisitor> XsdAttributeVisitorFunction(std::shared_ptr<XsdAbstractElement> element)
 {
   return std::static_pointer_cast<XsdAbstractElementVisitor>(
-            std::make_shared<XsdSimpleTypeVisitor>(
+            create<XsdSimpleTypeVisitor>(
               std::static_pointer_cast<XsdSimpleType>(element)));
 }
 
 XsdAttribute::XsdAttribute(std::shared_ptr<XsdParserCore> parser,
-             StringMap attributesMap,
-             VisitorFunctionReference visitorFunction)
-  : XsdNamedElements(parser, attributesMap, visitorFunction)
+                           StringMap attributesMap,
+                           VisitorFunctionReference visitorFunction,
+                           std::shared_ptr<XsdAbstractElement> parent)
+  : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
+{ }
+
+void XsdAttribute::initialize(void)
 {
-  m_form = getFormDefaultValue(m_parent);
+  m_form = getFormDefaultValue(getParent());
 
-  if(attributesMap.contains(*DEFAULT_ELEMENT_TAG))
-    m_defaultElement = attributesMap.at(*DEFAULT_ELEMENT_TAG);
+  if(haveAttribute(DEFAULT_ELEMENT_TAG))
+    m_defaultElement = getAttribute(DEFAULT_ELEMENT_TAG);
 
-  if(attributesMap.contains(*FIXED_TAG))
-    m_fixed = attributesMap.at(*FIXED_TAG);
+  if(haveAttribute(FIXED_TAG))
+    m_fixed = getAttribute(FIXED_TAG);
 
-  if(attributesMap.contains(*TYPE_TAG))
-    m_type = attributesMap.at(*TYPE_TAG);
+  if(haveAttribute(TYPE_TAG))
+    m_type = getAttribute(TYPE_TAG);
 
-  if(attributesMap.contains(*FORM_TAG))
-    m_form = AttributeValidations::belongsToEnum<FormEnum>(attributesMap.at(*FORM_TAG));
+  if(haveAttribute(FORM_TAG))
+    m_form = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(FORM_TAG));
 
-  if(attributesMap.contains(*USE_TAG))
-    m_use = AttributeValidations::belongsToEnum<UsageEnum>(attributesMap.at(*FORM_TAG));
+  if(haveAttribute(USE_TAG))
+    m_use = AttributeValidations::belongsToEnum<UsageEnum>(getAttribute(USE_TAG));
   else
     m_use = UsageEnum::OPTIONAL;
 
 
   if (m_type && !XsdParserCore::getXsdTypesToJava().contains(m_type.value()))
   {
-      m_simpleType = std::make_shared<UnsolvedReference>(m_type.value(),
-                                                         std::static_pointer_cast<XsdNamedElements>(
-                                                           std::make_shared<XsdSimpleType>(parser, StringMap{}, XsdAttributeVisitorFunction)));
-      parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_simpleType));
+      m_simpleType = create<UnsolvedReference>(
+                       m_type.value(),
+                       std::static_pointer_cast<XsdNamedElements>(
+                         create<XsdSimpleType>(getParser(),
+                                               StringMap{},
+                                               XsdAttributeVisitorFunction)));
+      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_simpleType));
   }
 }
 
@@ -68,7 +75,7 @@ std::optional<std::string> XsdAttribute::getFormDefaultValue(std::shared_ptr<Xsd
 void XsdAttribute::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
   XsdNamedElements::accept(visitorParam);
-  visitorParam->visit(nondeleted_ptr<XsdAttribute>(this));
+  visitorParam->visit(std::static_pointer_cast<XsdAttribute>(shared_from_this()));
 }
 
 
@@ -81,16 +88,19 @@ void XsdAttribute::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorPara
  */
 std::shared_ptr<XsdAttribute> XsdAttribute::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
     placeHolderAttributes.erase(*TYPE_TAG);
     placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = std::make_shared<XsdAttribute>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdAttribute>(getParser(),
+                                            placeHolderAttributes,
+                                            m_visitorFunction,
+                                            getParent());
 
     elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
     elementCopy->m_type = m_type;
-    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
-    elementCopy->m_parent = nullptr;
+    elementCopy->setCloneOf(shared_from_this());
+    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }
@@ -135,8 +145,9 @@ std::list<std::shared_ptr<XsdRestriction>> XsdAttribute::getAllRestrictions(void
 
 std::shared_ptr<ReferenceBase> XsdAttribute::parse(ParseData parseData)
 {
-      return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(
-                                std::make_shared<XsdAttribute>(parseData.parserInstance,
-                                                               XsdAbstractElement::getAttributesMap(parseData.node),
-                                                               parseData.visitorFunction)));
+      return xsdParseSkeleton(parseData.node,
+                              std::static_pointer_cast<XsdAbstractElement>(
+                                create<XsdAttribute>(parseData.parserInstance,
+                                                     getAttributesMap(parseData.node),
+                                                     parseData.visitorFunction)));
 }

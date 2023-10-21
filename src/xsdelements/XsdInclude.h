@@ -27,18 +27,22 @@ private:
      * that belong to the same XSD language definition.
      */
     SchemaLocation m_schemaLocation;
-public:
+public: // ctors
     XsdInclude(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
 public:
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdInclude>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdInclude>(parseData.parserInstance,
+                                                 getAttributesMap(parseData.node),
+                                                 parseData.visitorFunction)));
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdInclude>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdInclude>(shared_from_this()));
     }
 
   SchemaLocation getSchemaLocation(void) {

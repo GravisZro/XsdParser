@@ -27,15 +27,15 @@ private:
      * The textual content of the current element, either {@link XsdAppInfo} or {@link XsdDocumentation}.
      */
     std::optional<std::string> m_content;
-public:
+public: // ctors
     XsdAnnotationChildren(std::shared_ptr<XsdParserCore> parser,
                           StringMap attributesMap)
       : XsdAbstractElement(parser, attributesMap, nullptr)
   {
-      if(attributesMap.contains(*SOURCE_TAG))
-        m_source = attributesMap.at(*SOURCE_TAG);
+      if(haveAttribute(SOURCE_TAG))
+        m_source = getAttribute(SOURCE_TAG);
     }
-
+public:
     /**
      * @return Always returns a {@link VisitorNotFoundException} since the descendants of this class shouldn't be
      * visited since they aren't allowed to have children.

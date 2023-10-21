@@ -12,7 +12,7 @@ XsdEnumeration::XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
 void XsdEnumeration::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
 {
   XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-  xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdEnumeration>(this));
+  xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdEnumeration>(shared_from_this()));
 }
 
 /**
@@ -23,16 +23,19 @@ void XsdEnumeration::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstra
  */
 std::shared_ptr<XsdEnumeration> XsdEnumeration::clone(StringMap placeHolderAttributes)
 {
-  placeHolderAttributes.merge(m_attributesMap);
-  auto elementCopy = std::make_shared<XsdEnumeration>(getParser(), placeHolderAttributes, m_visitorFunction);
+  placeHolderAttributes.merge(getAttributesMap());
+  auto elementCopy = create<XsdEnumeration>(getParser(),
+                                            placeHolderAttributes,
+                                            m_visitorFunction);
   elementCopy->setParent(nullptr);
   return elementCopy;
 }
 
 std::shared_ptr<ReferenceBase> XsdEnumeration::parse(ParseData parseData)
 {
-  return xsdParseSkeleton(parseData.node, std::shared_ptr<XsdAbstractElement>(
-                            new XsdEnumeration(parseData.parserInstance,
-                                               XsdAbstractElement::getAttributesMap(parseData.node),
-                                               parseData.visitorFunction)));
+  return xsdParseSkeleton(parseData.node,
+                          std::static_pointer_cast<XsdAbstractElement>(
+                            create<XsdEnumeration>(parseData.parserInstance,
+                                                   getAttributesMap(parseData.node),
+                                                   parseData.visitorFunction)));
 }

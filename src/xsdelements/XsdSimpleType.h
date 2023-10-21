@@ -49,20 +49,16 @@ private:
      */
     SimpleTypeFinalEnum m_finalObj;
 
-public:
+public: // ctors
     XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
                   StringMap attributesMap,
-                  VisitorFunctionReference visitorFunction);
-
-    XsdSimpleType(std::shared_ptr<XsdAbstractElement> parent,
-                  std::shared_ptr<XsdParserCore> parser,
-                  StringMap elementFieldsMapParam,
-                  VisitorFunctionReference visitorFunction);
-
+                  VisitorFunctionReference visitorFunction,
+                  std::shared_ptr<XsdAbstractElement> parent = nullptr);
+public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  void validateSchemaRules(void);
+  virtual void validateSchemaRules(void) override;
 
 private:
     /**

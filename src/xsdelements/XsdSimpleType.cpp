@@ -25,22 +25,15 @@
 
 
 XsdSimpleType::XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
-              StringMap attributesMap,
-              VisitorFunctionReference visitorFunction)
-  : XsdNamedElements(parser, attributesMap, visitorFunction)
+                             StringMap attributesMap,
+                             VisitorFunctionReference visitorFunction,
+                             std::shared_ptr<XsdAbstractElement> parent)
+  : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
 {
-    std::string finalDefault = AttributeValidations::getFinalDefaultValue(m_parent);
+    m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
 
-    m_finalObj = AttributeValidations::belongsToEnum<SimpleTypeFinalEnum>(attributesMap.contains(*FINAL_TAG) ? attributesMap.at(*FINAL_TAG) : finalDefault);
-}
-
-XsdSimpleType::XsdSimpleType(std::shared_ptr<XsdAbstractElement> parent,
-                             std::shared_ptr<XsdParserCore> parser,
-                             StringMap elementFieldsMapParam,
-                             VisitorFunctionReference visitorFunction)
-  : XsdSimpleType(parser, elementFieldsMapParam, visitorFunction)
-{
-    setParent(parent);
+    if(haveAttribute(FINAL_TAG))
+      m_finalObj = AttributeValidations::belongsToEnum<SimpleTypeFinalEnum>(getAttribute(FINAL_TAG) );
 }
 
 /**
@@ -60,7 +53,7 @@ void XsdSimpleType::validateSchemaRules(void)
  */
 void XsdSimpleType::rule2(void)
 {
-    if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && m_name)
+    if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
         throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
 }
 
@@ -70,14 +63,14 @@ void XsdSimpleType::rule2(void)
  */
 void XsdSimpleType::rule3(void)
 {
-    if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && !m_name)
+    if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
         throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
 }
 
 void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdNamedElements::accept(visitorParam);
-    visitorParam->visit(nondeleted_ptr<XsdSimpleType>(this));
+    visitorParam->visit(std::static_pointer_cast<XsdSimpleType>(shared_from_this()));
 }
 
 /**
@@ -88,10 +81,13 @@ void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorPar
  */
 std::shared_ptr<XsdSimpleType> XsdSimpleType::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
     placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = std::make_shared<XsdSimpleType>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdSimpleType>(getParser(),
+                                             placeHolderAttributes,
+                                             m_visitorFunction,
+                                             getParent());
 
     if (m_xsd_union)
         elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(m_xsd_union->clone(m_xsd_union->getAttributesMap(), elementCopy));
@@ -107,7 +103,11 @@ std::shared_ptr<XsdSimpleType> XsdSimpleType::clone(StringMap placeHolderAttribu
 
 std::shared_ptr<ReferenceBase> XsdSimpleType::parse(ParseData parseData)
 {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdSimpleType>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdSimpleType>(parseData.parserInstance,
+                                                    getAttributesMap(parseData.node),
+                                                    parseData.visitorFunction)));
 }
 
 

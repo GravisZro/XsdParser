@@ -38,7 +38,7 @@ private:
      * Default value is 1. This attribute cannot be used if the parent element is the XsdSchema element.
      */
     std::string m_maxOccurs;
-public:
+public: // ctors
     XsdSequence(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction);
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam);
@@ -46,7 +46,11 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdSequence>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdSequence>(parseData.parserInstance,
+                                                      getAttributesMap(parseData.node),
+                                                      parseData.visitorFunction)));
     }
 
   int getMinOccurs(void) {

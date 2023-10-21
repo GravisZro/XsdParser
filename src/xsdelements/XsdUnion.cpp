@@ -10,9 +10,11 @@
  */
 std::shared_ptr<XsdUnion> XsdUnion::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = std::make_shared<XsdUnion>(getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdUnion>(getParser(),
+                                        placeHolderAttributes,
+                                        m_visitorFunction);
 
     if (m_simpleTypeList.empty())
     {
@@ -22,7 +24,7 @@ std::shared_ptr<XsdUnion> XsdUnion::clone(StringMap placeHolderAttributes)
                 simpleType->clone(simpleType->getAttributesMap(), elementCopy)));
     }
 
-    elementCopy->m_parent = nullptr;
+    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

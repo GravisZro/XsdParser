@@ -29,22 +29,25 @@ private:
      * Specifies the language used in the {@link XsdAnnotationChildren#content}
      */
     std::string m_xmlLang;
-public:
+public: // ctors
     XsdDocumentation(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap)
         : XsdAnnotationChildren(parser, attributesMap)
     {
-      if(attributesMap.contains(*XML_LANG_TAG))
-        m_xmlLang = attributesMap.at(*XML_LANG_TAG);
+      if(haveAttribute(XML_LANG_TAG))
+        m_xmlLang = getAttribute(XML_LANG_TAG);
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdAnnotationChildren::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdDocumentation>(this));
+        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdDocumentation>(shared_from_this()));
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdAnnotationChildrenParse(parseData.node, std::shared_ptr<XsdAnnotationChildren>(new XsdDocumentation(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node))));
-    }
+    return xsdAnnotationChildrenParse(parseData.node,
+                                      std::static_pointer_cast<XsdAnnotationChildren>(
+                                        create<XsdDocumentation>(parseData.parserInstance,
+                                                                 getAttributesMap(parseData.node))));
+  }
 };

@@ -19,6 +19,7 @@
 class XsdMinInclusive : public XsdStringRestrictions
 {
 public:
+  using XsdStringRestrictions::clone;
     constexpr static const std::string_view XSD_TAG = "xsd:minInclusive";
     constexpr static const std::string_view XS_TAG = "xs:minInclusive";
     constexpr static const std::string_view TAG = "minInclusive";
@@ -28,22 +29,21 @@ private:
      * Indicates if the value is fixed.
      */
     bool m_fixed;
-public:
-    using XsdStringRestrictions::clone;
+public: // ctors
     XsdMinInclusive(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
                     VisitorFunctionReference visitorFunction)
         : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction),
           m_fixed(false)
     {
-      if(m_attributesMap.contains(*FIXED_TAG))
+      if(haveAttribute(FIXED_TAG))
         m_fixed = AttributeValidations::validateBoolean(elementFieldsMapParam.at(*FIXED_TAG));
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdMinInclusive>(this));
+        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdMinInclusive>(shared_from_this()));
     }
 
     /**
@@ -54,15 +54,21 @@ public:
      */
   std::shared_ptr<XsdMinInclusive> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
-        auto elementCopy = std::make_shared<XsdMinInclusive>(getParser(), placeHolderAttributes, m_visitorFunction);
+        placeHolderAttributes.merge(getAttributesMap());
+        auto elementCopy = create<XsdMinInclusive>(getParser(),
+                                                             placeHolderAttributes,
+                                                             m_visitorFunction);
         elementCopy->setParent(nullptr);
         return elementCopy;
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdMinInclusive>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdMinInclusive>(parseData.parserInstance,
+                                                          getAttributesMap(parseData.node),
+                                                          parseData.visitorFunction)));
     }
 
   bool isFixed(void) {

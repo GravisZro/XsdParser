@@ -27,10 +27,13 @@ std::list<std::shared_ptr<ReferenceBase>> XsdAttributeGroup::getElements(void)
  */
 std::shared_ptr<XsdNamedElements> XsdAttributeGroup::clone(StringMap placeHolderAttributes)
 {
-  placeHolderAttributes.merge(m_attributesMap);
+  placeHolderAttributes.merge(getAttributesMap());
   placeHolderAttributes.erase(*REF_TAG);
 
-  auto elementCopy = std::make_shared<XsdAttributeGroup>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
+  auto elementCopy = create<XsdAttributeGroup>(getParser(),
+                                               placeHolderAttributes,
+                                               m_visitorFunction,
+                                               getParent());
 
   std::transform(std::begin(m_attributes), std::end(m_attributes),
                  std::end(elementCopy->m_attributes),
@@ -42,8 +45,8 @@ std::shared_ptr<XsdNamedElements> XsdAttributeGroup::clone(StringMap placeHolder
                  [this, elementCopy](std::shared_ptr<ReferenceBase> attributeGroupReference)
   { return ReferenceBase::clone(getParser(), attributeGroupReference, elementCopy); });
 
-  elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
-  elementCopy->m_parent = nullptr;
+  elementCopy->setCloneOf(shared_from_this());
+  elementCopy->setParent(nullptr);
 
   return elementCopy;
 }

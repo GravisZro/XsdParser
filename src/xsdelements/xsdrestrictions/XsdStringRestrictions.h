@@ -11,23 +11,24 @@
  */
 class XsdStringRestrictions : public XsdAnnotatedElements
 {
+public:
+    using XsdAnnotatedElements::clone;
 private:
     /**
      * The value of associated with a given restriction. This field has different meanings depending on the concrete
      * restriction, e.g. if the concrete class is {@link XsdEnumeration} this field means that the attribute which
      * has the restriction can only have the value that is specified in this field.
      */
-    std::optional<std::string> value;
+    std::optional<std::string> m_value;
 
-public:
-    using XsdAnnotatedElements::clone;
+public: // ctors
     XsdStringRestrictions(std::shared_ptr<XsdParserCore> parser,
                           StringMap elementFieldsMapParam,
                           VisitorFunctionReference visitorFunction)
         : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction)
     {
-      if(m_attributesMap.contains(*VALUE_TAG))
-        value = m_attributesMap.at(*VALUE_TAG);
+      if(haveAttribute(VALUE_TAG))
+        m_value = getAttribute(VALUE_TAG);
     }
 public:
     /**
@@ -48,6 +49,6 @@ public:
     }
 
   std::optional<std::string> getValue(void) {
-        return value;
+        return m_value;
     }
 };

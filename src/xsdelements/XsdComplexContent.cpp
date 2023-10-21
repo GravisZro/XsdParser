@@ -8,8 +8,8 @@ XsdComplexContent::XsdComplexContent(std::shared_ptr<XsdParserCore> parser, Stri
   : XsdAnnotatedElements(parser, attributesMap, visitorFunction),
     m_mixed(false)
 {
-  if(attributesMap.contains(*MIXED_TAG))
-    m_mixed = AttributeValidations::validateBoolean(attributesMap.at(*MIXED_TAG));
+  if(haveAttribute(MIXED_TAG))
+    m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
 }
 
 
@@ -21,14 +21,16 @@ XsdComplexContent::XsdComplexContent(std::shared_ptr<XsdParserCore> parser, Stri
  */
 std::shared_ptr<XsdComplexContent> XsdComplexContent::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = std::make_shared<XsdComplexContent>(getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdComplexContent>(getParser(),
+                                                 placeHolderAttributes,
+                                                 m_visitorFunction);
 
     elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
     elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
-    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
-    elementCopy->m_parent = nullptr;
+    elementCopy->setCloneOf(shared_from_this());
+    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }

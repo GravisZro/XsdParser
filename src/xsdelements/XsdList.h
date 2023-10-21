@@ -38,18 +38,18 @@ private:
      * {@link XsdList#simpleType} is present.
      */
     std::optional<std::string> m_itemType;
-public:
+public: // ctors
     XsdList(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
       : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
     {
-      if(attributesMap.contains(*ITEM_TYPE_TAG))
-        m_itemType = attributesMap.at(*ITEM_TYPE_TAG);
+      if(haveAttribute(ITEM_TYPE_TAG))
+        m_itemType = getAttribute(ITEM_TYPE_TAG);
     }
 public:
     void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdList>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdList>(shared_from_this()));
     }
 
     /**
@@ -60,21 +60,27 @@ public:
      */
   std::shared_ptr<XsdList> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
+        placeHolderAttributes.merge(getAttributesMap());
 
-        auto elementCopy = std::make_shared<XsdList>(getParser(), placeHolderAttributes, m_visitorFunction);
+        auto elementCopy = create<XsdList>(getParser(),
+                                           placeHolderAttributes,
+                                           m_visitorFunction);
 
         if (m_simpleType)
             elementCopy->m_simpleType = std::static_pointer_cast<XsdSimpleType>(m_simpleType->XsdAbstractElement::clone(m_simpleType->getAttributesMap(), elementCopy));
 
-        elementCopy->m_parent = nullptr;
+        elementCopy->setParent(nullptr);
 
         return elementCopy;
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdList>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdList>(parseData.parserInstance,
+                                                  getAttributesMap(parseData.node),
+                                                  parseData.visitorFunction)));
     }
 
   std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) {

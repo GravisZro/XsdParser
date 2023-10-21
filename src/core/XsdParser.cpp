@@ -40,7 +40,7 @@ void XsdParser::parseLocation(SchemaLocation fileLocation)
     throw std::runtime_error("XsdSchema not correctly configured.");
 
   auto schemaReference = xsdSchemaConfig.parserFunction(
-                           ParseData { nondeleted_ptr<XsdParserCore>(this),
+                           ParseData { shared_from_this(),
                                        getSchemaNode(fileLocation),
                                        xsdSchemaConfig.visitorFunction});
   std::static_pointer_cast<XsdSchema>(schemaReference->getElement())->setFileLocation(fileLocation);

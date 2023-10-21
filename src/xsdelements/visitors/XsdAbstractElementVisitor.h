@@ -45,6 +45,7 @@ class XsdAbstractElementVisitor
 {
 public:
   virtual ~XsdAbstractElementVisitor(void) = default;
+  virtual void initialize(void) { }
 
   virtual void visit(std::shared_ptr<XsdAll> element);
 

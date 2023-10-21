@@ -17,25 +17,26 @@
 class XsdFractionDigits : public XsdIntegerRestrictions
 {
 public:
+  using XsdIntegerRestrictions::clone;
     constexpr static const std::string_view XSD_TAG = "xsd:fractionDigits";
     constexpr static const std::string_view XS_TAG = "xs:fractionDigits";
     constexpr static const std::string_view TAG = "fractionDigits";
 
-public:
-  using XsdIntegerRestrictions::clone;
+public: // ctors
   XsdFractionDigits(std::shared_ptr<XsdParserCore> parser,
                     StringMap elementFieldsMapParam,
                     VisitorFunctionReference visitorFunction)
         : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction)
   {
-    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, m_attributesMap.at(*VALUE_TAG));
+    assert(haveAttribute(VALUE_TAG));
+    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
 
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdFractionDigits>(this));
+        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdFractionDigits>(shared_from_this()));
     }
 
     /**
@@ -46,14 +47,20 @@ public:
      */
   std::shared_ptr<XsdFractionDigits> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
-        auto elementCopy = std::make_shared<XsdFractionDigits>(getParser(), placeHolderAttributes, m_visitorFunction);
+        placeHolderAttributes.merge(getAttributesMap());
+        auto elementCopy = create<XsdFractionDigits>(getParser(),
+                                                     placeHolderAttributes,
+                                                     m_visitorFunction);
         elementCopy->setParent(nullptr);
         return elementCopy;
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdFractionDigits>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdFractionDigits>(parseData.parserInstance,
+                                                            getAttributesMap(parseData.node),
+                                                            parseData.visitorFunction)));
     }
 };

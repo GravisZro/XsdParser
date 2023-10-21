@@ -10,17 +10,17 @@ XsdSequence::XsdSequence(std::shared_ptr<XsdParserCore> parser, StringMap attrib
     m_minOccurs(1),
     m_maxOccurs("1")
 {
-  if(attributesMap.contains(*MIN_OCCURS_TAG))
-    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, attributesMap.at(*MIN_OCCURS_TAG));
+  if(haveAttribute(MIN_OCCURS_TAG))
+    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
-  if(m_attributesMap.contains(*MAX_OCCURS_TAG))
-    m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, attributesMap.at(*MAX_OCCURS_TAG));
+  if(haveAttribute(MAX_OCCURS_TAG))
+    m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
 }
 
 void XsdSequence::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdMultipleElements::accept(visitorParam);
-    visitorParam->visit(nondeleted_ptr<XsdSequence>(this));
+    visitorParam->visit(std::static_pointer_cast<XsdSequence>(shared_from_this()));
 }
 
 /**
@@ -31,14 +31,16 @@ void XsdSequence::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam
  */
 std::shared_ptr<XsdSequence> XsdSequence::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = std::make_shared<XsdSequence>(getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdSequence>(getParser(),
+                                           placeHolderAttributes,
+                                           m_visitorFunction);
 
     for(auto& element : getElements())
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
-    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
+    elementCopy->setCloneOf(shared_from_this());
     elementCopy->setParent(nullptr);
 
     return elementCopy;

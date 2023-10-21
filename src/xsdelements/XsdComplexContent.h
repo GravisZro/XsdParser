@@ -37,7 +37,7 @@ private:
      * Specifies whether character data is allowed to appear between the child elements of this element.
      */
     bool m_mixed;
-public:
+public: // ctors
     XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
                       StringMap attributesMap,
                       VisitorFunctionReference visitorFunction);
@@ -45,7 +45,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdComplexContent>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdComplexContent>(shared_from_this()));
     }
 
   std::shared_ptr<XsdComplexContent> clone(StringMap placeHolderAttributes);
@@ -59,8 +59,12 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdComplexContent>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
-    }
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdComplexContent>(parseData.parserInstance,
+                                                        getAttributesMap(parseData.node),
+                                                        parseData.visitorFunction)));
+  }
 
   void setExtension(std::shared_ptr<ReferenceBase> extension) {
         m_extension = extension;

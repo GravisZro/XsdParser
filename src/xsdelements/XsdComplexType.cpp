@@ -8,25 +8,28 @@
 #include <xsdelements/XsdChoice.h>
 #include <xsdelements/XsdSequence.h>
 
-XsdComplexType::XsdComplexType(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-  : XsdNamedElements(parser, attributesMap, visitorFunction),
+XsdComplexType::XsdComplexType(std::shared_ptr<XsdParserCore> parser,
+                               StringMap attributesMap,
+                               VisitorFunctionReference visitorFunction,
+                               std::shared_ptr<XsdAbstractElement> parent)
+  : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
     m_elementAbstract(false),
     m_mixed(false)
 {
-    m_block = AttributeValidations::getBlockDefaultValue(m_parent);
-    m_elementFinal = AttributeValidations::getFinalDefaultValue(m_parent);
+    m_block = AttributeValidations::getBlockDefaultValue(getParent());
+    m_elementFinal = AttributeValidations::getFinalDefaultValue(getParent());
 
-    if(attributesMap.contains(*ABSTRACT_TAG))
-      m_elementAbstract = AttributeValidations::validateBoolean(attributesMap.at(*ABSTRACT_TAG));
+    if(haveAttribute(ABSTRACT_TAG))
+      m_elementAbstract = AttributeValidations::validateBoolean(getAttribute(ABSTRACT_TAG));
 
-    if(attributesMap.contains(*MIXED_TAG))
-      m_mixed = AttributeValidations::validateBoolean(attributesMap.at(*MIXED_TAG));
+    if(haveAttribute(MIXED_TAG))
+      m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
 
-    if(attributesMap.contains(*BLOCK_TAG))
-      m_block = AttributeValidations::belongsToEnum<ComplexTypeBlockEnum>(attributesMap.at(*BLOCK_TAG));
+    if(haveAttribute(BLOCK_TAG))
+      m_block = AttributeValidations::belongsToEnum<ComplexTypeBlockEnum>(getAttribute(BLOCK_TAG));
 
-    if(attributesMap.contains(*FINAL_TAG))
-      m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(attributesMap.at(*FINAL_TAG));
+    if(haveAttribute(FINAL_TAG))
+      m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
 }
 
 /**
@@ -37,10 +40,13 @@ XsdComplexType::XsdComplexType(std::shared_ptr<XsdParserCore> parser, StringMap 
  */
 std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
     placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = std::make_shared<XsdComplexType>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdComplexType>(getParser(),
+                                              placeHolderAttributes,
+                                              m_visitorFunction,
+                                              getParent());
 
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
 
@@ -53,17 +59,17 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
     std::list<std::shared_ptr<ReferenceBase>> clonedAttributes;
     std::list<std::shared_ptr<ReferenceBase>> clonedAttributeGroups;
 
-    for(auto& attribute : std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributes())
+    for(auto& attribute : std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributes())
       clonedAttributes.push_back(ReferenceBase::clone(getParser(), attribute, elementCopy));
 
-    for(auto& attributeGroup: std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributeGroups())
+    for(auto& attributeGroup: std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributeGroups())
       clonedAttributeGroups.push_back(ReferenceBase::clone(getParser(), attributeGroup, elementCopy));
 
-    std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->m_visitor)->setAttributes(clonedAttributes);
-    std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->m_visitor)->setAttributeGroups(clonedAttributeGroups);
+    std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributes(clonedAttributes);
+    std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributeGroups(clonedAttributeGroups);
 
-    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
-    elementCopy->m_parent = nullptr;
+    elementCopy->setCloneOf(shared_from_this());
+    elementCopy->setParent(nullptr);
 
     return elementCopy;
 }
@@ -71,7 +77,10 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
 void XsdComplexType::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
     XsdNamedElements::replaceUnsolvedElements(element);
-    std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, nondeleted_ptr<XsdComplexType>(this));
+    std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->replaceUnsolvedAttributes(
+          getParser(),
+          element,
+          shared_from_this());
 
     if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_childElement);
         x &&
@@ -93,23 +102,23 @@ std::optional<std::string> XsdComplexType::getFinal(void) {
 }
 
 std::list<std::shared_ptr<ReferenceBase>> XsdComplexType::getAttributes(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAttributes();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributes();
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getXsdAttributes(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getXsdAttributes();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getXsdAttributes();
 }
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getXsdAttributeGroup(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getXsdAttributeGroups();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getXsdAttributeGroups();
 }
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getAllXsdAttributeGroups(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAllXsdAttributeGroups();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllXsdAttributeGroups();
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getAllXsdAttributes(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(m_visitor)->getAllAttributes();
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllAttributes();
 }
 
 

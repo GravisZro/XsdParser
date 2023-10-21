@@ -40,7 +40,7 @@ private:
      * The list of {@link XsdDocumentation} children.
      */
     std::list<std::shared_ptr<XsdDocumentation>> m_documentations;
-public:
+public: // ctors
     XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
                   StringMap elementFieldsMapParam,
                   VisitorFunctionReference visitorFunction);

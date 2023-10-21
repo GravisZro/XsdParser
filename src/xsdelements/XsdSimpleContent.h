@@ -43,7 +43,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdSimpleContent>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdSimpleContent>(shared_from_this()));
     }
 
     /**
@@ -54,14 +54,16 @@ public:
      */
   std::shared_ptr<XsdSimpleContent> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
+        placeHolderAttributes.merge(getAttributesMap());
 
-        auto elementCopy = std::make_shared<XsdSimpleContent>(getParser(), placeHolderAttributes, m_visitorFunction);
+        auto elementCopy = create<XsdSimpleContent>(getParser(),
+                                                              placeHolderAttributes,
+                                                              m_visitorFunction);
 
         elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
         elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
-        elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
-        elementCopy->m_parent = nullptr;
+        elementCopy->setCloneOf(shared_from_this());
+        elementCopy->setParent(nullptr);
 
         return elementCopy;
     }
@@ -82,7 +84,11 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdSimpleContent>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdSimpleContent>(parseData.parserInstance,
+                                                           getAttributesMap(parseData.node),
+                                                           parseData.visitorFunction)));
     }
 
   void setRestriction(std::shared_ptr<ReferenceBase> restriction) {

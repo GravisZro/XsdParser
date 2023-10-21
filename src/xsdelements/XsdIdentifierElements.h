@@ -17,22 +17,24 @@ class XsdIdentifierElements : public XsdAbstractElement
 {
 public:
   using XsdAbstractElement::clone;
+  using XsdAbstractElement::initialize;
 private:
     /**
      * Specifies a unique ID for the element.
      */
   std::optional<std::string> m_id;
 
-public:
+public: // ctors
     XsdIdentifierElements(std::shared_ptr<XsdParserCore> parser,
                           StringMap attributesMap,
-                          VisitorFunctionReference visitorFunction)
-      : XsdAbstractElement(parser, attributesMap, visitorFunction)
+                          VisitorFunctionReference visitorFunction,
+                          std::shared_ptr<XsdAbstractElement> parent = nullptr)
+      : XsdAbstractElement(parser, attributesMap, visitorFunction, parent)
     {
-      if(attributesMap.contains(*XsdAbstractElement::ID_TAG))
-        m_id = attributesMap.at(*XsdAbstractElement::ID_TAG);
+      if(haveAttribute(XsdAbstractElement::ID_TAG))
+        m_id = getAttribute(XsdAbstractElement::ID_TAG);
     }
-
+public:
   std::optional<std::string> getId(void) {
         return m_id;
     }

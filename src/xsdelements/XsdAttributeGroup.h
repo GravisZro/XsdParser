@@ -28,7 +28,7 @@ private:
      * A list of {@link XsdAttributeGroup} children instances.
      */
     //This list is populated by the replaceUnsolvedElements and never directly (such as a Visitor method like all else).
-    //The UnsolvedReference is placed in the XsdParser queue by the default implementation of the Visitor#visit(std::make_shared<XsdAttributeGroup> element)
+    //The UnsolvedReference is placed in the XsdParser queue by the default implementation of the Visitor#visit(std::enable_shared_from_this<XsdAttributeGroup>::create element)
     //The reference solving process then sends the XsdAttributeGroup to this class.
     std::list<std::shared_ptr<ReferenceBase>> m_attributeGroups;
 
@@ -37,19 +37,17 @@ private:
      */
     std::list<std::shared_ptr<ReferenceBase>> m_attributes;
 public:
-    XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-      : XsdNamedElements(parser, attributesMap, visitorFunction) { }
+    XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
+                      StringMap attributesMap,
+                      VisitorFunctionReference visitorFunction,
+                      std::shared_ptr<XsdAbstractElement> parent = nullptr)
+      : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 
-    XsdAttributeGroup(std::shared_ptr<XsdAbstractElement> parent, std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-      : XsdNamedElements(parser, attributesMap, visitorFunction)
-    {
-        setParent(parent);
-    }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdAttributeGroup>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
     }
 
   std::list<std::shared_ptr<ReferenceBase>> getElements(void);
@@ -62,7 +60,11 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdAttributeGroup>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdAttributeGroup>(parseData.parserInstance,
+                                                            getAttributesMap(parseData.node),
+                                                            parseData.visitorFunction)));
     }
 
   void addAttribute(std::shared_ptr<ReferenceBase> attribute)

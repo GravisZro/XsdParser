@@ -19,12 +19,12 @@ class XsdAbstractElement;
 class XsdEnumeration : public XsdStringRestrictions
 {
 public:
+  using XsdStringRestrictions::clone;
     constexpr static const std::string_view XSD_TAG = "xsd:enumeration";
     constexpr static const std::string_view XS_TAG = "xs:enumeration";
     constexpr static const std::string_view TAG = "enumeration";
 
-public:
-  using XsdStringRestrictions::clone;
+public: // ctors
   XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
                  StringMap elementFieldsMapParam,
                  VisitorFunctionReference visitorFunction);

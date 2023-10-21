@@ -11,11 +11,11 @@ XsdChoice::XsdChoice(std::shared_ptr<XsdParserCore> parser,
       m_minOccurs(1),
       m_maxOccurs("1")
 {
-  if(attributesMap.contains(*MIN_OCCURS_TAG))
-    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, attributesMap.at(*MIN_OCCURS_TAG));
+  if(haveAttribute(MIN_OCCURS_TAG))
+    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
-  if(attributesMap.contains(*MAX_OCCURS_TAG))
-    m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, attributesMap.at(*MAX_OCCURS_TAG));
+  if(haveAttribute(MAX_OCCURS_TAG))
+    m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
 }
 
 /**
@@ -26,9 +26,11 @@ XsdChoice::XsdChoice(std::shared_ptr<XsdParserCore> parser,
  */
 std::shared_ptr<XsdChoice> XsdChoice::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = std::make_shared<XsdChoice>(getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdChoice>(getParser(),
+                                         placeHolderAttributes,
+                                         m_visitorFunction);
     for(auto& element : getElements())
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 

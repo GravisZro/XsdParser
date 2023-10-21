@@ -32,11 +32,20 @@
 #include <core/XsdParserCore.h>
 
 
-XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser,
+                               StringMap attributesMap,
+                               VisitorFunctionReference visitorFunction,
+                               std::shared_ptr<XsdAbstractElement> parent)
+  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 {
-    if(attributesMap.contains(*BASE_TAG))
-      m_baseString = attributesMap.at(*BASE_TAG);
+}
+
+void XsdRestriction::initialize(void)
+{
+  XsdAnnotatedElements::initialize();
+
+    if(haveAttribute(BASE_TAG))
+      m_baseString = getAttribute(BASE_TAG);
 
     if (m_baseString)
     {
@@ -44,7 +53,11 @@ XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap 
         {
             StringMap attributes;
             attributes.emplace(NAME_TAG, m_baseString.value());
-            m_base = ReferenceBase::createFromXsd(std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdBuiltInDataType>(parser, attributes, nondeleted_ptr<XsdRestriction>(this))));
+            m_base = ReferenceBase::createFromXsd(
+                       std::static_pointer_cast<XsdAbstractElement>(
+                         create<XsdBuiltInDataType>(getParser(),
+                                                    attributes,
+                                                    shared_from_this())));
         } else {
             auto parseMappers = XsdParserCore::getParseMappers();
 
@@ -57,13 +70,12 @@ XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser, StringMap 
             if (config.parserFunction && config.visitorFunction)
                 throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
-            m_base = std::make_shared<UnsolvedReference>(m_baseString.value(),
-                                                         std::make_shared<XsdElement>(
-                                                           nondeleted_ptr<XsdAbstractElement>(this),
-                                                           getParser(),
-                                                           StringMap{},
-                                                           config.visitorFunction));
-            parser->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
+            m_base = create<UnsolvedReference>(m_baseString.value(),
+                                               create<XsdElement>(getParser(),
+                                                                  StringMap{},
+                                                                  config.visitorFunction,
+                                                                  shared_from_this()));
+            getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
         }
     }
 }
@@ -73,7 +85,10 @@ void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElemen
   {
       XsdAnnotatedElements::replaceUnsolvedElements(element);
 
-      std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->replaceUnsolvedAttributes(getParser(), element, nondeleted_ptr<XsdAbstractElement>(this));
+      std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->replaceUnsolvedAttributes(
+            getParser(),
+            element,
+            shared_from_this());
 
       std::shared_ptr<XsdNamedElements> elem = element->getElement();
 
@@ -101,9 +116,11 @@ void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElemen
    */
 std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttributes)
   {
-      placeHolderAttributes.merge(m_attributesMap);
+      placeHolderAttributes.merge(getAttributesMap());
 
-      auto elementCopy = std::make_shared<XsdRestriction>(getParser(), placeHolderAttributes, m_visitorFunction);
+      auto elementCopy = create<XsdRestriction>(getParser(),
+                                                placeHolderAttributes,
+                                                m_visitorFunction);
 
       if (!m_enumeration.empty())
       {
@@ -158,7 +175,7 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
       if (m_group)
           elementCopy->m_group = ReferenceBase::clone(getParser(), m_group, elementCopy);
 
-      elementCopy->m_parent = nullptr;
+      elementCopy->setParent(nullptr);
       elementCopy->m_base = m_base;
 
       return elementCopy;
@@ -167,12 +184,12 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
 
 std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void) {
-      return std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->getXsdAttributes();
+      return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributes();
   }
 
-  // @SuppressWarnings("unused")
+
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void) {
-      return std::static_pointer_cast<XsdRestrictionVisitor>(m_visitor)->getXsdAttributeGroups();
+      return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributeGroups();
   }
 
   /**

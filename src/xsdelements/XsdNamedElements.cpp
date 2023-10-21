@@ -4,10 +4,11 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 XsdNamedElements::XsdNamedElements(std::shared_ptr<XsdParserCore> parser,
-                 StringMap attributesMap,
-                 VisitorFunctionReference visitorFunction)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
+                                   StringMap attributesMap,
+                                   VisitorFunctionReference visitorFunction,
+                                   std::shared_ptr<XsdAbstractElement> parent)
+  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
 {
-  if(attributesMap.contains(*XsdAbstractElement::NAME_TAG))
-    m_name = attributesMap.at(*XsdAbstractElement::NAME_TAG);
+  if(haveAttribute(XsdAbstractElement::NAME_TAG))
+    m_name = getAttribute(XsdAbstractElement::NAME_TAG);
 }

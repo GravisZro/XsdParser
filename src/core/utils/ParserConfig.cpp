@@ -223,7 +223,7 @@ const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
 #define MAKE_PARSEMAP_ENTRY_FUNCTION(ClassName) \
                           [](std::shared_ptr<XsdAbstractElement> element) { \
                               return std::static_pointer_cast<XsdAbstractElementVisitor>( \
-                                        std::make_shared<CONCAT(ClassName, Visitor)> \
+                                        create<CONCAT(ClassName, Visitor)> \
                                             (std::static_pointer_cast<ClassName>(element) \
                                           ) ); }
 

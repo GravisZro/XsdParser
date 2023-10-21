@@ -40,7 +40,7 @@ private:
      */
     std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElementsMap;
 
-protected:
+public: // ctors
     SchemaLocation m_currentFile;
 
 public:

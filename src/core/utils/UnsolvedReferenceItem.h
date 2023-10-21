@@ -29,6 +29,9 @@ public:
     m_parents.push_back(unsolvedReference->getParent());
   }
 
+  virtual ~UnsolvedReferenceItem(void) = default;
+  virtual void initialize(void) { }
+
   std::shared_ptr<UnsolvedReference> getUnsolvedReference(void)
   {
     return m_unsolvedReference;

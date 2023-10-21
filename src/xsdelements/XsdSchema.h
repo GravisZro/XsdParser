@@ -16,6 +16,7 @@ class XsdSchema : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
+  using XsdAnnotatedElements::initialize;
     constexpr static const std::string_view XSD_TAG = "xsd:schema";
     constexpr static const std::string_view XS_TAG = "xs:schema";
     constexpr static const std::string_view TAG = "schema";
@@ -71,17 +72,12 @@ private:
      * The children elements contained in this {@link XsdSchema} element.
      */
     std::list<std::shared_ptr<XsdAbstractElement>> m_elements;
-public:
+public: // ctors
     XsdSchema(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
               VisitorFunctionReference visitorFunction);
 
 public:
-  std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void)
-    {
-        return m_visitor;
-    }
-
   std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void)
     {
         return m_elements;
@@ -123,7 +119,7 @@ public:
         return m_blockDefault.getValue();
     }
 
-    // @SuppressWarnings("unused")
+    
   std::optional<std::string> getFinalDefault(void) {
         return m_finalDefault.getValue();
     }

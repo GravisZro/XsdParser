@@ -35,18 +35,18 @@ private:
      * Specifies a list of built-in data types or {@link XsdSimpleType} instance names defined in a XsdSchema.
      */
     std::string m_memberTypes;
-public:
+public: // ctors
     XsdUnion(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
       : XsdAnnotatedElements(parser, attributesMap, visitorFunction)
     {
-      if(attributesMap.contains(*MEMBER_TYPES_TAG))
-        m_memberTypes = attributesMap.at(*MEMBER_TYPES_TAG);
+      if(haveAttribute(MEMBER_TYPES_TAG))
+        m_memberTypes = getAttribute(MEMBER_TYPES_TAG);
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdUnion>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdUnion>(shared_from_this()));
     }
 
   std::shared_ptr<XsdUnion> clone(StringMap placeHolderAttributes);
@@ -59,7 +59,11 @@ public:
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdUnion>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdUnion>(parseData.parserInstance,
+                                               getAttributesMap(parseData.node),
+                                               parseData.visitorFunction)));
   }
 
   void add(std::shared_ptr<XsdSimpleType> simpleType) {

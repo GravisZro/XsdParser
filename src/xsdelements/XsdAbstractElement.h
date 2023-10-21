@@ -19,16 +19,19 @@ class UnsolvedReference;
 /**
  * This class serves as a base to every element class, i.e. {@link XsdElement}, {@link XsdAttribute}, etc.
  */
-class XsdAbstractElement
+class XsdAbstractElement : public std::enable_shared_from_this<XsdAbstractElement>
 {
-protected:
-    /**
-     * A {@link Map} object containing the keys/values of the attributes that belong to the concrete element instance.
-     */
-  StringMap m_attributesMap;
-
-  constexpr static const std::string_view VALUE_TAG = "value";
 public:
+  /*
+  template<typename T, typename... Args>
+  static std::shared_ptr<T> create(Args... args)
+  {
+    auto ptr = std::shared_ptr<T>(new T(args...));
+    ptr->T::initialize();
+    return ptr;
+  }
+*/
+    constexpr static const std::string_view VALUE_TAG = "value";
     constexpr static const std::string_view ATTRIBUTE_FORM_DEFAULT = "attribtueFormDefault";
     constexpr static const std::string_view ELEMENT_FORM_DEFAULT = "elementFormDefault";
     constexpr static const std::string_view BLOCK_DEFAULT = "blockDefault";
@@ -62,6 +65,12 @@ public:
     constexpr static const std::string_view NAMESPACE = "namespace";
     constexpr static const std::string_view REF_TAG = "ref";
 
+private:
+  /**
+   * A {@link Map} object containing the keys/values of the attributes that belong to the concrete element instance.
+   */
+    StringMap m_attributesMap;
+
 
     /**
      * The instance which contains the present element.
@@ -91,13 +100,28 @@ public:
 
 protected:
     VisitorFunctionReference m_visitorFunction;
-public:
+public: // ctors
     XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                        StringMap attributesMap,
-                       VisitorFunctionReference visitorFunction);
+                       VisitorFunctionReference visitorFunction,
+                       std::shared_ptr<XsdAbstractElement> parent = nullptr);
 
-    virtual ~XsdAbstractElement(void) = default;
 public:
+  virtual ~XsdAbstractElement(void) = default;
+  virtual void initialize(void);
+
+  bool haveAttribute(const std::string_view& attribute)
+  {
+    return m_attributesMap.contains(std::string(attribute));
+  }
+
+
+  std::string getAttribute(const std::string_view& attribute)
+  {
+    return m_attributesMap.at(std::string(attribute));
+  }
+
+
   StringMap& getAttributesMap(void) {
         return m_attributesMap;
     }
@@ -133,10 +157,12 @@ public:
      */
     std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes)
     {
-      placeHolderAttributes.merge(m_attributesMap);
-      auto copyElement = std::make_shared<XsdAbstractElement>(getParser(), placeHolderAttributes, m_visitorFunction);
-      copyElement->setCloneOf(nondeleted_ptr<XsdAbstractElement>(this));
-      return copyElement;
+      placeHolderAttributes.merge(getAttributesMap());
+      auto elementCopy = create<XsdAbstractElement>(getParser(),
+                                                    placeHolderAttributes,
+                                                    m_visitorFunction, nullptr);
+      elementCopy->setCloneOf(shared_from_this());
+      return elementCopy;
     }
 
     /**
@@ -233,10 +259,11 @@ public:
         m_cloneOf = cloneOf;
     }
 
-  void setParent(std::shared_ptr<XsdAbstractElement> parent) {
-        m_parent = parent;
-        m_parentAvailable = true;
-    }
+  void setParent(std::shared_ptr<XsdAbstractElement> parent)
+  {
+    m_parent = parent;
+    m_parentAvailable = bool(m_parent);
+  }
 
   void setParentAvailable(bool parentAvailable) {
         m_parentAvailable = parentAvailable;

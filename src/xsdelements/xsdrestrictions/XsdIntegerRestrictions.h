@@ -15,6 +15,8 @@
  */
 class XsdIntegerRestrictions : public XsdAnnotatedElements
 {
+public:
+  using XsdAnnotatedElements::clone;
 protected:
     /**
      * Indicates if the value is fixed.
@@ -27,8 +29,7 @@ protected:
      * has the restriction can only have the length specified in this field..
      */
     int m_value;
-public:
-    using XsdAnnotatedElements::clone;
+public: // ctors
     XsdIntegerRestrictions(std::shared_ptr<XsdParserCore> parser,
                            StringMap elementFieldsMapParam,
                            VisitorFunctionReference visitorFunction)

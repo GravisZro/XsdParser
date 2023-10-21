@@ -2,8 +2,6 @@
 
 #include "ReferenceBase.h"
 
-#include <string>
-
 class XsdNamedElements;
 
 /**

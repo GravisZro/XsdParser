@@ -19,6 +19,7 @@
 class XsdWhiteSpace : public XsdAnnotatedElements
 {
 public:
+  using XsdAnnotatedElements::clone;
     constexpr static const std::string_view XSD_TAG = "xsd:whiteSpace";
     constexpr static const std::string_view XS_TAG = "xs:whiteSpace";
     constexpr static const std::string_view TAG = "whiteSpace";
@@ -26,8 +27,7 @@ public:
 private:
   bool m_fixed;
   WhiteSpaceEnum m_value;
-public:
-  using XsdAnnotatedElements::clone;
+public: // ctors
   XsdWhiteSpace(std::shared_ptr<XsdParserCore> parser,
                 StringMap elementFieldsMapParam,
                 VisitorFunctionReference visitorFunction)
@@ -43,7 +43,7 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdAnnotatedElements::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdWhiteSpace>(this));
+        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdWhiteSpace>(shared_from_this()));
     }
 
     /**
@@ -54,15 +54,21 @@ public:
      */
   std::shared_ptr<XsdWhiteSpace> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
-        auto elementCopy = std::make_shared<XsdWhiteSpace>(getParser(), placeHolderAttributes, m_visitorFunction);
+        placeHolderAttributes.merge(getAttributesMap());
+        auto elementCopy = create<XsdWhiteSpace>(getParser(),
+                                                           placeHolderAttributes,
+                                                           m_visitorFunction);
         elementCopy->setParent(nullptr);
         return elementCopy;
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdWhiteSpace>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdWhiteSpace>(parseData.parserInstance,
+                                                        getAttributesMap(parseData.node),
+                                                        parseData.visitorFunction)));
     }
 
   bool isFixed(void) {

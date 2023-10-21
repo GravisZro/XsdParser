@@ -27,17 +27,18 @@ class XsdMultipleElements : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
+
 protected:
     /**
      * A list of elements that are contained in the concrete implementation of the {@link XsdMultipleElements} instance.
      */
   std::list<std::shared_ptr<ReferenceBase>> m_elements;
 
-public:
+public: // ctors
     XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
                         StringMap elementFieldsMapParam,
                         VisitorFunctionReference visitorFunction);
-
+public:
     /**
      * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their
      * {@link UnsolvedReference#ref} field matches the {@link NamedConcreteElement#name} field.
@@ -60,7 +61,7 @@ public:
     /**
      * @return The children elements that are of the type {@link XsdElement}.
      */
-    // @SuppressWarnings("unused")
+    
   std::list<std::shared_ptr<XsdElement>> getChildrenElements(void);
 
   void addElement(std::shared_ptr<XsdAbstractElement> element);

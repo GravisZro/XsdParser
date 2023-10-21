@@ -13,7 +13,7 @@ XsdAnnotation::XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
 void XsdAnnotation::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdIdentifierElements::accept(visitorParam);
-    visitorParam->visit(nondeleted_ptr<XsdAnnotation>(this));
+    visitorParam->visit(std::static_pointer_cast<XsdAnnotation>(shared_from_this()));
 }
 
 std::list<std::shared_ptr<XsdAppInfo>>& XsdAnnotation::getAppInfoList(void)
@@ -38,5 +38,9 @@ void XsdAnnotation::add(std::shared_ptr<XsdDocumentation> documentation)
 
 std::shared_ptr<ReferenceBase> XsdAnnotation::parse(ParseData parseData)
 {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdAnnotation>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdAnnotation>(parseData.parserInstance,
+                                                    getAttributesMap(parseData.node),
+                                                    parseData.visitorFunction)));
 }

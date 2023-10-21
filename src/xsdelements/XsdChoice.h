@@ -36,7 +36,7 @@ private:
      * Default value is 1. This attribute cannot be used if the parent element is the std::shared_ptr<XsdSchema> element.
      */
     std::string m_maxOccurs;
-public:
+public: // ctors
     XsdChoice(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
               VisitorFunctionReference visitorFunction);
@@ -44,14 +44,18 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdMultipleElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdChoice>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdChoice>(shared_from_this()));
     }
 
   std::shared_ptr<XsdChoice> clone(StringMap placeHolderAttributes);
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdChoice>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdChoice>(parseData.parserInstance,
+                                                getAttributesMap(parseData.node),
+                                                parseData.visitorFunction)));
   }
 
   int getMinOccurs(void) {

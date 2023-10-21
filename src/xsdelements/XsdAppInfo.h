@@ -28,7 +28,7 @@ public:
     constexpr static const std::string_view XS_TAG = "xs:appinfo";
     constexpr static const std::string_view TAG = "appinfo";
 
-private:
+public: // ctors
     XsdAppInfo(std::shared_ptr<XsdParserCore> parser,
                StringMap elementFieldsMapParam)
       : XsdAnnotationChildren(parser, elementFieldsMapParam) { }
@@ -37,11 +37,14 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdAnnotationChildren::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdAppInfo>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdAppInfo>(shared_from_this()));
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
     {
-        return xsdAnnotationChildrenParse(parseData.node, std::shared_ptr<XsdAnnotationChildren>(new XsdAppInfo(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node))));
+        return xsdAnnotationChildrenParse(parseData.node,
+                                          std::static_pointer_cast<XsdAnnotationChildren>(
+                                            create<XsdAppInfo>(parseData.parserInstance,
+                                                               getAttributesMap(parseData.node))));
     }
 };

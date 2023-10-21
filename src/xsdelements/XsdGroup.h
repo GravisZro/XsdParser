@@ -48,29 +48,27 @@ private:
      */
     std::string m_maxOccurs;
 
-public:
-    XsdGroup(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-        : XsdNamedElements(parser, attributesMap, visitorFunction),
+public: // ctors
+    XsdGroup(std::shared_ptr<XsdParserCore> parser,
+             StringMap attributesMap,
+             VisitorFunctionReference visitorFunction,
+             std::shared_ptr<XsdAbstractElement> parent = nullptr)
+        : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
           m_minOccurs(1),
           m_maxOccurs("1")
     {
-      if(attributesMap.contains(*MIN_OCCURS_TAG))
-        m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, attributesMap.at(*MIN_OCCURS_TAG));
+      if(haveAttribute(MIN_OCCURS_TAG))
+        m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
-      if(attributesMap.contains(*MAX_OCCURS_TAG))
-        m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, attributesMap.at(*MAX_OCCURS_TAG));
+      if(haveAttribute(MAX_OCCURS_TAG))
+        m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
     }
 
-    XsdGroup(std::shared_ptr<XsdAbstractElement> parent, std::shared_ptr<XsdParserCore> parser, StringMap attributesMap, VisitorFunctionReference visitorFunction)
-        : XsdGroup(parser, attributesMap, visitorFunction)
-    {
-        setParent(parent);
-    }
 public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  void validateSchemaRules(void)
+  virtual void validateSchemaRules(void) override
     {
         XsdNamedElements::validateSchemaRules();
 
@@ -85,7 +83,7 @@ private:
      */
     void rule2(void)
     {
-        if (std::dynamic_pointer_cast<XsdSchema>(m_parent) == nullptr && m_name)
+        if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
             throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
     }
 
@@ -95,14 +93,14 @@ private:
      */
     void rule3(void)
     {
-        if (std::dynamic_pointer_cast<XsdSchema>(m_parent) && !m_name)
+        if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
             throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
     {
         XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(nondeleted_ptr<XsdGroup>(this));
+        visitorParam->visit(std::static_pointer_cast<XsdGroup>(shared_from_this()));
     }
 
     /**
@@ -124,10 +122,13 @@ public:
      */
   std::shared_ptr<XsdNamedElements> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
+        placeHolderAttributes.merge(getAttributesMap());
         placeHolderAttributes.erase(*REF_TAG);
 
-        auto elementCopy = std::make_shared<XsdGroup>(m_parent, getParser(), placeHolderAttributes, m_visitorFunction);
+        auto elementCopy = create<XsdGroup>(getParser(),
+                                            placeHolderAttributes,
+                                            m_visitorFunction,
+                                            getParent());
 
         if (m_childElement)
             elementCopy->m_childElement = std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->clone(m_childElement->getAttributesMap(), elementCopy));
@@ -140,7 +141,7 @@ public:
         m_childElement = childElement;
         for(auto& childElementObj : childElement->getElements())
           childElementObj->getElement()->setParent(childElement);
-        m_childElement->setParent(nondeleted_ptr<XsdGroup>(this));
+        m_childElement->setParent(shared_from_this());
     }
 
   std::shared_ptr<XsdMultipleElements> getChildElement(void) {
@@ -164,14 +165,18 @@ public:
     /**
      * @return The childElement as a {@link XsdSequence} object or null if childElement isn't a {@link XsdSequence} instance.
      */
-    // @SuppressWarnings("unused")
+
   std::shared_ptr<XsdSequence> getChildAsSequence(void) {
         return XsdMultipleElements::getChildAsSequence(m_childElement);
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-    return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdGroup>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+    return xsdParseSkeleton(parseData.node,
+                            std::static_pointer_cast<XsdAbstractElement>(
+                              create<XsdGroup>(parseData.parserInstance,
+                                               getAttributesMap(parseData.node),
+                                               parseData.visitorFunction)));
   }
 
   int getMinOccurs(void) {

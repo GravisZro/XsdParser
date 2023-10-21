@@ -17,23 +17,27 @@ XsdAll::XsdAll(std::shared_ptr<XsdParserCore> parser,
     m_minOccurs(1),
     m_maxOccurs(1)
 {
-  if(attributesMap.contains(*MIN_OCCURS_TAG))
-    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, attributesMap.at(*MIN_OCCURS_TAG));
-  if(attributesMap.contains(*MAX_OCCURS_TAG))
-    m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MAX_OCCURS_TAG, attributesMap.at(*MAX_OCCURS_TAG));
+  if(haveAttribute(MIN_OCCURS_TAG))
+    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+  if(haveAttribute(MAX_OCCURS_TAG))
+    m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MAX_OCCURS_TAG, getAttribute(MAX_OCCURS_TAG));
 }
 
 
 void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdMultipleElements::accept(visitorParam);
-    visitorParam->visit(nondeleted_ptr<XsdAll>(this));
+    visitorParam->visit(std::static_pointer_cast<XsdAll>(shared_from_this()));
 }
 
 
 std::shared_ptr<ReferenceBase> XsdAll::parse(ParseData parseData)
 {
-  return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdAll>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+  return xsdParseSkeleton(parseData.node,
+                          std::static_pointer_cast<XsdAbstractElement>(
+                            create<XsdAll>(parseData.parserInstance,
+                                           getAttributesMap(parseData.node),
+                                           parseData.visitorFunction)));
 }
 
 
@@ -46,14 +50,16 @@ std::shared_ptr<ReferenceBase> XsdAll::parse(ParseData parseData)
  */
 std::shared_ptr<XsdAll> XsdAll::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(m_attributesMap);
+    placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = std::make_shared<XsdAll>(getParser(), placeHolderAttributes, m_visitorFunction);
+    auto elementCopy = create<XsdAll>(getParser(),
+                                      placeHolderAttributes,
+                                      m_visitorFunction);
 
     for(auto& element : getElements())
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
-    elementCopy->m_cloneOf = nondeleted_ptr<XsdAbstractElement>(this);
+    elementCopy->setCloneOf(shared_from_this());
     elementCopy->setParent(nullptr);
 
     return elementCopy;

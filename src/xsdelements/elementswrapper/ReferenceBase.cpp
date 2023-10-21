@@ -30,17 +30,18 @@ std::shared_ptr<ReferenceBase> ReferenceBase::createFromXsd(std::shared_ptr<XsdA
   auto name = getName(element);
 
   if(std::dynamic_pointer_cast<XsdNamedElements>(element) == nullptr)
-    return std::make_shared<ConcreteElement>(element);
+    return create<ConcreteElement>(element);
 
   if(!ref)
   {
     if (!name)
-      return std::make_shared<ConcreteElement>(element);
+      return create<ConcreteElement>(element);
     else
-      return std::make_shared<NamedConcreteElement>(std::static_pointer_cast<XsdNamedElements>(element), name.value());
+      return create<NamedConcreteElement>(std::static_pointer_cast<XsdNamedElements>(element),
+                                          name.value());
   }
   else
-    return std::make_shared<UnsolvedReference>(std::static_pointer_cast<XsdNamedElements>(element));
+    return create<UnsolvedReference>(std::static_pointer_cast<XsdNamedElements>(element));
 }
 
 std::shared_ptr<ReferenceBase> ReferenceBase::clone(std::shared_ptr<XsdParserCore> parser,
@@ -64,7 +65,7 @@ std::shared_ptr<ReferenceBase> ReferenceBase::clone(std::shared_ptr<XsdParserCor
         clonedElement->setCloneOf(originalElement);
         clonedElement->setParent(parent);
 
-        auto unsolvedClonedElement = std::make_shared<UnsolvedReference>(clonedElement);
+        auto unsolvedClonedElement = create<UnsolvedReference>(clonedElement);
 
         parser->addUnsolvedReference(unsolvedClonedElement);
 

@@ -17,24 +17,25 @@
 class XsdLength : public XsdIntegerRestrictions
 {
 public:
+  using XsdIntegerRestrictions::clone;
     constexpr static const std::string_view XSD_TAG = "xsd:length";
     constexpr static const std::string_view XS_TAG = "xs:length";
     constexpr static const std::string_view TAG = "length";
 
-public:
-  using XsdIntegerRestrictions::clone;
+public: // ctors
   XsdLength(std::shared_ptr<XsdParserCore> parser,
             StringMap elementFieldsMapParam,
             VisitorFunctionReference visitorFunction)
     : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction)
   {
-    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, m_attributesMap.at(*VALUE_TAG));
+    assert(haveAttribute(VALUE_TAG));
+    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
-
+public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
     {
         XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(nondeleted_ptr<XsdLength>(this));
+        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdLength>(shared_from_this()));
     }
 
     /**
@@ -45,14 +46,20 @@ public:
      */
   std::shared_ptr<XsdLength> clone(StringMap placeHolderAttributes)
     {
-        placeHolderAttributes.merge(m_attributesMap);
-        auto elementCopy = std::make_shared<XsdLength>(getParser(), placeHolderAttributes, m_visitorFunction);
+        placeHolderAttributes.merge(getAttributesMap());
+        auto elementCopy = create<XsdLength>(getParser(),
+                                                       placeHolderAttributes,
+                                                       m_visitorFunction);
         elementCopy->setParent(nullptr);
         return elementCopy;
     }
 
   static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
   {
-        return xsdParseSkeleton(parseData.node, std::static_pointer_cast<XsdAbstractElement>(std::make_shared<XsdLength>(parseData.parserInstance, XsdAbstractElement::getAttributesMap(parseData.node), parseData.visitorFunction)));
+        return xsdParseSkeleton(parseData.node,
+                                std::static_pointer_cast<XsdAbstractElement>(
+                                  create<XsdLength>(parseData.parserInstance,
+                                                    getAttributesMap(parseData.node),
+                                                    parseData.visitorFunction)));
     }
 };

@@ -349,7 +349,7 @@ void XsdParserCore::replaceUnsolvedReference(std::map<std::string, std::list<std
 void XsdParserCore::storeUnsolvedItem(std::shared_ptr<UnsolvedReference> unsolvedReference)
 {
     if (m_parserUnsolvedElementsMap.empty())
-        m_parserUnsolvedElementsMap.push_back(std::make_shared<UnsolvedReferenceItem>(unsolvedReference));
+        m_parserUnsolvedElementsMap.push_back(create<UnsolvedReferenceItem>(unsolvedReference));
     else
     {
       std::shared_ptr<UnsolvedReferenceItem> innerEntry;
@@ -365,7 +365,7 @@ void XsdParserCore::storeUnsolvedItem(std::shared_ptr<UnsolvedReference> unsolve
       if (innerEntry)
         innerEntry->getParents().push_back(unsolvedReference->getParent());
       else
-        m_parserUnsolvedElementsMap.push_back(std::make_shared<UnsolvedReferenceItem>(unsolvedReference));
+        m_parserUnsolvedElementsMap.push_back(create<UnsolvedReferenceItem>(unsolvedReference));
     }
 }
 
