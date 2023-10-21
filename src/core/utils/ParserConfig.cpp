@@ -66,6 +66,7 @@
 #include <xsdelements/xsdrestrictions/XsdTotalDigits.h>
 #include <xsdelements/xsdrestrictions/XsdWhiteSpace.h>
 
+#include <core/utils/SchemaLocation.h>
 #include <core/utils/ParserConfig.h>
 
 const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
@@ -277,6 +278,19 @@ static void addEntry(std::map<std::string_view, ConfigEntryData>& mapper, Config
   mapper.emplace(std::make_pair(T::TAG, entry ));
 }
 
+#ifdef DEBUG
+template<typename T, typename V>
+static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
+{
+  addEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(T).name(), genericVisitor<T, V> });
+}
+
+template<typename T>
+static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
+{
+  addEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(XsdAnnotatedElements).name(), genericVisitor<XsdAnnotatedElements, XsdAnnotatedElementsVisitor> });
+}
+#else
 template<typename T, typename V>
 static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
   { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, V> }); }
@@ -284,16 +298,23 @@ static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
 template<typename T>
 static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
   { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<XsdAnnotatedElements, XsdAnnotatedElementsVisitor> }); }
-
+#endif
 
 const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
 {
   std::map<std::string_view, ConfigEntryData> mappers;
 
+#ifdef DEBUG
+  addEntry<XsdSchema>(mappers, ConfigEntryData { typeid(XsdSchema).name(), schemaParser, typeid(XsdSchema).name(), genericVisitor<XsdSchema, XsdSchemaVisitor> });
+
+  addEntry<XsdAppInfo>(mappers, ConfigEntryData { typeid(XsdAppInfo).name(), annotatedParser<XsdAppInfo>, typeid(std::nullopt_t).name(), nullptr });
+  addEntry<XsdDocumentation>(mappers, ConfigEntryData { typeid(XsdDocumentation).name(), annotatedParser<XsdDocumentation>, typeid(std::nullopt_t).name(), nullptr });
+#else
   addEntry<XsdSchema>(mappers, ConfigEntryData { schemaParser, genericVisitor<XsdSchema, XsdSchemaVisitor> });
 
   addEntry<XsdAppInfo>(mappers, ConfigEntryData { annotatedParser<XsdAppInfo>, nullptr });
   addEntry<XsdDocumentation>(mappers, ConfigEntryData { annotatedParser<XsdDocumentation>, nullptr });
+#endif
 
   addGenericEntry<XsdAll, XsdAllVisitor>(mappers);
   addGenericEntry<XsdAttribute, XsdAttributeVisitor>(mappers);

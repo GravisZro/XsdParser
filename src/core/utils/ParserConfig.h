@@ -1,7 +1,5 @@
 #pragma once
 
-#include <map>
-#include <string>
 #include "ConfigEntryData.h"
 
 struct ParserConfig

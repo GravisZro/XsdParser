@@ -28,19 +28,17 @@ public:
         m_owner = owner;
     }
 
-  std::shared_ptr<XsdComplexContent> getOwner(void)
-    {
-        return m_owner;
-    }
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
+    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
 
-  void visit(std::shared_ptr<XsdRestriction> element)
+  void visit(std::shared_ptr<XsdRestriction> element) override
     {
         XsdAnnotatedElementsVisitor::visit(element);
 
         m_owner->setRestriction(ReferenceBase::createFromXsd(element));
     }
 
-  void visit(std::shared_ptr<XsdExtension> element)
+  void visit(std::shared_ptr<XsdExtension> element) override
     {
         XsdAnnotatedElementsVisitor::visit(element);
 

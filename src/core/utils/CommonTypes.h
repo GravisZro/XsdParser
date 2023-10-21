@@ -4,11 +4,10 @@
 #include <string>
 #include <map>
 #include <list>
-#include <functional>
+
 #include <memory>
 #include <optional>
 
-#include "SchemaLocation.h"
 #include "NonDeletedPtr.h"
 
 class XsdAbstractElementVisitor;

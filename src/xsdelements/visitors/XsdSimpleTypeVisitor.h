@@ -28,24 +28,22 @@ public:
         m_owner = owner;
     }
 
-  std::shared_ptr<XsdSimpleType> getOwner(void)
-    {
-        return m_owner;
-    }
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
+    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
 
-  void visit(std::shared_ptr<XsdList> element)
+  void visit(std::shared_ptr<XsdList> element) override
     {
         XsdAnnotatedElementsVisitor::visit(element);
         m_owner->setList(element);
     }
 
-  void visit(std::shared_ptr<XsdUnion> element)
+  void visit(std::shared_ptr<XsdUnion> element) override
     {
         XsdAnnotatedElementsVisitor::visit(element);
         m_owner->setUnion(element);
     }
 
-  void visit(std::shared_ptr<XsdRestriction> element)
+  void visit(std::shared_ptr<XsdRestriction> element) override
     {
         XsdAnnotatedElementsVisitor::visit(element);
         m_owner->setRestriction(element);

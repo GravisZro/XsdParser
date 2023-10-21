@@ -4,7 +4,6 @@
 #include <xsdelements/XsdSchema.h>
 #include <xsdelements/XsdImport.h>
 #include <xsdelements/XsdInclude.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 #include <algorithm>
 

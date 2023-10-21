@@ -23,19 +23,17 @@ public:
         m_owner = owner;
     }
 
-  std::shared_ptr<XsdAnnotation> getOwner(void)
-  {
-        return m_owner;
-    }
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
+    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
 
-  void visit(std::shared_ptr<XsdAppInfo> element)
+  void visit(std::shared_ptr<XsdAppInfo> element) override
     {
         XsdAbstractElementVisitor::visit(element);
 
         m_owner->add(element);
     }
 
-  void visit(std::shared_ptr<XsdDocumentation> element)
+  void visit(std::shared_ptr<XsdDocumentation> element) override
     {
         XsdAbstractElementVisitor::visit(element);
 

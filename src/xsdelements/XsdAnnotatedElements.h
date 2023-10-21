@@ -4,8 +4,8 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotation.h>
 
-#include <map>
-#include <functional>
+
+
 
 class XsdAnnotation;
 

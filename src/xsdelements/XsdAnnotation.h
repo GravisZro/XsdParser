@@ -1,17 +1,8 @@
 #pragma once
 
-
-
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-//#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-
 #include <xsdelements/XsdIdentifierElements.h>
-
-#include <list>
-#include <map>
-#include <functional>
-#include <string_view>
 
 class XsdAppInfo;
 class XsdDocumentation;

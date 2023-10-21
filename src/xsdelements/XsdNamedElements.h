@@ -2,7 +2,7 @@
 
 #include <regex>
 #include <xsdelements/XsdAnnotatedElements.h>
-#include <core/utils/CommonOperations.h>
+#include <core/utils/StringOperations.h>
 
 /**
  * This class serves as a base to concrete {@link XsdAbstractElement} classes that can have a name attribute. This is

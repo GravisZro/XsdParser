@@ -71,18 +71,16 @@ public:
     m_owner = owner;
   }
 
-  std::shared_ptr<XsdExtension> getOwner(void)
-    {
-        return m_owner;
-    }
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
+    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
 
-  void visit(std::shared_ptr<XsdMultipleElements> element)
+  void visit(std::shared_ptr<XsdMultipleElements> element) override
     {
         AttributesVisitor::visit(element);
         m_owner->setChildElement(ReferenceBase::createFromXsd(element));
     }
 
-  void visit(std::shared_ptr<XsdGroup> element)
+  void visit(std::shared_ptr<XsdGroup> element) override
     {
         AttributesVisitor::visit(element);
         m_owner->setChildElement(ReferenceBase::createFromXsd(element));

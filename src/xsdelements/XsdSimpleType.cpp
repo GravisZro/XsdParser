@@ -69,6 +69,7 @@ void XsdSimpleType::rule3(void)
 
 void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
+  assert(visitorParam->getOwner());
     XsdNamedElements::accept(visitorParam);
     visitorParam->visit(std::static_pointer_cast<XsdSimpleType>(shared_from_this()));
 }

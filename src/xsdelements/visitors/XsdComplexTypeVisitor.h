@@ -31,13 +31,11 @@ public:
     m_owner = owner;
   }
 
-  std::shared_ptr<XsdComplexType> getOwner(void)
-    {
-        return m_owner;
-    }
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
+    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
 
-  void visit(std::shared_ptr<XsdMultipleElements> element);
-  void visit(std::shared_ptr<XsdGroup> element);
-  void visit(std::shared_ptr<XsdComplexContent> element);
-  void visit(std::shared_ptr<XsdSimpleContent> element);
+  void visit(std::shared_ptr<XsdMultipleElements> element) override;
+  void visit(std::shared_ptr<XsdGroup> element) override;
+  void visit(std::shared_ptr<XsdComplexContent> element) override;
+  void visit(std::shared_ptr<XsdSimpleContent> element) override;
 };

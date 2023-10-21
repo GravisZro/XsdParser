@@ -49,25 +49,24 @@ public:
   using AttributesVisitor::visit;
 
   XsdRestrictionVisitor(std::shared_ptr<XsdRestriction> owner);
-  std::shared_ptr<XsdRestriction> getOwner(void)
-  {
-    return m_owner;
-  }
 
-  void visit(std::shared_ptr<XsdEnumeration> element);
-  void visit(std::shared_ptr<XsdFractionDigits> element);
-  void visit(std::shared_ptr<XsdLength> element);
-  void visit(std::shared_ptr<XsdMaxExclusive> element);
-  void visit(std::shared_ptr<XsdMaxInclusive> element);
-  void visit(std::shared_ptr<XsdMaxLength> element);
-  void visit(std::shared_ptr<XsdMinExclusive> element);
-  void visit(std::shared_ptr<XsdMinInclusive> element);
-  void visit(std::shared_ptr<XsdMinLength> element);
-  void visit(std::shared_ptr<XsdPattern> element);
-  void visit(std::shared_ptr<XsdTotalDigits> element);
-  void visit(std::shared_ptr<XsdWhiteSpace> element);
-  void visit(std::shared_ptr<XsdAll> element);
-  void visit(std::shared_ptr<XsdChoice> element);
-  void visit(std::shared_ptr<XsdSequence> element);
-  void visit(std::shared_ptr<XsdGroup> element);
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
+    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
+
+  void visit(std::shared_ptr<XsdEnumeration> element) override;
+  void visit(std::shared_ptr<XsdFractionDigits> element) override;
+  void visit(std::shared_ptr<XsdLength> element) override;
+  void visit(std::shared_ptr<XsdMaxExclusive> element) override;
+  void visit(std::shared_ptr<XsdMaxInclusive> element) override;
+  void visit(std::shared_ptr<XsdMaxLength> element) override;
+  void visit(std::shared_ptr<XsdMinExclusive> element) override;
+  void visit(std::shared_ptr<XsdMinInclusive> element) override;
+  void visit(std::shared_ptr<XsdMinLength> element) override;
+  void visit(std::shared_ptr<XsdPattern> element) override;
+  void visit(std::shared_ptr<XsdTotalDigits> element) override;
+  void visit(std::shared_ptr<XsdWhiteSpace> element) override;
+  void visit(std::shared_ptr<XsdAll> element) override;
+  void visit(std::shared_ptr<XsdChoice> element) override;
+  void visit(std::shared_ptr<XsdSequence> element) override;
+  void visit(std::shared_ptr<XsdGroup> element) override;
 };

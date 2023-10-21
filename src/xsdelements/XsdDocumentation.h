@@ -7,7 +7,7 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotationChildren.h>
 
-#include <map>
+
 
 /**
  * A class representing the xsd:documentation element. This class extends from {@link XsdAnnotationChildren} since it

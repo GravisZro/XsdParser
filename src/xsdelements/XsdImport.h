@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/utils/SchemaLocation.h>
 #include <core/utils/CommonTypes.h>
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -43,8 +44,6 @@ public:
         XsdAnnotatedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdImport>(shared_from_this()));
     }
-
-
 
   std::optional<std::string> getNamespace(void) {
         return m_namespace;

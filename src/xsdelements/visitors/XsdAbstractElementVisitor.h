@@ -115,5 +115,5 @@ public:
 
   virtual void visit(std::shared_ptr<XsdInclude> element);
 
-  std::shared_ptr<XsdAbstractElement> getOwner(void) { return nullptr; }
+  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) = 0;
 };

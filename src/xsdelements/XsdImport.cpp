@@ -1,7 +1,7 @@
 #include "XsdImport.h"
 
 #include <core/XsdParserCore.h>
-#include <core/utils/CommonOperations.h>
+#include <core/utils/StringOperations.h>
 
 XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,

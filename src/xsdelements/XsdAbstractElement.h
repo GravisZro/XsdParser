@@ -121,7 +121,7 @@ public:
      * Obtains the visitor of a concrete {@link XsdAbstractElement} instance.
      * @return The concrete visitor instance.
      */
-  std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void)
+  virtual std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void)
   {
     return m_visitor;
   }

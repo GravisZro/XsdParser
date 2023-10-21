@@ -12,7 +12,6 @@ HEADERS += \
   src/core/XsdParser.h \
   src/core/XsdParserCore.h \
   src/core/XsdParserJar.h \
-  src/core/utils/CommonOperations.h \
   src/core/utils/CommonTypes.h \
   src/core/utils/ConfigEntryData.h \
   src/core/utils/DefaultParserConfig.h \
@@ -21,6 +20,7 @@ HEADERS += \
   src/core/utils/ParseData.h \
   src/core/utils/ParserConfig.h \
   src/core/utils/SchemaLocation.h \
+  src/core/utils/StringOperations.h \
   src/core/utils/UnsolvedReferenceItem.h \
   src/xsdelements/AttributeValidations.h \
   src/xsdelements/XsdAbstractElement.h \

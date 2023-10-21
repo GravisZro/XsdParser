@@ -1,14 +1,9 @@
 #pragma once
 
-#include <core/utils/CommonOperations.h>
+#include <core/utils/StringOperations.h>
 
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-
-
-#include <map>
-#include <functional>
-#include <string>
 
 /**
  * A class that serves as a base to every {@link XsdAbstractElement} concrete type that contains an id field.

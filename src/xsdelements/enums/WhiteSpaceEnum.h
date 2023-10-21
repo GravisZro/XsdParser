@@ -1,5 +1,6 @@
+#pragma once
+
 #include <xsdelements/enums/XsdEnum.h>
-#include <list>
 
 /**
  * An {@link Enum} with all the possible values for the whiteSpace attribute.

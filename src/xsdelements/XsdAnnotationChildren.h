@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/utils/CommonOperations.h>
+#include <core/utils/StringOperations.h>
 #include <pugixml.hpp>
 
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -40,7 +40,7 @@ public:
      * @return Always returns a {@link VisitorNotFoundException} since the descendants of this class shouldn't be
      * visited since they aren't allowed to have children.
      */
-  XsdAbstractElementVisitor getVisitor(void)
+  std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void) override
     {
         throw VisitorNotFoundException("AppInfo/Documentation can't have children.");
     }

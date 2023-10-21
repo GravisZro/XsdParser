@@ -8,10 +8,6 @@
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/XsdSimpleType.h>
 
-#include <list>
-#include <map>
-#include <functional>
-
 /**
  * A class representing the xsd:union element.
  *

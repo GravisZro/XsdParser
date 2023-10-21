@@ -67,7 +67,7 @@ void XsdRestriction::initialize(void)
             else if(parseMappers.contains(*XsdElement::XS_TAG))
               config = parseMappers.at(*XsdElement::XS_TAG);
 
-            if (config.parserFunction && config.visitorFunction)
+            if (config.parserFunction == nullptr && config.visitorFunction == nullptr)
                 throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
             m_base = create<UnsolvedReference>(m_baseString.value(),

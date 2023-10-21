@@ -2,10 +2,6 @@
 
 #include <xsdelements/XsdMultipleElements.h>
 
-#include <map>
-#include <string>
-#include <functional>
-
 class XsdAbstractElementVisitor;
 class XsdAbstractElement;
 class XsdParserCore;

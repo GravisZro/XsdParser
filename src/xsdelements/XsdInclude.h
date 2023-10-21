@@ -1,6 +1,7 @@
 #pragma once
 
-#include <core/utils/CommonOperations.h>
+#include <core/utils/SchemaLocation.h>
+#include <core/utils/StringOperations.h>
 #include <core/XsdParserCore.h>
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>

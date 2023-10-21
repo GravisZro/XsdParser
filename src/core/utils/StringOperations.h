@@ -1,5 +1,5 @@
-#ifndef COMMONOPERATIONS_H
-#define COMMONOPERATIONS_H
+#ifndef STRINGOPERATIONS_H
+#define STRINGOPERATIONS_H
 
 #include <string>
 #include <string_view>
@@ -22,4 +22,4 @@ std::string operator +(const std::string& a, T b)
 
 inline std::string operator *(const std::string_view& a) { return std::string(a); }
 
-#endif // COMMONOPERATIONS_H
+#endif // STRINGOPERATIONS_H

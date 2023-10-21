@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/utils/CommonTypes.h>
-#include <core/utils/CommonOperations.h>
+#include <core/utils/StringOperations.h>
 
 #include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>

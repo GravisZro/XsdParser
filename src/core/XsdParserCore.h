@@ -1,17 +1,20 @@
 #pragma once
 
-#include <core/utils/CommonTypes.h>
 #include <pugixml.hpp>
 
+#include <core/utils/SchemaLocation.h>
+#include <core/utils/CommonTypes.h>
+
+#include <core/utils/ConfigEntryData.h>
+#include <core/utils/UnsolvedReferenceItem.h>
+#include <core/utils/ParserConfig.h>
 
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/exceptions/ParentAvailableException.h>
-#include <core/utils/ConfigEntryData.h>
-#include <core/utils/UnsolvedReferenceItem.h>
-#include <core/utils/ParserConfig.h>
+
 
 class XsdElement;
 class XsdSchema;

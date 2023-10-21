@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/utils/SchemaLocation.h>
 #include <core/utils/CommonTypes.h>
 
 #include <pugixml.hpp>

@@ -11,11 +11,6 @@
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
 
-// import java.util.ArrayList;
-#include <list>
-// import java.util.stream.Collectors;
-// import java.util.stream.Stream;
-
 /**
  * Represents the restrictions of the all elements that can contain {@link XsdAttribute} and {@link XsdAttributeGroup}.
  * This visitor contains the {@link AttributesVisitor#attributes} and {@link AttributesVisitor#attributeGroups} that
@@ -42,13 +37,13 @@ public:
     AttributesVisitor(std::shared_ptr<XsdAnnotatedElements> owner)
       : XsdAnnotatedElementsVisitor(owner) { }
 
-  void visit(std::shared_ptr<XsdAttribute> attribute)
+  void visit(std::shared_ptr<XsdAttribute> attribute) override
     {
         XsdAbstractElementVisitor::visit(attribute);
         m_attributes.push_back(ReferenceBase::createFromXsd(attribute));
     }
 
-  void visit(std::shared_ptr<XsdAttributeGroup> attributeGroup)
+  void visit(std::shared_ptr<XsdAttributeGroup> attributeGroup) override
     {
         XsdAbstractElementVisitor::visit(attributeGroup);
         m_attributeGroups.push_back(ReferenceBase::createFromXsd(attributeGroup));

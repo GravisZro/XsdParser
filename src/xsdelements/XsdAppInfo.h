@@ -8,11 +8,6 @@
 
 #include <xsdelements/XsdAnnotationChildren.h>
 
-#include <string_view>
-#include <string>
-#include <map>
-
-
 /**
  * A class representing the xsd:appInfo element. This class extends form {@link XsdAnnotationChildren} since it shares
  * a few similarities with {@link XsdDocumentation}, which is the other possible children of {@link XsdAnnotation}

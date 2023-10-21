@@ -1,6 +1,6 @@
 #include "XsdExtension.h"
 
-#include <core/utils/CommonOperations.h>
+#include <core/utils/StringOperations.h>
 
 #include <xsdelements/XsdBuiltInDataType.h>
 #include <xsdelements/XsdElement.h>

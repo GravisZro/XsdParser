@@ -60,7 +60,6 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
         std::string nodeName = child.name();
         auto parse_mappers = XsdParserCore::getParseMappers();
         if(parse_mappers.contains(nodeName))
-        {
           if(auto configEntryData = parse_mappers.at(nodeName); configEntryData.parserFunction)
           {
             auto rval = configEntryData.parserFunction( ParseData { parser, child, configEntryData.visitorFunction });
@@ -68,7 +67,6 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
             childElement->accept(element->getVisitor());
             childElement->validateSchemaRules();
           }
-        }
       }
     }
 
