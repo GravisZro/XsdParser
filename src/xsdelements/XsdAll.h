@@ -1,10 +1,9 @@
 #pragma once
 
 #include <xsdelements/XsdMultipleElements.h>
+#include <xsdelements/AttributeValidations.h>
 
-class XsdAbstractElementVisitor;
-class XsdAbstractElement;
-class XsdParserCore;
+struct XsdAbstractElementVisitor;
 
 /**
  * A class representing the xsd:all element. Since it shares the same attributes as {@link XsdChoice} or {@link XsdSequence}
@@ -38,8 +37,25 @@ public: // ctors
     XsdAll(std::shared_ptr<XsdParserCore> parser,
            StringMap attributesMap,
            VisitorFunctionType visitorFunction,
-           std::shared_ptr<XsdAbstractElement> parent);
+           std::shared_ptr<XsdAbstractElement> parent)
+      : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
+        m_minOccurs(INT_MIN),
+        m_maxOccurs(INT_MIN)
+    {
+    }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdMultipleElements::initialize();
+    m_minOccurs = 1;
+    m_maxOccurs = 1;
+    if(haveAttribute(MIN_OCCURS_TAG))
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+    if(haveAttribute(MAX_OCCURS_TAG))
+      m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MAX_OCCURS_TAG, getAttribute(MAX_OCCURS_TAG));
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
 
   

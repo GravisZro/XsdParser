@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-//#include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/enums/SimpleTypeFinalEnum.h>
@@ -10,10 +7,11 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdNamedElements.h>
+#include <xsdelements/AttributeValidations.h>
 
-//using XsdIntegerRestrictions::hasDifferentValue;
-//using XsdStringRestrictions::hasDifferentValue;
-//using XsdWhiteSpace::hasDifferentValue;
+class XsdRestriction;
+class XsdUnion;
+class XsdList;
 
 /**
  * A class representing the xsd:simpleType element.
@@ -50,11 +48,23 @@ private:
     SimpleTypeFinalEnum m_finalObj;
 
 public: // ctors
-    XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
-                  StringMap attributesMap,
-                  VisitorFunctionType visitorFunction,
-                  std::shared_ptr<XsdAbstractElement> parent);
+  XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
+                StringMap attributesMap,
+                VisitorFunctionType visitorFunction,
+                std::shared_ptr<XsdAbstractElement> parent)
+    : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 public:
+  virtual void initialize(void) override
+  {
+    XsdNamedElements::initialize();
+    m_restriction.reset();
+    m_xsd_union.reset();
+    m_xsd_list.reset();
+    m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
+
+    if(haveAttribute(FINAL_TAG))
+      m_finalObj = AttributeValidations::belongsToEnum<SimpleTypeFinalEnum>(getAttribute(FINAL_TAG) );
+  }
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */

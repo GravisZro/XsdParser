@@ -2,7 +2,7 @@
 
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/CommonTypes.h>
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -17,9 +17,9 @@ class XsdImport : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:import";
-    constexpr static const std::string_view XS_TAG = "xs:import";
-    constexpr static const std::string_view TAG = "import";
+  constexpr static const std::string_view XSD_TAG = "xsd:import";
+  constexpr static const std::string_view XS_TAG = "xs:import";
+  constexpr static const std::string_view TAG = "import";
 
 private:
     /**
@@ -34,11 +34,17 @@ private:
      */
     SchemaLocation m_schemaLocation;
 public: // ctors
-    XsdImport(std::shared_ptr<XsdParserCore> parser,
-              StringMap attributesMap,
-              VisitorFunctionType visitorFunction,
-              std::shared_ptr<XsdAbstractElement> parent);
+  XsdImport(std::shared_ptr<XsdParserCore> parser,
+            StringMap attributesMap,
+            VisitorFunctionType visitorFunction,
+            std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+  {
+  }
+
 public:
+  virtual void initialize(void) override;
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);

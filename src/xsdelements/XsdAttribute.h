@@ -74,10 +74,11 @@ public: // ctors
     XsdAttribute(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
                  VisitorFunctionType visitorFunction,
-                 std::shared_ptr<XsdAbstractElement> parent);
+                 std::shared_ptr<XsdAbstractElement> parent)
+      : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 
-    virtual void initialize(void) override;
 public:
+    virtual void initialize(void) override;
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */

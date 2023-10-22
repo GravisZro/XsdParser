@@ -2,19 +2,6 @@
 
 #include <xsdelements/XsdExtension.h>
 #include <xsdelements/XsdRestriction.h>
-#include <xsdelements/AttributeValidations.h>
-
-XsdComplexContent::XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
-                                     StringMap attributesMap,
-                                     VisitorFunctionType visitorFunction,
-                                     std::shared_ptr<XsdAbstractElement> parent)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
-    m_mixed(false)
-{
-  if(haveAttribute(MIXED_TAG))
-    m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
-}
-
 
 /**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace

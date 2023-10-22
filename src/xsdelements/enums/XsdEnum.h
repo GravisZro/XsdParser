@@ -10,24 +10,26 @@
 class XsdEnum
 {
 private:
-  std::optional<std::string> value;
+  std::optional<std::string> m_value;
 public:
   XsdEnum(void) = default;
 
   XsdEnum(std::string_view value)
-    : value(std::string(value)) { }
+    : m_value(std::string(value)) { }
   XsdEnum(std::optional<std::string> value)
-    : value(value) { }
+    : m_value(value) { }
 
-  void operator =(const std::string_view& v) { value = v; }
-  void operator =(const std::string& v) { value = v; }
-  void operator =(const std::optional<std::string>& v) { value = v; }
-  operator bool (void) const { return value.has_value(); }
+  void operator =(const std::string_view& value) { m_value = value; }
+  void operator =(const std::string& value) { m_value = value; }
+  void operator =(const std::optional<std::string>& value) { m_value = value; }
+  operator bool (void) const { return m_value.has_value(); }
+
+  void reset(void) { m_value.reset(); }
 
   /**
    * @return The concrete value of the current instance.
    */
-  std::optional<std::string> getValue(void) { return value; }
+  std::optional<std::string> getValue(void) { return m_value; }
 
   /**
    * @return The name of the attribute that the {@link Enum} represents.

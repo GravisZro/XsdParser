@@ -22,16 +22,22 @@ private:
     std::optional<std::string> m_value;
 
 public: // ctors
-    XsdStringRestrictions(std::shared_ptr<XsdParserCore> parser,
-                          StringMap elementFieldsMapParam,
-                          VisitorFunctionType visitorFunction,
-                          std::shared_ptr<XsdAbstractElement> parent)
-        : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent)
-    {
-      if(haveAttribute(VALUE_TAG))
-        m_value = getAttribute(VALUE_TAG);
-    }
+  XsdStringRestrictions(std::shared_ptr<XsdParserCore> parser,
+                        StringMap attributesMap,
+                        VisitorFunctionType visitorFunction,
+                        std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+  {
+  }
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_value.reset();
+    if(haveAttribute(VALUE_TAG))
+      m_value = getAttribute(VALUE_TAG);
+  }
+
     /**
      * Compares two different objects of this type.
      * @param o1 The first object.

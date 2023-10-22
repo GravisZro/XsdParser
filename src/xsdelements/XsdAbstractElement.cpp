@@ -1,8 +1,8 @@
 #include "XsdAbstractElement.h"
 
 #include <core/XsdParserCore.h>
-#include <core/utils/ParseData.h>
 
+#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -11,24 +11,6 @@
 #include <xsdelements/XsdSchema.h>
 
 #include <algorithm>
-
-XsdAbstractElement::XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
-                                       StringMap attributesMap,
-                                       VisitorFunctionType visitorFunction,
-                                       std::shared_ptr<XsdAbstractElement> parent)
-{
-    m_parser = parser;
-    m_attributesMap = attributesMap;
-    m_visitorFunction = visitorFunction;
-    setParent(parent);
-}
-
-void XsdAbstractElement::initialize(void)
-{
-  assert(shared_from_this());
-  if(m_visitor == nullptr && m_visitorFunction)
-    m_visitor = m_visitorFunction(shared_from_this());
-}
 
 /**
  * Base method for all accept methods. It serves as a way to guarantee that every accept call assigns the parent
@@ -62,9 +44,11 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
         if(parse_mappers.contains(nodeName))
           if(auto configEntryData = parse_mappers.at(nodeName); configEntryData.parserFunction)
           {
-            auto rval = configEntryData.parserFunction( ParseData { parser, child, configEntryData.visitorFunction });
+            auto rval = configEntryData.parserFunction(parser, child, configEntryData.visitorFunction, nullptr);
             auto childElement = rval->getElement();
-            childElement->accept(element->getVisitor());
+            childElement->setElementName(nodeName);
+            if(element->getVisitor())
+              childElement->accept(element->getVisitor());
             childElement->validateSchemaRules();
           }
       }

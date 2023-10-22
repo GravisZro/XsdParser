@@ -15,16 +15,15 @@
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <core/XsdParserCore.h>
 
-XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
-                     VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
-    m_attributeFormDefault(FormEnum::UNQUALIFIED),
-    m_elementFormDefault(FormEnum::UNQUALIFIED),
-    m_blockDefault(BlockDefaultEnum::DEFAULT),
-    m_finalDefault(FinalDefaultEnum::DEFAULT)
+void XsdSchema::initialize(void)
 {
+  XsdAnnotatedElements::initialize();
+
+  m_attributeFormDefault = FormEnum::UNQUALIFIED;
+  m_elementFormDefault = FormEnum::UNQUALIFIED;
+  m_blockDefault = BlockDefaultEnum::DEFAULT;
+  m_finalDefault = FinalDefaultEnum::DEFAULT;
+
   if(haveAttribute(ATTRIBUTE_FORM_DEFAULT))
     m_attributeFormDefault = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(ATTRIBUTE_FORM_DEFAULT));
 
@@ -46,7 +45,7 @@ XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
   if(haveAttribute(XMLNS))
     m_xmlns = getAttribute(XMLNS);
 
-  for (auto& pair : attributesMap)
+  for (auto& pair : getAttributesMap())
   {
     auto& key = pair.first;
     if (key.starts_with(XMLNS) &&
@@ -54,7 +53,7 @@ XsdSchema::XsdSchema(std::shared_ptr<XsdParserCore> parser,
         key != "xmlns:xsd")
     {
       std::string namespaceId = key.substr(key.find_first_of(':') + 1);
-      m_namespaces.emplace(namespaceId, NamespaceInfo(attributesMap.at(key)));
+      m_namespaces.emplace(namespaceId, NamespaceInfo(pair.second));
     }
   }
 }
@@ -67,46 +66,20 @@ std::list<std::shared_ptr<ReferenceBase>> XsdSchema::getElements(void)
   return rval;
 }
 
-void XsdSchema::add(std::shared_ptr<XsdInclude> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
 
-void XsdSchema::add(std::shared_ptr<XsdImport> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdAnnotation> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdSimpleType> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdComplexType> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdGroup> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdAttributeGroup> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdElement> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-void XsdSchema::add(std::shared_ptr<XsdAttribute> element) {
-      m_elements.push_back(std::static_pointer_cast<XsdAbstractElement>(element));
-  }
-
-
-
-
-
+void XsdSchema::add(std::shared_ptr<XsdAbstractElement> element)
+{
+  assert(std::dynamic_pointer_cast<XsdInclude       >(element) ||
+         std::dynamic_pointer_cast<XsdImport        >(element) ||
+         std::dynamic_pointer_cast<XsdAnnotation    >(element) ||
+         std::dynamic_pointer_cast<XsdSimpleType    >(element) ||
+         std::dynamic_pointer_cast<XsdComplexType   >(element) ||
+         std::dynamic_pointer_cast<XsdGroup         >(element) ||
+         std::dynamic_pointer_cast<XsdAttributeGroup>(element) ||
+         std::dynamic_pointer_cast<XsdElement       >(element) ||
+         std::dynamic_pointer_cast<XsdAttribute     >(element));
+  m_elements.push_back(element);
+}
 
 /**
  * @return The children elements that are of the type {@link XsdInclude}.

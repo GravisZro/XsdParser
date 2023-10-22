@@ -1,12 +1,13 @@
 #pragma once
 
-#include <core/utils/ParseData.h>
+#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
-#include <xsdelements/XsdAbstractElement.h>
 
 #include <xsdelements/XsdNamedElements.h>
+
+class XsdAttribute;
 
 /**
  * A class is representing xsd:attributeGroup elements. It can have a ref attribute and therefore extends from
@@ -37,20 +38,28 @@ private:
      */
     std::list<std::shared_ptr<ReferenceBase>> m_attributes;
 public:
-    XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
-                      StringMap attributesMap,
-                      VisitorFunctionType visitorFunction,
-                      std::shared_ptr<XsdAbstractElement> parent)
-      : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
+  XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
+                    StringMap attributesMap,
+                    VisitorFunctionType visitorFunction,
+                    std::shared_ptr<XsdAbstractElement> parent)
+    : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 
 public:
+  virtual void initialize(void) override
+  {
+    XsdNamedElements::initialize();
+    m_attributeGroups.clear();
+    m_attributes.clear();
+  }
+
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdNamedElements::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
     }
 
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void);
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
   std::shared_ptr<XsdNamedElements> clone(StringMap placeHolderAttributes);
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
   std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void);
@@ -62,7 +71,8 @@ public:
     m_attributes.push_back(attribute);
   }
 
-  void addAttributeGroup(std::shared_ptr<ReferenceBase> attributeGroup) {
-        m_attributeGroups.push_back(attributeGroup);
-    }
+  void addAttributeGroup(std::shared_ptr<ReferenceBase> attributeGroup)
+  {
+    m_attributeGroups.push_back(attributeGroup);
+  }
 };

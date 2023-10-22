@@ -9,17 +9,22 @@
 
 #include <xsdelements/XsdAnnotatedElements.h>
 
-class XsdAbstractElement;
-class XsdAbstractElementVisitor;
-class XsdParserCore;
+class XsdInclude;
+class XsdImport;
+class XsdSimpleType;
+class XsdComplexType;
+class XsdGroup;
+class XsdAttributeGroup;
+class XsdElement;
+class XsdAttribute;
 
 class XsdSchema : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:schema";
-    constexpr static const std::string_view XS_TAG = "xs:schema";
-    constexpr static const std::string_view TAG = "schema";
+  constexpr static const std::string_view XSD_TAG = "xsd:schema";
+  constexpr static const std::string_view XS_TAG = "xs:schema";
+  constexpr static const std::string_view TAG = "schema";
 
 private:
     /**
@@ -76,15 +81,18 @@ public: // ctors
     XsdSchema(std::shared_ptr<XsdParserCore> parser,
               StringMap attributesMap,
               VisitorFunctionType visitorFunction,
-              std::shared_ptr<XsdAbstractElement> parent);
+              std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+    {}
 
 public:
-  std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void)
+  virtual void initialize(void) override;
+  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) override
     {
         return m_elements;
     }
 
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void);
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
 
   
 
@@ -98,15 +106,8 @@ public:
     }
   }
 public:
-  void add(std::shared_ptr<XsdInclude> element);
-  void add(std::shared_ptr<XsdImport> element);
-  void add(std::shared_ptr<XsdAnnotation> element);
-  void add(std::shared_ptr<XsdSimpleType> element);
-  void add(std::shared_ptr<XsdComplexType> element);
-  void add(std::shared_ptr<XsdGroup> element);
-  void add(std::shared_ptr<XsdAttributeGroup> element);
-  void add(std::shared_ptr<XsdElement> element);
-  void add(std::shared_ptr<XsdAttribute> element);
+
+  void add(std::shared_ptr<XsdAbstractElement> element);
 
   std::optional<std::string> getAttributeFormDefault(void) {
         return m_attributeFormDefault.getValue();

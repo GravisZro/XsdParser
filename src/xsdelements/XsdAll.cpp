@@ -1,29 +1,10 @@
 #include "XsdAll.h"
 
 #include <core/XsdParserCore.h>
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/AttributeValidations.h>
-
-
-
-
-XsdAll::XsdAll(std::shared_ptr<XsdParserCore> parser,
-               StringMap attributesMap,
-               VisitorFunctionType visitorFunction,
-               std::shared_ptr<XsdAbstractElement> parent)
-  : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
-    m_minOccurs(1),
-    m_maxOccurs(1)
-{
-  if(haveAttribute(MIN_OCCURS_TAG))
-    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
-  if(haveAttribute(MAX_OCCURS_TAG))
-    m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MAX_OCCURS_TAG, getAttribute(MAX_OCCURS_TAG));
-}
-
 
 void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {

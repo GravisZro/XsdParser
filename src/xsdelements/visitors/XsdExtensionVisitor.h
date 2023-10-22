@@ -1,46 +1,5 @@
 #pragma once
 
-
-// #include <xsdelements/*.h>
-/*
-
-#include <xsdelements/XsdAbstractElement.h>
-#include <xsdelements/XsdAll.h>
-#include <xsdelements/XsdAttribute.h>
-#include <xsdelements/XsdAttributeGroup.h>
-#include <xsdelements/XsdChoice.h>
-#include <xsdelements/XsdComplexType.h>
-#include <xsdelements/XsdElement.h>
-#include <xsdelements/XsdGroup.h>
-#include <xsdelements/XsdSequence.h>
-#include <xsdelements/XsdMultipleElements.h>
-#include <xsdelements/XsdNamedElements.h>
-#include <xsdelements/XsdSimpleType.h>
-#include <xsdelements/XsdRestriction.h>
-#include <xsdelements/XsdList.h>
-#include <xsdelements/XsdUnion.h>
-#include <xsdelements/XsdEnumeration.h>
-#include <xsdelements/XsdFractionDigits.h>
-#include <xsdelements/XsdLength.h>
-#include <xsdelements/XsdMaxExclusive.h>
-#include <xsdelements/XsdMaxInclusive.h>
-#include <xsdelements/XsdMaxLength.h>
-#include <xsdelements/XsdMinExclusive.h>
-#include <xsdelements/XsdMinInclusive.h>
-#include <xsdelements/XsdMinLength.h>
-#include <xsdelements/XsdPattern.h>
-#include <xsdelements/XsdTotalDigits.h>
-#include <xsdelements/XsdWhiteSpace.h>
-#include <xsdelements/XsdExtension.h>
-#include <xsdelements/XsdComplexContent.h>
-#include <xsdelements/XsdSimpleContent.h>
-#include <xsdelements/XsdDocumentation.h>
-#include <xsdelements/XsdAppInfo.h>
-#include <xsdelements/XsdAnnotation.h>
-#include <xsdelements/XsdImport.h>
-#include <xsdelements/XsdInclude.h>
-*/
-
 #include <xsdelements/XsdExtension.h>
 #include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdGroup.h>
@@ -55,34 +14,26 @@
  * Can also have {@link XsdAttribute} and {@link XsdAttributeGroup} children as per inheritance of {@link AttributesVisitor}.
  * Can also have {@link XsdAnnotation} children as per inheritance of {@link XsdAnnotatedElementsVisitor}.
  */
-class XsdExtensionVisitor : public AttributesVisitor
+struct XsdExtensionVisitor : AttributesVisitor
 {
-private:
+  XsdExtensionVisitor(std::shared_ptr<XsdExtension> _owner) : owner(_owner) { }
+
     /**
      * The {@link XsdExtension} instance which owns this {@link XsdExtensionVisitor} instance. This way this visitor
      * instance can perform changes in the {@link XsdExtension} object.
      */
-  std::shared_ptr<XsdExtension> m_owner;
-public:
-  using AttributesVisitor::visit;
-  XsdExtensionVisitor(std::shared_ptr<XsdExtension> owner)
-    : AttributesVisitor(owner)
-  {
-    m_owner = owner;
-  }
+  std::shared_ptr<XsdExtension> owner;
 
   virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
+    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
 
-  void visit(std::shared_ptr<XsdMultipleElements> element) override
-    {
-        AttributesVisitor::visit(element);
-        m_owner->setChildElement(ReferenceBase::createFromXsd(element));
-    }
-
-  void visit(std::shared_ptr<XsdGroup> element) override
-    {
-        AttributesVisitor::visit(element);
-        m_owner->setChildElement(ReferenceBase::createFromXsd(element));
-    }
+  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  {
+    AttributesVisitor::visit(element);
+    if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
+       std::dynamic_pointer_cast<XsdGroup>(element))
+      owner->setChildElement(ReferenceBase::createFromXsd(element));
+    else
+      assert(false);
+  }
 };

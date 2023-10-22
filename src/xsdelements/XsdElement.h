@@ -1,6 +1,5 @@
 #pragma once
 
-#include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -14,6 +13,8 @@
 #include <xsdelements/XsdBuiltInDataType.h>
 #include <xsdelements/AttributeValidations.h>
 
+class XsdComplexType;
+class XsdSimpleType;
 
 /**
  * A class representing the xsd:element element. Extends {@link XsdNamedElements} because it's one of the
@@ -117,9 +118,14 @@ public: // ctors
   XsdElement(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
              VisitorFunctionType visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent);
+             std::shared_ptr<XsdAbstractElement> parent)
+    : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
+      m_minOccurs(INT_MIN)
+  { }
+
+public:
   virtual void initialize(void) override;
-private:
+
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */

@@ -16,17 +16,16 @@ std::shared_ptr<XsdAbstractElementVisitor> XsdAttributeVisitorFunction(std::shar
               std::static_pointer_cast<XsdSimpleType>(element)));
 }
 
-XsdAttribute::XsdAttribute(std::shared_ptr<XsdParserCore> parser,
-                           StringMap attributesMap,
-                           VisitorFunctionType visitorFunction,
-                           std::shared_ptr<XsdAbstractElement> parent)
-  : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
-{ }
-
 void XsdAttribute::initialize(void)
 {
   XsdNamedElements::initialize();
+  m_simpleType.reset();
+  m_defaultElement.reset();
+  m_fixed.reset();
+  m_type.reset();
+
   m_form = getFormDefaultValue(getParent());
+  m_use = UsageEnum::OPTIONAL;
 
   if(haveAttribute(DEFAULT_ELEMENT_TAG))
     m_defaultElement = getAttribute(DEFAULT_ELEMENT_TAG);
@@ -42,9 +41,6 @@ void XsdAttribute::initialize(void)
 
   if(haveAttribute(USE_TAG))
     m_use = AttributeValidations::belongsToEnum<UsageEnum>(getAttribute(USE_TAG));
-  else
-    m_use = UsageEnum::OPTIONAL;
-
 
   if (m_type && !XsdParserCore::getXsdTypesToJava().contains(m_type.value()))
   {

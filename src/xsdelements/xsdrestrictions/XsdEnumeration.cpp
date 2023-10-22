@@ -2,14 +2,6 @@
 
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
-XsdEnumeration::XsdEnumeration(std::shared_ptr<XsdParserCore> parser,
-                               StringMap elementFieldsMapParam,
-                               VisitorFunctionType visitorFunction,
-                               std::shared_ptr<XsdAbstractElement> parent)
-      : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
-{
-}
-
 void XsdEnumeration::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
 {
   XsdStringRestrictions::accept(xsdAbstractElementVisitor);

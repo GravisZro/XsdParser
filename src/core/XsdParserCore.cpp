@@ -29,7 +29,20 @@ bool XsdParserCore::isXsdSchema(pugi::xml_node node)
  * @return A list of all the top level parsed xsd:elements by this class. It doesn't return any other elements apart
  * from xsd:elements. To access the whole element tree use {@link XsdParser#getResultXsdSchemas()}
  */
-std::list<std::shared_ptr<XsdElement>> XsdParserCore::getResultXsdElements(void)
+std::list<std::shared_ptr<XsdAbstractElement>> XsdParserCore::getResultXsdElements(void)
+{
+  std::list<std::shared_ptr<XsdAbstractElement>> rval;
+  for(auto& schema : getResultXsdSchemas())
+    for(auto& element : schema->getXsdElements())
+      rval.push_back(element);
+  return rval;
+}
+
+/**
+ * @return A list of all the top level parsed xsd:elements by this class. It doesn't return any other elements apart
+ * from xsd:elements. To access the whole element tree use {@link XsdParser#getResultXsdSchemas()}
+ */
+std::list<std::shared_ptr<XsdElement>> XsdParserCore::getResultChildrenElements(void)
 {
   std::list<std::shared_ptr<XsdElement>> rval;
   for(auto& schema : getResultXsdSchemas())
@@ -79,8 +92,6 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
 
     for(auto pair : schema->getNamespaces())
       schema->resolveNameSpace(pair.first, schema->getFileLocation());
-//    for(auto key : std::views::keys(schema->getNamespaces()))
-//      schema->resolveNameSpace(key, schema->getFileLocation());
   }
 
   for(auto& pair : m_parseElements)

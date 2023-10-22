@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
@@ -25,11 +25,12 @@ public:
 
 public: // ctors
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
-             StringMap elementFieldsMapParam,
+             StringMap attributesMap,
              VisitorFunctionType visitorFunction,
              std::shared_ptr<XsdAbstractElement> parent)
-    : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
-  { }
+    : XsdStringRestrictions(parser, attributesMap, visitorFunction, parent)
+  {
+  }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {

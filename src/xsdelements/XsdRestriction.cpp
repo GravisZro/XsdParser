@@ -32,57 +32,70 @@
 #include <core/XsdParserCore.h>
 
 
-XsdRestriction::XsdRestriction(std::shared_ptr<XsdParserCore> parser,
-                               StringMap attributesMap,
-                               VisitorFunctionType visitorFunction,
-                               std::shared_ptr<XsdAbstractElement> parent)
-  : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-{
-}
 
 void XsdRestriction::initialize(void)
 {
   XsdAnnotatedElements::initialize();
+  m_base.reset();
+  m_enumeration.clear();
+  m_fractionDigits.reset();
+  m_length.reset();
+  m_maxExclusive.reset();
+  m_maxInclusive.reset();
+  m_maxLength.reset();
+  m_minExclusive.reset();
+  m_minInclusive.reset();
+  m_minLength.reset();
+  m_pattern.reset();
+  m_totalDigits.reset();
+  m_whiteSpace.reset();
+  m_group.reset();
+  m_all.reset();
+  m_choice.reset();
+  m_sequence.reset();
 
-    if(haveAttribute(BASE_TAG))
-      m_baseString = getAttribute(BASE_TAG);
+  if(haveAttribute(BASE_TAG))
+    m_baseString = getAttribute(BASE_TAG);
 
-    if (m_baseString)
+  if (m_baseString)
+  {
+    if (XsdParserCore::getXsdTypesToJava().contains(m_baseString.value()))
     {
-        if (XsdParserCore::getXsdTypesToJava().contains(m_baseString.value()))
-        {
-            StringMap attributes;
-            attributes.emplace(NAME_TAG, m_baseString.value());
-            m_base = ReferenceBase::createFromXsd(
-                       std::static_pointer_cast<XsdAbstractElement>(
-                         create<XsdBuiltInDataType>(getParser(),
-                                                    attributes,
-                                                    shared_from_this())));
-        } else {
-            auto parseMappers = XsdParserCore::getParseMappers();
+      StringMap attributes;
+      attributes.emplace(NAME_TAG, m_baseString.value());
+      m_base = ReferenceBase::createFromXsd(
+                 std::static_pointer_cast<XsdAbstractElement>(
+                   create<XsdBuiltInDataType>(getParser(),
+                                              attributes,
+                                              nullptr,
+                                              shared_from_this())));
+    } else {
+      auto parseMappers = XsdParserCore::getParseMappers();
 
-            ConfigEntryData config;
-            if(parseMappers.contains(*XsdElement::XSD_TAG))
-              config = parseMappers.at(*XsdElement::XSD_TAG);
-            else if(parseMappers.contains(*XsdElement::XS_TAG))
-              config = parseMappers.at(*XsdElement::XS_TAG);
+      ConfigEntryData config;
+      if(parseMappers.contains(*XsdElement::XSD_TAG))
+        config = parseMappers.at(*XsdElement::XSD_TAG);
+      else if(parseMappers.contains(*XsdElement::XS_TAG))
+        config = parseMappers.at(*XsdElement::XS_TAG);
 
-            if (config.parserFunction == nullptr && config.visitorFunction == nullptr)
-                throw ParsingException("Invalid Parsing Configuration for XsdElement.");
+      if (config.parserFunction == nullptr && config.visitorFunction == nullptr)
+        throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
-            m_base = create<UnsolvedReference>(m_baseString.value(),
-                                               create<XsdElement>(getParser(),
-                                                                  StringMap{},
-                                                                  config.visitorFunction,
-                                                                  shared_from_this()));
-            getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
-        }
+      m_base = create<UnsolvedReference>(m_baseString.value(),
+                                         create<XsdElement>(getParser(),
+                                                            StringMap{},
+                                                            config.visitorFunction,
+                                                            shared_from_this()));
+      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
     }
+  }
 }
 
 
 void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
-  {
+{
+  assert(getVisitor());
+
       XsdAnnotatedElements::replaceUnsolvedElements(element);
 
       std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->replaceUnsolvedAttributes(
@@ -184,11 +197,13 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
 
 std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void) {
+  assert(getVisitor());
       return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributes();
   }
 
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void) {
+  assert(getVisitor());
       return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributeGroups();
   }
 

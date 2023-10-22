@@ -7,11 +7,10 @@
 
 #include <xsdelements/exceptions/ParentAvailableException.h>
 #include <xsdelements/exceptions/ParsingException.h>
-#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <cassert>
 
-class XsdParserCore;
+struct XsdAbstractElementVisitor;
 class XsdSchema;
 class NamedConcreteElement;
 class UnsolvedReference;
@@ -89,33 +88,57 @@ private:
      */
   bool m_parentAvailable;
 
+
+  std::string m_element_name;
+
 protected:
     VisitorFunctionType m_visitorFunction;
 public: // ctors
     XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
                        StringMap attributesMap,
                        VisitorFunctionType visitorFunction,
-                       std::shared_ptr<XsdAbstractElement> parent);
+                       std::shared_ptr<XsdAbstractElement> parent)
+      : m_attributesMap(attributesMap),
+        m_parent(parent),
+        m_parser(parser),
+        m_parentAvailable(false),
+        m_visitorFunction(visitorFunction)
+    {
+    }
 
 public:
   virtual ~XsdAbstractElement(void) = default;
-  virtual void initialize(void);
+  virtual void initialize(void)
+  {
+    m_parentAvailable = bool(m_parent);
+    if(m_visitor == nullptr && m_visitorFunction)
+      m_visitor = m_visitorFunction(shared_from_this());
+  }
 
   bool haveAttribute(const std::string_view& attribute)
   {
     return m_attributesMap.contains(std::string(attribute));
   }
 
-
   std::string getAttribute(const std::string_view& attribute)
   {
     return m_attributesMap.at(std::string(attribute));
   }
 
-
   StringMap& getAttributesMap(void) {
         return m_attributesMap;
     }
+
+
+  void setElementName(const std::string& name)
+  {
+    m_element_name = name;
+  }
+
+  const std::string& getElementName(void) const
+  {
+    return m_element_name;
+  }
 
     /**
      * Obtains the visitor of a concrete {@link XsdAbstractElement} instance.
@@ -138,7 +161,7 @@ public:
      */
   virtual void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor);
 
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void) { return {}; }
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) { return {}; }
 
     /**
      * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -174,7 +197,7 @@ public:
      * @return All the {@link ConcreteElement} objects present in the concrete implementation of the
      * {@link XsdAbstractElement} class. It doesn't return the {@link UnsolvedReference} objects.
      */
-  std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void);
+  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void);
 
   std::shared_ptr<XsdSchema> getXsdSchema(void);
 
@@ -216,7 +239,7 @@ public:
     /**
      * @return The parent of the current {@link XsdAbstractElement} object.
      */
-  std::shared_ptr<XsdAbstractElement> getParent() const
+  std::shared_ptr<XsdAbstractElement> getParent(void) const
   {
     return getParent(false);
   }
@@ -295,6 +318,6 @@ public:
 
         return stringBuilder.toString();
 #endif
-        return "";
+        return node.text().get();
     }
 };

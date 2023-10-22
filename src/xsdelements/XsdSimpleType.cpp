@@ -24,18 +24,6 @@
 #include <core/XsdParserCore.h>
 
 
-XsdSimpleType::XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
-                             StringMap attributesMap,
-                             VisitorFunctionType visitorFunction,
-                             std::shared_ptr<XsdAbstractElement> parent)
-  : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
-{
-    m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
-
-    if(haveAttribute(FINAL_TAG))
-      m_finalObj = AttributeValidations::belongsToEnum<SimpleTypeFinalEnum>(getAttribute(FINAL_TAG) );
-}
-
 /**
  * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
  */
@@ -69,7 +57,6 @@ void XsdSimpleType::rule3(void)
 
 void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
-  assert(visitorParam->getOwner());
     XsdNamedElements::accept(visitorParam);
     visitorParam->visit(std::static_pointer_cast<XsdSimpleType>(shared_from_this()));
 }

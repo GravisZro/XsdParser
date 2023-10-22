@@ -13,19 +13,22 @@
 
 #define xsdElementIsXsdSchema XsdElement::XSD_TAG + " is a " + XsdSchema::XSD_TAG + " element."
 
-
-XsdElement::XsdElement(std::shared_ptr<XsdParserCore> parser,
-                       StringMap attributesMap,
-                       VisitorFunctionType visitorFunction,
-                       std::shared_ptr<XsdAbstractElement> parent)
-  : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
-    m_minOccurs(1),
-    m_maxOccurs("1")
-{ }
-
 void XsdElement::initialize(void)
 {
   XsdNamedElements::initialize();
+  m_complexType.reset();
+  m_simpleType.reset();
+  m_type.reset();
+  m_substitutionGroup.reset();
+  m_defaultObj.reset();
+  m_fixed.reset();
+  m_form = AttributeValidations::getFormDefaultValue(getParent());
+  m_nillable = false;
+  m_abstractObj = false;
+  m_block = AttributeValidations::getBlockDefaultValue(getParent());
+  m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
+  m_minOccurs = 1;
+  m_maxOccurs = "1";
 
   if (haveAttribute(TYPE_TAG))
   {
@@ -37,6 +40,7 @@ void XsdElement::initialize(void)
       m_type = ReferenceBase::createFromXsd(
                  create<XsdBuiltInDataType>(getParser(),
                                             attributes,
+                                            nullptr,
                                             shared_from_this()));
     }
     else
@@ -49,12 +53,6 @@ void XsdElement::initialize(void)
       getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_type));
     }
   }
-
-  m_form = AttributeValidations::getFormDefaultValue(getParent());
-  m_block = AttributeValidations::getBlockDefaultValue(getParent());
-  m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
-  m_nillable = false;
-  m_abstractObj = false;
 
   std::optional<std::string> localSubstitutionGroup;
   if(haveAttribute(SUBSTITUTION_GROUP_TAG))

@@ -19,11 +19,23 @@ private:
      */
     std::optional<std::string> m_name;
 public: // ctors
-    XsdNamedElements(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
-                     VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent);
+  XsdNamedElements(std::shared_ptr<XsdParserCore> parser,
+                   StringMap attributesMap,
+                   VisitorFunctionType visitorFunction,
+                   std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+  {
+  }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_name.reset();
+    if(haveAttribute(XsdAbstractElement::NAME_TAG))
+      m_name = getAttribute(XsdAbstractElement::NAME_TAG);
+  }
+
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */

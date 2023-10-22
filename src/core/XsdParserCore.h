@@ -129,13 +129,17 @@ public:
      * @return A list of all the top level parsed xsd:elements by this class. It doesn't return any other elements apart
      * from xsd:elements. To access the whole element tree use {@link XsdParser#getResultXsdSchemas()}
      */
-  std::list<std::shared_ptr<XsdElement>> getResultXsdElements(void);
+  std::list<std::shared_ptr<XsdAbstractElement>> getResultXsdElements(void);
+
+  std::list<std::shared_ptr<XsdElement>> getResultChildrenElements(void);
 
     /**
      * @return A {@link List} of all the {@link XsdSchema} elements parsed by this class. You can use the {@link XsdSchema}
      * instances to navigate through the whole element tree.
      */
   std::list<std::shared_ptr<XsdSchema>> getResultXsdSchemas(void);
+
+
 
     /**
      * Adds an {@link UnsolvedReference} object to the {@link XsdParser#unsolvedElements} list which should be solved

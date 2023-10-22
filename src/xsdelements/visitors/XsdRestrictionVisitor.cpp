@@ -1,7 +1,5 @@
 #include "XsdRestrictionVisitor.h"
 
-
-
 #include <xsdelements/xsdrestrictions/XsdEnumeration.h>
 #include <xsdelements/xsdrestrictions/XsdFractionDigits.h>
 #include <xsdelements/xsdrestrictions/XsdIntegerRestrictions.h>
@@ -23,102 +21,42 @@
 
 #include <xsdelements/XsdRestriction.h>
 
-XsdRestrictionVisitor::XsdRestrictionVisitor(std::shared_ptr<XsdRestriction> owner)
-      : AttributesVisitor(std::static_pointer_cast<XsdAnnotatedElements>(owner)),
-        m_owner(owner) { }
+void XsdRestrictionVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
+{
+  AttributesVisitor::visit(element);
 
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdEnumeration> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->add(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdFractionDigits> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setFractionDigits(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdLength> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setLength(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMaxExclusive> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setMaxExclusive(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMaxInclusive> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setMaxInclusive(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMaxLength> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setMaxLength(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMinExclusive> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setMinExclusive(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMinInclusive> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setMinInclusive(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdMinLength> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setMinLength(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdPattern> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setPattern(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdTotalDigits> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setTotalDigits(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdWhiteSpace> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setWhiteSpace(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdAll> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setAll(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdChoice> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setChoice(element);
-  }
-
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdSequence> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setSequence(element);
-  }
-
-void XsdRestrictionVisitor::XsdRestrictionVisitor::visit(std::shared_ptr<XsdGroup> element)
-  {
-      AttributesVisitor::visit(element);
-      m_owner->setGroup(ReferenceBase::createFromXsd(element));
-  }
+  if(std::dynamic_pointer_cast<XsdEnumeration>(element))
+    owner->add(std::static_pointer_cast<XsdEnumeration>(element));
+  else if(std::dynamic_pointer_cast<XsdFractionDigits>(element))
+    owner->setFractionDigits(std::static_pointer_cast<XsdFractionDigits>(element));
+  else if(std::dynamic_pointer_cast<XsdLength>(element))
+    owner->setLength(std::static_pointer_cast<XsdLength>(element));
+  else if(std::dynamic_pointer_cast<XsdMaxExclusive>(element))
+    owner->setMaxExclusive(std::static_pointer_cast<XsdMaxExclusive>(element));
+  else if(std::dynamic_pointer_cast<XsdMaxInclusive>(element))
+    owner->setMaxInclusive(std::static_pointer_cast<XsdMaxInclusive>(element));
+  else if(std::dynamic_pointer_cast<XsdMaxLength>(element))
+    owner->setMaxLength(std::static_pointer_cast<XsdMaxLength>(element));
+  else if(std::dynamic_pointer_cast<XsdMinExclusive>(element))
+    owner->setMinExclusive(std::static_pointer_cast<XsdMinExclusive>(element));
+  else if(std::dynamic_pointer_cast<XsdMinInclusive>(element))
+    owner->setMinInclusive(std::static_pointer_cast<XsdMinInclusive>(element));
+  else if(std::dynamic_pointer_cast<XsdMinLength>(element))
+    owner->setMinLength(std::static_pointer_cast<XsdMinLength>(element));
+  else if(std::dynamic_pointer_cast<XsdPattern>(element))
+    owner->setPattern(std::static_pointer_cast<XsdPattern>(element));
+  else if(std::dynamic_pointer_cast<XsdTotalDigits>(element))
+    owner->setTotalDigits(std::static_pointer_cast<XsdTotalDigits>(element));
+  else if(std::dynamic_pointer_cast<XsdWhiteSpace>(element))
+    owner->setWhiteSpace(std::static_pointer_cast<XsdWhiteSpace>(element));
+  else if(std::dynamic_pointer_cast<XsdAll>(element))
+    owner->setAll(std::static_pointer_cast<XsdAll>(element));
+  else if(std::dynamic_pointer_cast<XsdChoice>(element))
+    owner->setChoice(std::static_pointer_cast<XsdChoice>(element));
+  else if(std::dynamic_pointer_cast<XsdSequence>(element))
+    owner->setSequence(std::static_pointer_cast<XsdSequence>(element));
+  else if(std::dynamic_pointer_cast<XsdGroup>(element))
+    owner->setGroup(ReferenceBase::createFromXsd(element));
+  else
+    assert(false);
+}

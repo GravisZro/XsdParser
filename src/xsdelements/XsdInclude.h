@@ -3,7 +3,7 @@
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/StringOperations.h>
 #include <core/XsdParserCore.h>
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -17,9 +17,9 @@ class XsdInclude : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:include";
-    constexpr static const std::string_view XS_TAG = "xs:include";
-    constexpr static const std::string_view TAG = "include";
+  constexpr static const std::string_view XSD_TAG = "xsd:include";
+  constexpr static const std::string_view XS_TAG = "xs:include";
+  constexpr static const std::string_view TAG = "include";
 
 private:
     /**
@@ -29,11 +29,25 @@ private:
      */
     SchemaLocation m_schemaLocation;
 public: // ctors
-    XsdInclude(std::shared_ptr<XsdParserCore> parser,
-               StringMap attributesMap,
-               VisitorFunctionType visitorFunction,
-               std::shared_ptr<XsdAbstractElement> parent);
+  XsdInclude(std::shared_ptr<XsdParserCore> parser,
+             StringMap attributesMap,
+             VisitorFunctionType visitorFunction,
+             std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+  {
+  }
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_schemaLocation.reset();
+    if(haveAttribute(SCHEMA_LOCATION))
+    {
+      m_schemaLocation = getAttribute(SCHEMA_LOCATION);
+      getParser()->addLocationToParse(m_schemaLocation);
+    }
+  }
+
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {

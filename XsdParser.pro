@@ -17,7 +17,6 @@ HEADERS += \
   src/core/utils/DefaultParserConfig.h \
   src/core/utils/NamespaceInfo.h \
   src/core/utils/NonDeletedPtr.h \
-  src/core/utils/ParseData.h \
   src/core/utils/ParserConfig.h \
   src/core/utils/SchemaLocation.h \
   src/core/utils/StringOperations.h \
@@ -106,7 +105,6 @@ HEADERS += \
 SOURCES += \
   src/core/XsdParser.cpp \
   src/core/XsdParserCore.cpp \
-  src/core/utils/ParseData.cpp \
   src/core/utils/ParserConfig.cpp \
   src/core/utils/SchemaLocation.cpp \
   src/main.cpp \

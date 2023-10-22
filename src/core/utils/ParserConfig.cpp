@@ -222,29 +222,26 @@ static StringMap generateAttributeMap(pugi::xml_node node)
 }
 
 template<typename T>
-static std::shared_ptr<ReferenceBase> genericParser(const ParseData& parseData)
+static std::shared_ptr<ReferenceBase> genericParser(std::shared_ptr<XsdParserCore> parserInstance,
+                                                    pugi::xml_node node,
+                                                    VisitorFunctionType visitorFunction,
+                                                    std::shared_ptr<XsdAbstractElement> parent)
 {
-  return XsdAbstractElement::xsdParseSkeleton(parseData.node,
-                                              std::static_pointer_cast<XsdAbstractElement>(
-                                                create<T>(parseData.parserInstance,
-                                                          generateAttributeMap(parseData.node),
-                                                          parseData.visitorFunction,
-                                                          nullptr)));
+  return XsdAbstractElement::xsdParseSkeleton(
+        node,
+        std::static_pointer_cast<XsdAbstractElement>(
+          create<T>(parserInstance,
+                    generateAttributeMap(node),
+                    visitorFunction,
+                    parent)));
 }
 
-template<typename T>
-static std::shared_ptr<ReferenceBase> annotatedParser(const ParseData& parseData)
+static std::shared_ptr<ReferenceBase> schemaParser(std::shared_ptr<XsdParserCore> parserInstance,
+                                                   pugi::xml_node node,
+                                                   VisitorFunctionType visitorFunction,
+                                                   std::shared_ptr<XsdAbstractElement> parent)
 {
-  return XsdAnnotationChildren::xsdAnnotationChildrenParse(parseData.node,
-                                                        std::static_pointer_cast<XsdAnnotationChildren>(
-                                                          create<T>(parseData.parserInstance,
-                                                                    generateAttributeMap(parseData.node))));
-}
-
-
-static std::shared_ptr<ReferenceBase> schemaParser(const ParseData& parseData)
-{
-  auto xsdSchemaRef = genericParser<XsdSchema>(parseData);
+  auto xsdSchemaRef = genericParser<XsdSchema>(parserInstance, node, visitorFunction, parent);
   auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
 
   std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
@@ -297,7 +294,7 @@ static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
 
 template<typename T>
 static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
-  { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<XsdAnnotatedElements, XsdAnnotatedElementsVisitor> }); }
+  { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, XsdAnnotatedElementsVisitorWrapper<T>> }); }
 #endif
 
 const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
@@ -307,13 +304,13 @@ const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(
 #ifdef DEBUG
   addEntry<XsdSchema>(mappers, ConfigEntryData { typeid(XsdSchema).name(), schemaParser, typeid(XsdSchema).name(), genericVisitor<XsdSchema, XsdSchemaVisitor> });
 
-  addEntry<XsdAppInfo>(mappers, ConfigEntryData { typeid(XsdAppInfo).name(), annotatedParser<XsdAppInfo>, typeid(std::nullopt_t).name(), nullptr });
-  addEntry<XsdDocumentation>(mappers, ConfigEntryData { typeid(XsdDocumentation).name(), annotatedParser<XsdDocumentation>, typeid(std::nullopt_t).name(), nullptr });
+  addEntry<XsdAppInfo>(mappers, ConfigEntryData { typeid(XsdAppInfo).name(), genericParser<XsdAppInfo>, typeid(std::nullopt_t).name(), nullptr });
+  addEntry<XsdDocumentation>(mappers, ConfigEntryData { typeid(XsdDocumentation).name(), genericParser<XsdDocumentation>, typeid(std::nullopt_t).name(), nullptr });
 #else
   addEntry<XsdSchema>(mappers, ConfigEntryData { schemaParser, genericVisitor<XsdSchema, XsdSchemaVisitor> });
 
-  addEntry<XsdAppInfo>(mappers, ConfigEntryData { annotatedParser<XsdAppInfo>, nullptr });
-  addEntry<XsdDocumentation>(mappers, ConfigEntryData { annotatedParser<XsdDocumentation>, nullptr });
+  addEntry<XsdAppInfo>(mappers, ConfigEntryData { genericParser<XsdAppInfo>, nullptr });
+  addEntry<XsdDocumentation>(mappers, ConfigEntryData { genericParser<XsdDocumentation>, nullptr });
 #endif
 
   addGenericEntry<XsdAll, XsdAllVisitor>(mappers);

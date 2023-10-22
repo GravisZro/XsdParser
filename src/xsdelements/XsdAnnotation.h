@@ -1,12 +1,11 @@
 #pragma once
 
-#include <core/utils/ParseData.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/XsdIdentifierElements.h>
 
+struct XsdAbstractElementVisitor;
+class XsdAnnotationChildren;
 class XsdAppInfo;
 class XsdDocumentation;
-class XsdAbstractElementVisitor;
 
 /**
  * A class representing the xsd:annotation element.
@@ -17,9 +16,9 @@ class XsdAnnotation : public XsdIdentifierElements
 {
 public:
   using XsdIdentifierElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:annotation";
-    constexpr static const std::string_view XS_TAG = "xs:annotation";
-    constexpr static const std::string_view TAG = "annotation";
+  constexpr static const std::string_view XSD_TAG = "xsd:annotation";
+  constexpr static const std::string_view XS_TAG = "xs:annotation";
+  constexpr static const std::string_view TAG = "annotation";
 
 private:
     /**
@@ -32,20 +31,27 @@ private:
      */
     std::list<std::shared_ptr<XsdDocumentation>> m_documentations;
 public: // ctors
-    XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
-                  StringMap elementFieldsMapParam,
-                  VisitorFunctionType visitorFunction,
-                  std::shared_ptr<XsdAbstractElement> parent);
+  XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
+                StringMap attributesMap,
+                VisitorFunctionType visitorFunction,
+                std::shared_ptr<XsdAbstractElement> parent)
+    : XsdIdentifierElements(parser, attributesMap, visitorFunction, parent)
+  { }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdIdentifierElements::initialize();
+    m_appInfoList.clear();
+    m_documentations.clear();
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
 
   std::list<std::shared_ptr<XsdAppInfo>>& getAppInfoList(void);
 
   std::list<std::shared_ptr<XsdDocumentation>>& getDocumentations(void);
 
-  void add(std::shared_ptr<XsdAppInfo> appInfo);
-
-  void add(std::shared_ptr<XsdDocumentation> documentation);
-
+  void add(std::shared_ptr<XsdAnnotationChildren> element);
   
 };

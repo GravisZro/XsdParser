@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
@@ -19,27 +19,21 @@ class XsdAppInfo : public XsdAnnotationChildren
 {
 public:
   using XsdAnnotationChildren::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:appinfo";
-    constexpr static const std::string_view XS_TAG = "xs:appinfo";
-    constexpr static const std::string_view TAG = "appinfo";
+  constexpr static const std::string_view XSD_TAG = "xsd:appinfo";
+  constexpr static const std::string_view XS_TAG = "xs:appinfo";
+  constexpr static const std::string_view TAG = "appinfo";
 
 public: // ctors
     XsdAppInfo(std::shared_ptr<XsdParserCore> parser,
-               StringMap elementFieldsMapParam)
-      : XsdAnnotationChildren(parser, elementFieldsMapParam) { }
+               StringMap attributesMap,
+               VisitorFunctionType visitorFunction,
+               std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotationChildren(parser, attributesMap, visitorFunction, parent) { }
 
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotationChildren::accept(visitorParam);
         visitorParam->visit(std::static_pointer_cast<XsdAppInfo>(shared_from_this()));
-    }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-    {
-        return xsdAnnotationChildrenParse(parseData.node,
-                                          std::static_pointer_cast<XsdAnnotationChildren>(
-                                            create<XsdAppInfo>(parseData.parserInstance,
-                                                               getAttributesMap(parseData.node))));
     }
 };

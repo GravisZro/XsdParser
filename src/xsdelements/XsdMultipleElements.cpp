@@ -7,12 +7,6 @@
 #include <xsdelements/XsdChoice.h>
 #include <xsdelements/XsdSequence.h>
 
-XsdMultipleElements::XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
-                                         StringMap elementFieldsMapParam,
-                                         VisitorFunctionType visitorFunction,
-                                         std::shared_ptr<XsdAbstractElement> parent)
-  : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent) { }
-
 /**
  * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their
  * {@link UnsolvedReference#ref} field matches the {@link NamedConcreteElement#name} field.

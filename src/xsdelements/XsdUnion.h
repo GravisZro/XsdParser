@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
@@ -17,9 +17,9 @@ class XsdUnion : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:union";
-    constexpr static const std::string_view XS_TAG = "xs:union";
-    constexpr static const std::string_view TAG = "union";
+  constexpr static const std::string_view XSD_TAG = "xsd:union";
+  constexpr static const std::string_view XS_TAG = "xs:union";
+  constexpr static const std::string_view TAG = "union";
 
 private:
     /**
@@ -32,16 +32,23 @@ private:
      */
     std::string m_memberTypes;
 public: // ctors
-    XsdUnion(std::shared_ptr<XsdParserCore> parser,
-             StringMap attributesMap,
-             VisitorFunctionType visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-    {
-      if(haveAttribute(MEMBER_TYPES_TAG))
-        m_memberTypes = getAttribute(MEMBER_TYPES_TAG);
-    }
+  XsdUnion(std::shared_ptr<XsdParserCore> parser,
+           StringMap attributesMap,
+           VisitorFunctionType visitorFunction,
+           std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_simpleTypeList.clear();
+    m_memberTypes.clear();
+
+    if(haveAttribute(MEMBER_TYPES_TAG))
+      m_memberTypes = getAttribute(MEMBER_TYPES_TAG);
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);

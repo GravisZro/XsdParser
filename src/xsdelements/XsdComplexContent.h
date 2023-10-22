@@ -1,13 +1,15 @@
 #pragma once
 
-
-#include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
+#include <xsdelements/AttributeValidations.h>
+
+class XsdExtension;
+class XsdRestriction;
 
 /**
  * A class representing the xsd:complexContent element.
@@ -18,9 +20,9 @@ class XsdComplexContent : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:complexContent";
-    constexpr static const std::string_view XS_TAG = "xs:complexContent";
-    constexpr static const std::string_view TAG = "complexContent";
+  constexpr static const std::string_view XSD_TAG = "xsd:complexContent";
+  constexpr static const std::string_view XS_TAG = "xs:complexContent";
+  constexpr static const std::string_view TAG = "complexContent";
 
 private:
     /**
@@ -38,11 +40,26 @@ private:
      */
     bool m_mixed;
 public: // ctors
-    XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
-                      StringMap attributesMap,
-                      VisitorFunctionType visitorFunction,
-                      std::shared_ptr<XsdAbstractElement> parent);
+  XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
+                    StringMap attributesMap,
+                    VisitorFunctionType visitorFunction,
+                    std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
+      m_mixed(false)
+  {
+  }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_restriction.reset();
+    m_extension.reset();
+    m_mixed = false;
+    if(haveAttribute(MIXED_TAG))
+      m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);

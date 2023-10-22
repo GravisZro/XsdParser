@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/utils/ConfigEntryData.h>
-#include <core/utils/ParseData.h>
+
 #include <core/utils/ParserConfig.h>
 #include <xsdelements/XsdSchema.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>

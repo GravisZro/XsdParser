@@ -22,32 +22,28 @@
 class AttributesVisitor : public XsdAnnotatedElementsVisitor
 {
 private:
-    /**
-     * The list of {@link XsdAttributeGroup} instances received by this visitor, wrapped in a {@link ReferenceBase} object.
-     */
-    std::list<std::shared_ptr<ReferenceBase>> m_attributeGroups;
+  /**
+   * The list of {@link XsdAttributeGroup} instances received by this visitor, wrapped in a {@link ReferenceBase} object.
+   */
+  std::list<std::shared_ptr<ReferenceBase>> m_attributeGroups;
 
-    /**
-     * The list of {@link XsdAttribute} instances received by this visitor, wrapped in a {@link ReferenceBase} object.
-     */
-    std::list<std::shared_ptr<ReferenceBase>> m_attributes;
+  /**
+   * The list of {@link XsdAttribute} instances received by this visitor, wrapped in a {@link ReferenceBase} object.
+   */
+  std::list<std::shared_ptr<ReferenceBase>> m_attributes;
 public:
-    using XsdAnnotatedElementsVisitor::visit;
+  AttributesVisitor(void) = default;
 
-    AttributesVisitor(std::shared_ptr<XsdAnnotatedElements> owner)
-      : XsdAnnotatedElementsVisitor(owner) { }
 
-  void visit(std::shared_ptr<XsdAttribute> attribute) override
-    {
-        XsdAbstractElementVisitor::visit(attribute);
-        m_attributes.push_back(ReferenceBase::createFromXsd(attribute));
-    }
-
-  void visit(std::shared_ptr<XsdAttributeGroup> attributeGroup) override
-    {
-        XsdAbstractElementVisitor::visit(attributeGroup);
-        m_attributeGroups.push_back(ReferenceBase::createFromXsd(attributeGroup));
-    }
+  virtual void visit(std::shared_ptr<XsdAbstractElement> attribute) override
+  {
+    if(std::dynamic_pointer_cast<XsdAttribute>(attribute))
+      m_attributes.push_back(ReferenceBase::createFromXsd(attribute));
+    else if(std::dynamic_pointer_cast<XsdAttributeGroup>(attribute))
+      m_attributeGroups.push_back(ReferenceBase::createFromXsd(attribute));
+    else
+      assert(false);
+  }
 
   void setAttributes(std::list<std::shared_ptr<ReferenceBase>> attributes) {
         m_attributes = attributes;

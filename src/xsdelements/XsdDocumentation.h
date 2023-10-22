@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotationChildren.h>
@@ -30,9 +30,16 @@ private:
      */
     std::string m_xmlLang;
 public: // ctors
-    XsdDocumentation(std::shared_ptr<XsdParserCore> parser, StringMap attributesMap)
-        : XsdAnnotationChildren(parser, attributesMap)
+    XsdDocumentation(std::shared_ptr<XsdParserCore> parser,
+                     StringMap attributesMap,
+                     VisitorFunctionType visitorFunction,
+                     std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotationChildren(parser, attributesMap, visitorFunction, parent) { }
+
+    virtual void initialize(void) override
     {
+      XsdAnnotationChildren::initialize();
+      m_xmlLang.clear();
       if(haveAttribute(XML_LANG_TAG))
         m_xmlLang = getAttribute(XML_LANG_TAG);
     }
@@ -42,12 +49,4 @@ public:
         XsdAnnotationChildren::accept(xsdAbstractElementVisitor);
         xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdDocumentation>(shared_from_this()));
     }
-
-  static std::shared_ptr<ReferenceBase> parse(ParseData parseData)
-  {
-    return xsdAnnotationChildrenParse(parseData.node,
-                                      std::static_pointer_cast<XsdAnnotationChildren>(
-                                        create<XsdDocumentation>(parseData.parserInstance,
-                                                                 getAttributesMap(parseData.node))));
-  }
 };

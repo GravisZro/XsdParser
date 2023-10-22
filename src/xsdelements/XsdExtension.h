@@ -1,12 +1,22 @@
 #pragma once
 
-
 #include <core/utils/CommonTypes.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
+#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 class XsdBuiltInDataType;
+class XsdExtension;
+class XsdNamedElements;
+class XsdSimpleType;
+class XsdComplexType;
+class XsdAttribute;
+class XsdAttributeGroup;
+class XsdGroup;
+class XsdAll;
+class XsdChoice;
+class XsdSequence;
 
 /**
  * A class representing the xsd:extension element.
@@ -37,10 +47,11 @@ public: // ctors
     XsdExtension(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
                  VisitorFunctionType visitorFunction,
-                 std::shared_ptr<XsdAbstractElement> parent);
+                 std::shared_ptr<XsdAbstractElement> parent)
+      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
 
-    virtual void initialize(void) override;
 public:
+  virtual void initialize(void) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
@@ -50,7 +61,7 @@ public:
     }
 
   std::shared_ptr<XsdExtension> clone(StringMap placeHolderAttributes);
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void);
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
   std::shared_ptr<XsdNamedElements> getBase(void);
 
   std::shared_ptr<XsdComplexType> getBaseAsComplexType(void);

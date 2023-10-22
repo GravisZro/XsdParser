@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -18,21 +18,26 @@ class XsdLength : public XsdIntegerRestrictions
 {
 public:
   using XsdIntegerRestrictions::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:length";
-    constexpr static const std::string_view XS_TAG = "xs:length";
-    constexpr static const std::string_view TAG = "length";
+  constexpr static const std::string_view XSD_TAG = "xsd:length";
+  constexpr static const std::string_view XS_TAG = "xs:length";
+  constexpr static const std::string_view TAG = "length";
 
 public: // ctors
   XsdLength(std::shared_ptr<XsdParserCore> parser,
-            StringMap elementFieldsMapParam,
+            StringMap attributesMap,
             VisitorFunctionType visitorFunction,
             std::shared_ptr<XsdAbstractElement> parent)
-    : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
+    : XsdIntegerRestrictions(parser, attributesMap, visitorFunction, parent)
   {
+  }
+public:
+  virtual void initialize(void) override
+  {
+    XsdIntegerRestrictions::initialize();
     assert(haveAttribute(VALUE_TAG));
     m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
-public:
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {
         XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);

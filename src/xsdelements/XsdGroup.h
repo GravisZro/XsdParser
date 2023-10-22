@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/exceptions/ParsingException.h>
@@ -49,22 +49,29 @@ private:
     std::string m_maxOccurs;
 
 public: // ctors
-    XsdGroup(std::shared_ptr<XsdParserCore> parser,
-             StringMap attributesMap,
-             VisitorFunctionType visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent)
-        : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
-          m_minOccurs(1),
-          m_maxOccurs("1")
-    {
-      if(haveAttribute(MIN_OCCURS_TAG))
-        m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
-
-      if(haveAttribute(MAX_OCCURS_TAG))
-        m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
-    }
+  XsdGroup(std::shared_ptr<XsdParserCore> parser,
+           StringMap attributesMap,
+           VisitorFunctionType visitorFunction,
+           std::shared_ptr<XsdAbstractElement> parent)
+      : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
+        m_minOccurs(INT_MIN)
+  {
+  }
 
 public:
+  virtual void initialize(void) override
+  {
+    XsdNamedElements::initialize();
+    m_minOccurs = 1;
+    m_maxOccurs = "1";
+
+    if(haveAttribute(MIN_OCCURS_TAG))
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+
+    if(haveAttribute(MAX_OCCURS_TAG))
+      m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
+  }
+
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
@@ -106,7 +113,7 @@ public:
     /**
      * @return A list with the child element of the {@link XsdGroup} instance.
      */
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void)
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override
   {
     std::list<std::shared_ptr<ReferenceBase>> list;
     if (m_childElement)

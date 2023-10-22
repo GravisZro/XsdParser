@@ -5,7 +5,7 @@
 
 #include <pugixml.hpp>
 
-#include <core/utils/ParseData.h>
+
 #include <core/utils/ParserConfig.h>
 #include <xsdelements/XsdSchema.h>
 

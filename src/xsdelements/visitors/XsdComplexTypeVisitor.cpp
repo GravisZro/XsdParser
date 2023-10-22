@@ -3,31 +3,19 @@
 #include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdGroup.h>
 #include <xsdelements/XsdComplexContent.h>
+#include <xsdelements/XsdSimpleContent.h>
 
-void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdMultipleElements> element)
-  {
-      AttributesVisitor::visit(element);
+void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
+{
+  AttributesVisitor::visit(element);
 
-      m_owner->setChildElement(ReferenceBase::createFromXsd(element));
-  }
-
-void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdGroup> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->setChildElement(ReferenceBase::createFromXsd(element));
-  }
-
-void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdComplexContent> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->setComplexContent(element);
-  }
-
-void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdSimpleContent> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->setSimpleContent(element);
-  }
+  if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
+     std::dynamic_pointer_cast<XsdGroup>(element))
+    owner->setChildElement(ReferenceBase::createFromXsd(element));
+  else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
+    owner->setComplexContent(std::static_pointer_cast<XsdComplexContent>(element));
+  else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
+    owner->setSimpleContent(std::static_pointer_cast<XsdSimpleContent>(element));
+  else
+    assert(false);
+}

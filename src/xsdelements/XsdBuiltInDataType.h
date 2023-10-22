@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <xsdelements/XsdNamedElements.h>
 
 class XsdBuiltInDataType : public XsdNamedElements
@@ -10,8 +9,9 @@ public:
 public: // ctors
   XsdBuiltInDataType(std::shared_ptr<XsdParserCore> parser,
                      StringMap attributesMap,
+                     VisitorFunctionType visitorFunction,
                      std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, nullptr, parent)
+    : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
   {
   }
 public:
@@ -19,6 +19,7 @@ public:
   {
     return create<XsdBuiltInDataType>(getParser(),
                                       getAttributesMap(),
+                                      nullptr,
                                       getParent());
   }
 };

@@ -32,6 +32,12 @@ public:
 
   void insert(const std::string& entry);
   const std::set<std::string>& data(void) const { return m_data; }
+
+  void reset(void)
+  {
+    m_parent = nullptr;
+    m_data.clear();
+  }
 private:
   mutable SchemaLocation* m_parent = nullptr;
   mutable std::set<std::string> m_data;

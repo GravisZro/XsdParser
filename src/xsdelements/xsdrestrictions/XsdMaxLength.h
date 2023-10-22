@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -27,15 +27,20 @@ public:
 
 public: // ctors
   XsdMaxLength(std::shared_ptr<XsdParserCore> parser,
-               StringMap elementFieldsMapParam,
+               StringMap attributesMap,
                VisitorFunctionType visitorFunction,
                std::shared_ptr<XsdAbstractElement> parent)
-        : XsdIntegerRestrictions(parser, elementFieldsMapParam, visitorFunction, parent)
+        : XsdIntegerRestrictions(parser, attributesMap, visitorFunction, parent)
   {
-    assert(haveAttribute(VALUE_TAG));
-        m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
-    }
+  }
 public:
+  virtual void initialize(void) override
+  {
+    XsdIntegerRestrictions::initialize();
+    assert(haveAttribute(VALUE_TAG));
+    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
     {
         XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);

@@ -4,6 +4,7 @@
 #include <xsdelements/XsdSimpleType.h>
 #include <xsdelements/XsdUnion.h>
 #include <xsdelements/XsdList.h>
+#include <xsdelements/XsdRestriction.h>
 #include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
 
 /**
@@ -12,40 +13,29 @@
  * {@link XsdAnnotatedElementsVisitor}.
  */
 
-class XsdSimpleTypeVisitor : public XsdAnnotatedElementsVisitor
+struct XsdSimpleTypeVisitor : XsdAnnotatedElementsVisitor
 {
-private:
-    /**
-     * The {@link XsdSimpleType} instance which owns this {@link XsdSimpleTypeVisitor} instance. This way this visitor
-     * instance can perform changes in the {@link XsdSimpleType} object.
-     */
-    std::shared_ptr<XsdSimpleType> m_owner;
-public:
-    using XsdAnnotatedElementsVisitor::visit;
-  XsdSimpleTypeVisitor(std::shared_ptr<XsdSimpleType> owner)
-        : XsdAnnotatedElementsVisitor(std::static_pointer_cast<XsdAnnotatedElements>(owner))
-  {
-        m_owner = owner;
-    }
+  XsdSimpleTypeVisitor(std::shared_ptr<XsdSimpleType> _owner) : owner(_owner) { }
+
+  /**
+   * The {@link XsdSimpleType} instance which owns this {@link XsdSimpleTypeVisitor} instance. This way this visitor
+   * instance can perform changes in the {@link XsdSimpleType} object.
+   */
+  std::shared_ptr<XsdSimpleType> owner;
 
   virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
+    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
 
-  void visit(std::shared_ptr<XsdList> element) override
-    {
-        XsdAnnotatedElementsVisitor::visit(element);
-        m_owner->setList(element);
-    }
-
-  void visit(std::shared_ptr<XsdUnion> element) override
-    {
-        XsdAnnotatedElementsVisitor::visit(element);
-        m_owner->setUnion(element);
-    }
-
-  void visit(std::shared_ptr<XsdRestriction> element) override
-    {
-        XsdAnnotatedElementsVisitor::visit(element);
-        m_owner->setRestriction(element);
-    }
+  void visit(std::shared_ptr<XsdAbstractElement> element) override
+  {
+    XsdAnnotatedElementsVisitor::visit(element);
+    if(std::dynamic_pointer_cast<XsdList>(element))
+      owner->setList(std::static_pointer_cast<XsdList>(element));
+    else if(std::dynamic_pointer_cast<XsdUnion>(element))
+      owner->setUnion(std::static_pointer_cast<XsdUnion>(element));
+    else if(std::dynamic_pointer_cast<XsdList>(element))
+      owner->setRestriction(std::static_pointer_cast<XsdRestriction>(element));
+    else
+      assert(false);
+  }
 };

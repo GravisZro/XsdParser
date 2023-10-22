@@ -17,51 +17,47 @@
 
 #include <core/XsdParserCore.h>
 
-
-XsdExtension::XsdExtension(std::shared_ptr<XsdParserCore> parser,
-                           StringMap attributesMap,
-                           VisitorFunctionType visitorFunction,
-                           std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-{ }
-
 void XsdExtension::initialize(void)
 {
   XsdAnnotatedElements::initialize();
-    if (haveAttribute(BASE_TAG))
+  m_childElement.reset();
+  m_base.reset();
+
+  if (haveAttribute(BASE_TAG))
+  {
+    std::string baseValue = getAttribute(BASE_TAG);
+
+    if (XsdParserCore::getXsdTypesToJava().contains(baseValue))
     {
-      std::string baseValue = getAttribute(BASE_TAG);
-
-        if (XsdParserCore::getXsdTypesToJava().contains(baseValue))
-        {
-            StringMap attributes;
-            attributes.emplace(NAME_TAG, baseValue);
-            m_base = ReferenceBase::createFromXsd(
-                       create<XsdBuiltInDataType>(getParser(),
-                         attributes,
-                         shared_from_this()));
-        }
-        else
-        {
-            auto parseMappers = XsdParserCore::getParseMappers();
-            ConfigEntryData config;
-
-            if(parseMappers.contains(*XsdElement::XSD_TAG))
-              config = parseMappers.at(*XsdElement::XSD_TAG);
-            else if(parseMappers.contains(*XsdElement::XS_TAG))
-              config = parseMappers.at(*XsdElement::XS_TAG);
-
-            if (config.parserFunction == nullptr || config.visitorFunction == nullptr)
-                throw ParsingException("Invalid Parsing Configuration for XsdElement.");
-
-            m_base = create<UnsolvedReference>(baseValue,
-                                               create<XsdElement>(getParser(),
-                                                 StringMap{},
-                                                 config.visitorFunction,
-                                                 shared_from_this()));
-            getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
-        }
+      StringMap attributes;
+      attributes.emplace(NAME_TAG, baseValue);
+      m_base = ReferenceBase::createFromXsd(
+                 create<XsdBuiltInDataType>(getParser(),
+                                            attributes,
+                                            nullptr,
+                                            shared_from_this()));
     }
+    else
+    {
+      auto parseMappers = XsdParserCore::getParseMappers();
+      ConfigEntryData config;
+
+      if(parseMappers.contains(*XsdElement::XSD_TAG))
+        config = parseMappers.at(*XsdElement::XSD_TAG);
+      else if(parseMappers.contains(*XsdElement::XS_TAG))
+        config = parseMappers.at(*XsdElement::XS_TAG);
+
+      if (config.parserFunction == nullptr || config.visitorFunction == nullptr)
+        throw ParsingException("Invalid Parsing Configuration for XsdElement.");
+
+      m_base = create<UnsolvedReference>(baseValue,
+                                         create<XsdElement>(getParser(),
+                                                            StringMap{},
+                                                            config.visitorFunction,
+                                                            shared_from_this()));
+      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
+    }
+  }
 }
 
 /**
@@ -73,6 +69,7 @@ void XsdExtension::initialize(void)
  */
 void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
+  assert(getVisitor());
     XsdAnnotatedElements::replaceUnsolvedElements(element);
 
     auto elem = element->getElement();
@@ -111,6 +108,8 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
                                             placeHolderAttributes,
                                             m_visitorFunction,
                                             nullptr);
+
+    assert(elementCopy->getVisitor());
 
     for(auto& attribute : getXsdAttributes())
     {
@@ -193,12 +192,16 @@ std::shared_ptr<XsdBuiltInDataType> XsdExtension::getBaseAsBuiltInDataType(void)
   return nullptr;
 }
 
-std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void) {
-    return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributes();
+std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void)
+{
+  assert(getVisitor());
+  return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributes();
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void) {
-    return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributeGroups();
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void)
+{
+  assert(getVisitor());
+  return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributeGroups();
 }
 
 std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement()

@@ -3,19 +3,25 @@
 #include <core/utils/CommonTypes.h>
 #include <core/utils/StringOperations.h>
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/enums/ComplexTypeBlockEnum.h>
 #include <xsdelements/enums/FinalEnum.h>
 #include <xsdelements/exceptions/ParsingException.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/visitors/XsdComplexTypeVisitor.h>
 
 #include <xsdelements/XsdNamedElements.h>
 #include <xsdelements/AttributeValidations.h>
 
+class XsdComplexContent;
+class XsdSimpleContent;
+class XsdAttribute;
+class XsdAttributeGroup;
+class XsdGroup;
+class XsdAll;
+class XsdChoice;
+class XsdSequence;
 
 /**
  * A class representing the xsd:complexType element. Extends {@link XsdNamedElements} because it's one of the
@@ -74,11 +80,44 @@ private:
     std::shared_ptr<XsdSimpleContent> m_simpleContent;
 
 public: // ctors
-    XsdComplexType(std::shared_ptr<XsdParserCore> parser,
-                   StringMap elementFieldsMapParam,
-                   VisitorFunctionType visitorFunction,
-                   std::shared_ptr<XsdAbstractElement> parent);
+  XsdComplexType(std::shared_ptr<XsdParserCore> parser,
+                 StringMap attributesMap,
+                 VisitorFunctionType visitorFunction,
+                 std::shared_ptr<XsdAbstractElement> parent)
+    : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
+      m_elementAbstract(false),
+      m_mixed(false)
+  {
+  }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdNamedElements::initialize();
+    m_childElement.reset();
+    m_elementAbstract = false;
+    m_mixed = false;
+    m_block.reset();
+    m_elementFinal.reset();
+    m_complexContent.reset();
+    m_simpleContent.reset();
+
+    m_block = AttributeValidations::getBlockDefaultValue(getParent());
+    m_elementFinal = AttributeValidations::getFinalDefaultValue(getParent());
+
+    if(haveAttribute(ABSTRACT_TAG))
+      m_elementAbstract = AttributeValidations::validateBoolean(getAttribute(ABSTRACT_TAG));
+
+    if(haveAttribute(MIXED_TAG))
+      m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
+
+    if(haveAttribute(BLOCK_TAG))
+      m_block = AttributeValidations::belongsToEnum<ComplexTypeBlockEnum>(getAttribute(BLOCK_TAG));
+
+    if(haveAttribute(FINAL_TAG))
+      m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
+  }
+
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
@@ -110,7 +149,7 @@ public:
     /**
      * @return The elements of his child as if they belong to the {@link XsdComplexType} instance.
      */
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void)
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override
   {
     if(m_childElement)
       return m_childElement->getElement()->getElements();

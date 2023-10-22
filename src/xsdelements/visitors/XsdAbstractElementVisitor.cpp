@@ -35,7 +35,7 @@
 #include <xsdelements/XsdSimpleType.h>
 #include <xsdelements/XsdUnion.h>
 
-
+/*
 void XsdAbstractElementVisitor::visit(std::shared_ptr<XsdAll> element)
 {
   visit(std::static_pointer_cast<XsdMultipleElements>(element));
@@ -130,3 +130,4 @@ void XsdAbstractElementVisitor::visit([[maybe_unused]] std::shared_ptr<XsdAnnota
 void XsdAbstractElementVisitor::visit([[maybe_unused]] std::shared_ptr<XsdImport> element) {}
 
 void XsdAbstractElementVisitor::visit([[maybe_unused]] std::shared_ptr<XsdInclude> element) {}
+*/

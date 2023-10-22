@@ -2,8 +2,29 @@
 
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdAnnotatedElements.h>
+#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 class XsdBuiltInDataType;
+class XsdEnumeration;
+class XsdFractionDigits;
+class XsdLength;
+class XsdMaxExclusive;
+class XsdMaxInclusive;
+class XsdMaxLength;
+class XsdMinExclusive;
+class XsdMinInclusive;
+class XsdMinLength;
+class XsdPattern;
+class XsdTotalDigits;
+class XsdWhiteSpace;
+class XsdAll;
+class XsdChoice;
+class XsdSequence;
+class XsdAttribute;
+class XsdAttributeGroup;
+class XsdComplexType;
+class XsdSimpleType;
+class XsdGroup;
 
 /**
  * A class representing the xsd:restriction element.
@@ -98,12 +119,16 @@ private:
     std::optional<std::string> m_baseString;
 public: // ctors
   XsdRestriction(std::shared_ptr<XsdParserCore> parser,
-                 StringMap elementFieldsMapParam,
+                 StringMap attributesMap,
                  VisitorFunctionType visitorFunction,
-                 std::shared_ptr<XsdAbstractElement> parent);
+                 std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+  {
+  }
 
-  virtual void initialize(void) override;
 public:
+  virtual void initialize(void) override;
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdAnnotatedElements::accept(visitorParam);

@@ -2,8 +2,6 @@
 
 #include <xsdelements/XsdAbstractElement.h>
 
-class XsdParserCore;
-
 /**
  * An abstract class that is meant to wrap all the {@link XsdAbstractElement} objects. Its hierarchy is meant to help
  * in the reference solving process.

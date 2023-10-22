@@ -1,12 +1,14 @@
 #pragma once
 
-
-#include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdMultipleElements.h>
+#include <xsdelements/AttributeValidations.h>
+
+class XsdSequence;
+class XsdGroup;
 
 /**
  * A class representing the xsd:choice element. Since it shares the same attributes as {@link XsdChoice} or
@@ -37,11 +39,28 @@ private:
      */
     std::string m_maxOccurs;
 public: // ctors
-    XsdChoice(std::shared_ptr<XsdParserCore> parser,
-              StringMap attributesMap,
-              VisitorFunctionType visitorFunction,
-              std::shared_ptr<XsdAbstractElement> parent);
+  XsdChoice(std::shared_ptr<XsdParserCore> parser,
+            StringMap attributesMap,
+            VisitorFunctionType visitorFunction,
+            std::shared_ptr<XsdAbstractElement> parent)
+    : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
+      m_minOccurs (INT_MIN)
+  {
+  }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdMultipleElements::initialize();
+    m_minOccurs = 1;
+    m_maxOccurs = "1";
+    if(haveAttribute(MIN_OCCURS_TAG))
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+
+    if(haveAttribute(MAX_OCCURS_TAG))
+      m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
         XsdMultipleElements::accept(visitorParam);

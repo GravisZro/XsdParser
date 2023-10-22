@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
@@ -38,10 +38,10 @@ private:
     std::shared_ptr<ReferenceBase> m_extension;
 public:
     XsdSimpleContent(std::shared_ptr<XsdParserCore> parser,
-                     StringMap elementFieldsMapParam,
+                     StringMap attributesMap,
                      VisitorFunctionType visitorFunction,
                      std::shared_ptr<XsdAbstractElement> parent)
-        : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent) { }
+        : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {

@@ -3,14 +3,6 @@
 #include <xsdelements/XsdDocumentation.h>
 #include <xsdelements/XsdAppInfo.h>
 
-
-XsdAnnotation::XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
-                             StringMap elementFieldsMapParam,
-                             VisitorFunctionType visitorFunction,
-                             std::shared_ptr<XsdAbstractElement> parent)
-  : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction, parent)
-{ }
-
 void XsdAnnotation::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
     XsdIdentifierElements::accept(visitorParam);
@@ -27,12 +19,10 @@ std::list<std::shared_ptr<XsdDocumentation>>& XsdAnnotation::getDocumentations(v
     return m_documentations;
 }
 
-void XsdAnnotation::add(std::shared_ptr<XsdAppInfo> appInfo)
+void XsdAnnotation::add(std::shared_ptr<XsdAnnotationChildren> element)
 {
-    m_appInfoList.push_back(appInfo);
-}
-
-void XsdAnnotation::add(std::shared_ptr<XsdDocumentation> documentation)
-{
-    m_documentations.push_back(documentation);
+  if(std::dynamic_pointer_cast<XsdAppInfo>(element))
+    m_appInfoList.push_back(std::static_pointer_cast<XsdAppInfo>(element));
+  else if(std::dynamic_pointer_cast<XsdDocumentation>(element))
+    m_documentations.push_back(std::static_pointer_cast<XsdDocumentation>(element));
 }

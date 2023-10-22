@@ -1,14 +1,13 @@
 #pragma once
 
-
-
-#include <core/utils/ParseData.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdMultipleElements.h>
 
+#include <xsdelements/AttributeValidations.h>
 
+class XsdGroup;
 
 /**
  * A class representing the xsd:sequence element. Since it shares the same attributes as {@link XsdAll} or
@@ -20,9 +19,9 @@ class XsdSequence : public XsdMultipleElements
 {
 public:
   using XsdMultipleElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:sequence";
-    constexpr static const std::string_view XS_TAG = "xs:sequence";
-    constexpr static const std::string_view TAG = "sequence";
+  constexpr static const std::string_view XSD_TAG = "xsd:sequence";
+  constexpr static const std::string_view XS_TAG = "xs:sequence";
+  constexpr static const std::string_view TAG = "sequence";
 
 private:
     /**
@@ -39,11 +38,28 @@ private:
      */
     std::string m_maxOccurs;
 public: // ctors
-    XsdSequence(std::shared_ptr<XsdParserCore> parser,
-                StringMap attributesMap,
-                VisitorFunctionType visitorFunction,
-                std::shared_ptr<XsdAbstractElement> parent);
+  XsdSequence(std::shared_ptr<XsdParserCore> parser,
+              StringMap attributesMap,
+              VisitorFunctionType visitorFunction,
+              std::shared_ptr<XsdAbstractElement> parent)
+    : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
+      m_minOccurs(INT_MIN)
+  {
+  }
 public:
+  virtual void initialize(void) override
+  {
+    XsdMultipleElements::initialize();
+    m_minOccurs = 1;
+    m_maxOccurs = "1";
+
+    if(haveAttribute(MIN_OCCURS_TAG))
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+
+    if(haveAttribute(MAX_OCCURS_TAG))
+      m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
+  }
+
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
   std::shared_ptr<XsdSequence> clone(StringMap placeHolderAttributes);
 

@@ -3,12 +3,12 @@
 #include <core/XsdParserCore.h>
 #include <core/utils/StringOperations.h>
 
-XsdImport::XsdImport(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
-                     VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+void XsdImport::initialize(void)
 {
+  XsdAnnotatedElements::initialize();
+  m_namespace.reset();
+  m_schemaLocation.reset();
+
   if(haveAttribute(NAMESPACE))
     m_namespace = getAttribute(NAMESPACE);
 

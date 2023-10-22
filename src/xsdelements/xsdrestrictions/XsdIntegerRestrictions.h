@@ -30,17 +30,26 @@ protected:
      */
     int m_value;
 public: // ctors
-    XsdIntegerRestrictions(std::shared_ptr<XsdParserCore> parser,
-                           StringMap elementFieldsMapParam,
-                           VisitorFunctionType visitorFunction,
-                           std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent),
-        m_fixed(false)
-    {
-      if(elementFieldsMapParam.contains(*FIXED_TAG))
-        m_fixed = AttributeValidations::validateBoolean(elementFieldsMapParam.at(*FIXED_TAG));
-    }
+  XsdIntegerRestrictions(std::shared_ptr<XsdParserCore> parser,
+                         StringMap attributesMap,
+                         VisitorFunctionType visitorFunction,
+                         std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
+      m_fixed(false),
+      m_value(INT_MIN)
+  {
+  }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_fixed = false;
+    m_value = INT_MIN;
+    if(haveAttribute(FIXED_TAG))
+      m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
+  }
+
     /**
      * Compares two different objects of this type.
      * @param o1 The first object.

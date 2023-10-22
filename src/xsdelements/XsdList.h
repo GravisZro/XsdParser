@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-#include <core/utils/ParseData.h>
 #include <xsdelements/XsdSimpleType.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
@@ -19,10 +16,10 @@
 class XsdList : public XsdAnnotatedElements
 {
 public:
-    using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:list";
-    constexpr static const std::string_view XS_TAG = "xs:list";
-    constexpr static const std::string_view TAG = "list";
+  using XsdAnnotatedElements::clone;
+  constexpr static const std::string_view XSD_TAG = "xsd:list";
+  constexpr static const std::string_view XS_TAG = "xs:list";
+  constexpr static const std::string_view TAG = "list";
 
 private:
     /**
@@ -38,15 +35,22 @@ private:
      */
     std::optional<std::string> m_itemType;
 public: // ctors
-    XsdList(std::shared_ptr<XsdParserCore> parser,
-            StringMap attributesMap,
-            VisitorFunctionType visitorFunction,
-            std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-    {
-      if(haveAttribute(ITEM_TYPE_TAG))
-        m_itemType = getAttribute(ITEM_TYPE_TAG);
-    }
+  XsdList(std::shared_ptr<XsdParserCore> parser,
+          StringMap attributesMap,
+          VisitorFunctionType visitorFunction,
+          std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+  {
+  }
+public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_simpleType.reset();
+    m_itemType.reset();
+    if(haveAttribute(ITEM_TYPE_TAG))
+      m_itemType = getAttribute(ITEM_TYPE_TAG);
+  }
 public:
     void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {

@@ -11,65 +11,18 @@
 #include <xsdelements/XsdAttribute.h>
 
 
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdInclude> element)
-  {
-      AttributesVisitor::visit(element);
+void XsdSchemaVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
+{
+  AttributesVisitor::visit(element);
 
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdImport> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdAnnotation> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdSimpleType> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdComplexType> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdGroup> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdAttributeGroup> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdElement> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
-
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdAttribute> element)
-  {
-      AttributesVisitor::visit(element);
-
-      m_owner->add(element);
-  }
+  assert(std::dynamic_pointer_cast<XsdInclude       >(element) ||
+         std::dynamic_pointer_cast<XsdImport        >(element) ||
+         std::dynamic_pointer_cast<XsdAnnotation    >(element) ||
+         std::dynamic_pointer_cast<XsdSimpleType    >(element) ||
+         std::dynamic_pointer_cast<XsdComplexType   >(element) ||
+         std::dynamic_pointer_cast<XsdGroup         >(element) ||
+         std::dynamic_pointer_cast<XsdAttributeGroup>(element) ||
+         std::dynamic_pointer_cast<XsdElement       >(element) ||
+         std::dynamic_pointer_cast<XsdAttribute     >(element));
+  owner->add(element);
+}

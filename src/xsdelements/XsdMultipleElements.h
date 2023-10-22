@@ -1,20 +1,13 @@
 #pragma once
 
-
-//#include <xsdelements/elementswrapper/ConcreteElement.h>
-//#include <xsdelements/elementswrapper/ReferenceBase.h>
-//#include <xsdelements/elementswrapper/UnsolvedReference.h>
-//#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-
-
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 
-
 class ReferenceBase;
-class XsdAbstractElementVisitor;
-class XsdAbstractElement;
-class XsdParserCore;
+class XsdAll;
+class XsdChoice;
+class XsdSequence;
+class XsdElement;
 
 /**
  * A class that serves as a base class to three classes that share similarities, {@link XsdAll}, {@link XsdChoice} and
@@ -35,11 +28,18 @@ protected:
   std::list<std::shared_ptr<ReferenceBase>> m_elements;
 
 public: // ctors
-    XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
-                        StringMap elementFieldsMapParam,
-                        VisitorFunctionType visitorFunction,
-                        std::shared_ptr<XsdAbstractElement> parent);
+  XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
+                      StringMap attributesMap,
+                      VisitorFunctionType visitorFunction,
+                      std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_elements.clear();
+  }
     /**
      * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their
      * {@link UnsolvedReference#ref} field matches the {@link NamedConcreteElement#name} field.
@@ -52,12 +52,12 @@ public:
     /**
      * @return All the elements received in the parsing process.
      */
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void);
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
 
     /**
      * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
      */
-  std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void);
+  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) override;
 
     /**
      * @return The children elements that are of the type {@link XsdElement}.

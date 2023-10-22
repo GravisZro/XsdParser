@@ -1,23 +1,7 @@
 #include "XsdChoice.h"
 
-#include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdSequence.h>
 #include <xsdelements/XsdGroup.h>
-
-XsdChoice::XsdChoice(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
-                     VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent)
-    : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
-      m_minOccurs(1),
-      m_maxOccurs("1")
-{
-  if(haveAttribute(MIN_OCCURS_TAG))
-    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
-
-  if(haveAttribute(MAX_OCCURS_TAG))
-    m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
-}
 
 /**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace

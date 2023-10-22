@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -20,25 +20,32 @@ class XsdWhiteSpace : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:whiteSpace";
-    constexpr static const std::string_view XS_TAG = "xs:whiteSpace";
-    constexpr static const std::string_view TAG = "whiteSpace";
+  constexpr static const std::string_view XSD_TAG = "xsd:whiteSpace";
+  constexpr static const std::string_view XS_TAG = "xs:whiteSpace";
+  constexpr static const std::string_view TAG = "whiteSpace";
 
 private:
   bool m_fixed;
   WhiteSpaceEnum m_value;
 public: // ctors
   XsdWhiteSpace(std::shared_ptr<XsdParserCore> parser,
-                StringMap elementFieldsMapParam,
+                StringMap attributesMap,
                 VisitorFunctionType visitorFunction,
                 std::shared_ptr<XsdAbstractElement> parent)
-        : XsdAnnotatedElements(parser, elementFieldsMapParam, visitorFunction, parent),
+        : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
           m_fixed(false)
   {
-    if(elementFieldsMapParam.contains(*FIXED_TAG))
-      m_fixed = AttributeValidations::validateBoolean(elementFieldsMapParam.at(*FIXED_TAG));
-    if(elementFieldsMapParam.contains(*VALUE_TAG))
-      m_value = AttributeValidations::belongsToEnum<WhiteSpaceEnum>(elementFieldsMapParam.at(*VALUE_TAG));
+  }
+public:
+  virtual void initialize(void) override
+  {
+    XsdAnnotatedElements::initialize();
+    m_fixed = false;
+    m_value.reset();
+    if(haveAttribute(FIXED_TAG))
+      m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
+    if(haveAttribute(VALUE_TAG))
+      m_value = AttributeValidations::belongsToEnum<WhiteSpaceEnum>(getAttribute(VALUE_TAG));
   }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override

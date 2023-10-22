@@ -9,35 +9,22 @@
  * Represents the restrictions of the {@link XsdAnnotation} element, which can only contain {@link XsdAppInfo} and
  * {@link XsdDocumentation} as children.
  */
-class XsdAnnotationVisitor : public XsdAbstractElementVisitor
+struct XsdAnnotationVisitor : XsdAbstractElementVisitor
 {
-private:
-    /**
-     * The {@link XsdAnnotation} instance which owns this {@link XsdAnnotationVisitor} instance. This way this visitor
-     * instance can perform changes in the {@link XsdAnnotation} object.
-     */
-    std::shared_ptr<XsdAnnotation> m_owner;
-public:
-    using XsdAbstractElementVisitor::visit;
-  XsdAnnotationVisitor(std::shared_ptr<XsdAnnotation> owner){
-        m_owner = owner;
-    }
+  XsdAnnotationVisitor(std::shared_ptr<XsdAnnotation> _owner) : owner(_owner) { }
+
+  /**
+   * The {@link XsdAnnotation} instance which owns this {@link XsdAnnotationVisitor} instance. This way this visitor
+   * instance can perform changes in the {@link XsdAnnotation} object.
+   */
+  std::shared_ptr<XsdAnnotation> owner;
 
   virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(m_owner); }
+    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
 
-  void visit(std::shared_ptr<XsdAppInfo> element) override
-    {
-        XsdAbstractElementVisitor::visit(element);
-
-        m_owner->add(element);
-    }
-
-  void visit(std::shared_ptr<XsdDocumentation> element) override
-    {
-        XsdAbstractElementVisitor::visit(element);
-
-        m_owner->add(element);
-    }
-
+  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  {
+    assert(std::dynamic_pointer_cast<XsdAnnotationChildren>(element));
+    owner->add(std::static_pointer_cast<XsdAnnotationChildren>(element));
+  }
 };

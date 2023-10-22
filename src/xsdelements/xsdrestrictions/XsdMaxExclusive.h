@@ -2,7 +2,7 @@
 
 
 
-#include <core/utils/ParseData.h>
+
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
@@ -31,15 +31,21 @@ private:
      */
     bool m_fixed;
 public: // ctors
-    XsdMaxExclusive(std::shared_ptr<XsdParserCore> parser,
-                    StringMap elementFieldsMapParam,
-                    VisitorFunctionType visitorFunction,
-                    std::shared_ptr<XsdAbstractElement> parent)
-        : XsdStringRestrictions(parser, elementFieldsMapParam, visitorFunction, parent),
-          m_fixed(false)
+  XsdMaxExclusive(std::shared_ptr<XsdParserCore> parser,
+                  StringMap attributesMap,
+                  VisitorFunctionType visitorFunction,
+                  std::shared_ptr<XsdAbstractElement> parent)
+      : XsdStringRestrictions(parser, attributesMap, visitorFunction, parent),
+        m_fixed(false)
   {
+  }
+public:
+  virtual void initialize(void) override
+  {
+    XsdStringRestrictions::initialize();
+    m_fixed = false;
     if(haveAttribute(FIXED_TAG))
-      m_fixed = AttributeValidations::validateBoolean(elementFieldsMapParam.at(*FIXED_TAG));
+      m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
   }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override

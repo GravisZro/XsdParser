@@ -7,8 +7,6 @@
 #include <xsdelements/exceptions/VisitorNotFoundException.h>
 #include <xsdelements/XsdAbstractElement.h>
 
-class XsdParserCore;
-
 /**
  * This class serves as a base to both {@link XsdAppInfo} and {@link XsdDocumentation} since they share similarities.
  */
@@ -28,14 +26,22 @@ private:
      */
     std::optional<std::string> m_content;
 public: // ctors
-    XsdAnnotationChildren(std::shared_ptr<XsdParserCore> parser,
-                          StringMap attributesMap)
-      : XsdAbstractElement(parser, attributesMap, nullptr, nullptr)
-  {
-      if(haveAttribute(SOURCE_TAG))
-        m_source = getAttribute(SOURCE_TAG);
-    }
+  XsdAnnotationChildren(std::shared_ptr<XsdParserCore> parser,
+                        StringMap attributesMap,
+                        VisitorFunctionType visitorFunction,
+                        std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAbstractElement(parser, attributesMap, visitorFunction, parent) { }
+
 public:
+  virtual void initialize(void) override
+  {
+    XsdAbstractElement::initialize();
+    m_source.reset();
+    m_content.reset();
+
+    if(haveAttribute(SOURCE_TAG))
+      m_source = getAttribute(SOURCE_TAG);
+  }
     /**
      * @return Always returns a {@link VisitorNotFoundException} since the descendants of this class shouldn't be
      * visited since they aren't allowed to have children.

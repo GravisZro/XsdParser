@@ -1,13 +1,7 @@
 #pragma once
 
 #include <xsdelements/XsdIdentifierElements.h>
-#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotation.h>
-
-
-
-
-class XsdAnnotation;
 
 /**
  * Serves as a base to every {@link XsdAbstractElement} concrete type which can have xsd:annotation as children. Extends
@@ -27,12 +21,18 @@ private:
 
 public: // ctors
   XsdAnnotatedElements(std::shared_ptr<XsdParserCore> parser,
-                       StringMap elementFieldsMapParam,
+                       StringMap attributesMap,
                        VisitorFunctionType visitorFunction,
                        std::shared_ptr<XsdAbstractElement> parent)
-    : XsdIdentifierElements(parser, elementFieldsMapParam, visitorFunction, parent) {}
+    : XsdIdentifierElements(parser, attributesMap, visitorFunction, parent) { }
 
 public:
+  virtual void initialize(void) override
+  {
+    XsdIdentifierElements::initialize();
+    m_annotation.reset();
+  }
+
   void setAnnotation(std::shared_ptr<XsdAnnotation> annotation){
         m_annotation = annotation;
     }
