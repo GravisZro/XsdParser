@@ -60,7 +60,7 @@ private:
      * field.
      * @param filePath The path to the XSD file.
      */
-  void parseLocation(SchemaLocation fileLocation);
+  void parseLocation(const SchemaLocation& fileLocation);
 
 
   pugi::xml_node getSchemaNode(SchemaLocation fileLocation);

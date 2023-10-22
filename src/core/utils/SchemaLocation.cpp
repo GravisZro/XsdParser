@@ -1,19 +1,74 @@
 #include "SchemaLocation.h"
 
 #include <algorithm>
+#include <filesystem>
 
-/**
- * @return true if any string from either set matches.
- * Will merge in unknown alises if there is a match
- */
-bool SchemaLocation::operator ==(const SchemaLocation& other)
+static bool is_URL(const std::string& target)
 {
-  if(std::any_of(std::begin(other),
-                     std::end(other),
-                     [this](const std::string& entry){ return contains(entry); } ))
+  return target.starts_with("https://") || target.starts_with("http://");
+}
+
+bool SchemaLocation::contains(const std::string& entry) const
+{
+  if(m_data.contains(entry))
+    return true;
+
+  if(is_URL(entry))
+    return false;
+
+  if(m_parent == nullptr)
+    return false;
+
+  for(auto& parent : m_parent->data())
+    if(auto entrypath = std::filesystem::absolute(std::filesystem::path(parent).parent_path() / entry);
+      m_data.contains(entrypath))
+    return true;
+
+  return false;
+}
+
+void SchemaLocation::operator =(const std::string& entry)
+{
+  m_data.clear();
+  if(!entry.contains(' '))
+    insert(entry);
+  else
   {
-    merge(static_cast<std::set<std::string>>(other));
+    for(std::size_t pos = 0, last = 0;
+        pos = entry.find_first_of(' ', pos),
+        pos != std::string::npos;
+        last = pos, ++pos)
+      if(last + 1 < pos)
+        insert(entry.substr(last, pos));
+  }
+}
+
+bool SchemaLocation::operator ==(const SchemaLocation& other) const
+{
+  if(std::any_of(std::begin(other.m_data),
+                     std::end(other.m_data),
+                     [this](const std::string& entry)
+                { return operator ==(entry); }))
+  {
+    if(m_parent == nullptr && other.m_parent != nullptr)
+      m_parent = other.m_parent;
+    else if(m_parent != nullptr && other.m_parent == nullptr)
+      other.m_parent = m_parent; // rule breaker! (mutable)
+    m_data.merge(static_cast<std::set<std::string>>(other.m_data));
     return true;
   }
   return false;
+}
+
+void SchemaLocation::insert(const std::string& entry)
+{
+  if(is_URL(entry) || std::filesystem::path(entry).is_absolute())
+    m_data.insert(entry);
+  else
+  {
+    auto entrypath = std::filesystem::current_path() / entry;
+    if(!std::filesystem::exists(entrypath))
+      throw std::runtime_error("unable to location file");
+    m_data.insert(std::filesystem::absolute(entrypath));
+  }
 }

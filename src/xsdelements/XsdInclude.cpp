@@ -1,8 +1,5 @@
 #include "XsdInclude.h"
 
-#include <ranges>
-
-
 XsdInclude::XsdInclude(std::shared_ptr<XsdParserCore> parser,
                        StringMap attributesMap,
                        VisitorFunctionType visitorFunction,
@@ -11,8 +8,7 @@ XsdInclude::XsdInclude(std::shared_ptr<XsdParserCore> parser,
 {
   if(haveAttribute(SCHEMA_LOCATION))
   {
-    for(auto location : std::ranges::views::split(getAttribute(SCHEMA_LOCATION), '\n'))
-      m_schemaLocation.insert(location.data());
+    m_schemaLocation = getAttribute(SCHEMA_LOCATION);
     parser->addLocationToParse(m_schemaLocation);
   }
 }

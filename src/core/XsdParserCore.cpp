@@ -404,6 +404,9 @@ void XsdParserCore::addUnsolvedReference(std::shared_ptr<UnsolvedReference> unso
  */
 void XsdParserCore::addLocationToParse(SchemaLocation schemaLocation)
 {
+  schemaLocation.setParent(&m_currentFile);
   m_schemaLocations.insert(schemaLocation);
-  m_schemaLocationsMap.emplace(schemaLocation, m_currentFile);
+  auto result = m_schemaLocationsMap.emplace(schemaLocation, m_currentFile);
+  if(!result.second)
+    assert(m_schemaLocationsMap.at(schemaLocation) == m_currentFile);
 }

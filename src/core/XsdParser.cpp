@@ -1,5 +1,6 @@
 #include "XsdParser.h"
 
+#include <iostream>
 #include <filesystem>
 
 #include <core/utils/ConfigEntryData.h>
@@ -7,6 +8,9 @@
 
 void XsdParser::parse(std::string filePath)
 {
+  if(std::filesystem::path(filePath).is_absolute())
+    std::filesystem::current_path(std::filesystem::path(filePath).parent_path());
+
   m_currentFile = filePath;
   if(!m_schemaLocations.contains(filePath))
     m_schemaLocations.insert(filePath);
@@ -25,7 +29,7 @@ void XsdParser::parse(std::string filePath)
  * field.
  * @param filePath The path to the XSD file.
  */
-void XsdParser::parseLocation(SchemaLocation fileLocation)
+void XsdParser::parseLocation(const SchemaLocation& fileLocation)
 {
   m_currentFile = fileLocation;
   ConfigEntryData xsdSchemaConfig;
@@ -57,9 +61,9 @@ void XsdParser::parseLocation(SchemaLocation fileLocation)
  */
 pugi::xml_node XsdParser::getSchemaNode(SchemaLocation fileLocation)
 {
-  SchemaLocation parentLocation = m_schemaLocationsMap.at(fileLocation);
+  SchemaLocation& parentLocation = m_schemaLocationsMap.at(fileLocation);
   std::optional<std::string> filePath;
-  for(auto& location : fileLocation)
+  for(auto& location : fileLocation.data())
   {
     if(std::filesystem::exists(location))
     {
@@ -68,9 +72,13 @@ pugi::xml_node XsdParser::getSchemaNode(SchemaLocation fileLocation)
     }
     else if(std::filesystem::path(location).is_relative())
     {
-      for(auto& parent_location : parentLocation)
+      for(auto& parent_location : parentLocation.data())
         if(std::filesystem::exists(std::filesystem::path(parent_location).parent_path() / location))
           filePath = std::filesystem::path(parent_location).parent_path() / location;
+      if(filePath)
+        std::cout << "filePath: " << *filePath << std::endl;
+      else
+        std::cout << "filePath: not found!" << std::endl;
     }
   }
   assert(filePath);

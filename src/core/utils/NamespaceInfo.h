@@ -16,5 +16,5 @@ public:
   SchemaLocation getFile(void) const { return m_file; }
 
   void setFile(SchemaLocation file) { m_file = file; }
-  void setFile(std::string file) { m_file.insert(file); }
+  void setFile(std::string file) { m_file = file; }
 };
