@@ -4,16 +4,18 @@
 #include <set>
 #include <string>
 #include <memory>
+#include <initializer_list>
 
 class SchemaLocation : public std::enable_shared_from_this<SchemaLocation>
 {
 public:
+  SchemaLocation(void) = default;
+
   SchemaLocation(std::string entry)
     : m_data({ entry }) { }
 
-  template<typename... Args>
-  SchemaLocation(Args... args)
-    : m_data(args...) { }
+  SchemaLocation(std::initializer_list<std::string> entries)
+    : m_data(entries) { }
 
   void setParent(SchemaLocation* parent) { m_parent = parent; }
 
