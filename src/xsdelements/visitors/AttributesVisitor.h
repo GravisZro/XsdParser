@@ -9,7 +9,7 @@
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
-#include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/visitors/XsdNamedElementsVisitor.h>
 
 /**
  * Represents the restrictions of the all elements that can contain {@link XsdAttribute} and {@link XsdAttributeGroup}.
@@ -19,7 +19,7 @@
  * contained a list of {@link XsdAttribute} and {@link XsdAttributeGroup} objects.
  * Can also have xsd:annotation children as per inheritance of {@link XsdAnnotatedElementsVisitor}.
  */
-class AttributesVisitor : public XsdAnnotatedElementsVisitor
+class AttributesVisitor : public XsdNamedElementsVisitor
 {
 private:
   /**
@@ -37,12 +37,11 @@ public:
 
   virtual void visit(std::shared_ptr<XsdAbstractElement> attribute) override
   {
+    XsdNamedElementsVisitor::visit(attribute); // won't impact non-named elements
     if(std::dynamic_pointer_cast<XsdAttribute>(attribute))
       m_attributes.push_back(ReferenceBase::createFromXsd(attribute));
     else if(std::dynamic_pointer_cast<XsdAttributeGroup>(attribute))
       m_attributeGroups.push_back(ReferenceBase::createFromXsd(attribute));
-    else
-      assert(false);
   }
 
   void setAttributes(std::list<std::shared_ptr<ReferenceBase>> attributes) {

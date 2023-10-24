@@ -81,6 +81,7 @@ HEADERS += \
   src/xsdelements/visitors/XsdExtensionVisitor.h \
   src/xsdelements/visitors/XsdGroupVisitor.h \
   src/xsdelements/visitors/XsdListVisitor.h \
+  src/xsdelements/visitors/XsdNamedElementsVisitor.h \
   src/xsdelements/visitors/XsdRestrictionVisitor.h \
   src/xsdelements/visitors/XsdSchemaVisitor.h \
   src/xsdelements/visitors/XsdSequenceVisitor.h \
@@ -134,6 +135,7 @@ SOURCES += \
   src/xsdelements/elementswrapper/UnsolvedReference.cpp \
   src/xsdelements/visitors/XsdAbstractElementVisitor.cpp \
   src/xsdelements/visitors/XsdComplexTypeVisitor.cpp \
+  src/xsdelements/visitors/XsdNamedElementsVisitor.cpp \
   src/xsdelements/visitors/XsdRestrictionVisitor.cpp \
   src/xsdelements/visitors/XsdSchemaVisitor.cpp \
   src/xsdelements/visitors/XsdSimpleTypeVisitor.cpp \

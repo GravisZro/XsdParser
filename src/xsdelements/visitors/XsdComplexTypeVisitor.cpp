@@ -7,6 +7,7 @@
 
 void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
 {
+  XsdNamedElementsVisitor::visit(element);
   AttributesVisitor::visit(element);
 
   if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
@@ -16,6 +17,4 @@ void XsdComplexTypeVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
     owner->setComplexContent(std::static_pointer_cast<XsdComplexContent>(element));
   else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
     owner->setSimpleContent(std::static_pointer_cast<XsdSimpleContent>(element));
-  else
-    assert(false);
 }

@@ -1,14 +1,14 @@
 #pragma once
 
 #include <xsdelements/XsdGroup.h>
-#include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/visitors/XsdNamedElementsVisitor.h>
 
 /**
  * Represents the restrictions of the {@link XsdGroup} element, which can contain {@link XsdAll}, {@link XsdSequence},
  * {@link XsdChoice} (represented by {@link XsdMultipleElements}) as children. Can also have {@link XsdAnnotation} as
  * children as per inheritance of {@link XsdAnnotatedElementsVisitor}.
  */
-struct XsdGroupVisitor : XsdAnnotatedElementsVisitor
+struct XsdGroupVisitor : XsdNamedElementsVisitor
 {
   XsdGroupVisitor(std::shared_ptr<XsdGroup> _owner) : owner(_owner) { }
 
@@ -23,7 +23,7 @@ struct XsdGroupVisitor : XsdAnnotatedElementsVisitor
 
   void visit(std::shared_ptr<XsdAbstractElement> element) override
   {
-    XsdAnnotatedElementsVisitor::visit(element);
+    XsdNamedElementsVisitor::visit(element);
     owner->setChildElement(std::static_pointer_cast<XsdMultipleElements>(element));
   }
 };

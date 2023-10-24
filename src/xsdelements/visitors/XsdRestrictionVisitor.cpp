@@ -57,6 +57,4 @@ void XsdRestrictionVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
     owner->setSequence(std::static_pointer_cast<XsdSequence>(element));
   else if(std::dynamic_pointer_cast<XsdGroup>(element))
     owner->setGroup(ReferenceBase::createFromXsd(element));
-  else
-    assert(false);
 }

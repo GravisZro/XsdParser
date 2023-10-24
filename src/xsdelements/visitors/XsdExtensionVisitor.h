@@ -33,7 +33,5 @@ struct XsdExtensionVisitor : AttributesVisitor
     if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
        std::dynamic_pointer_cast<XsdGroup>(element))
       owner->setChildElement(ReferenceBase::createFromXsd(element));
-    else
-      assert(false);
   }
 };

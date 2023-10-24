@@ -5,14 +5,14 @@
 #include <xsdelements/XsdAttribute.h>
 #include <xsdelements/XsdAttributeGroup.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/visitors/XsdNamedElementsVisitor.h>
 
 /**
  * Represents the restrictions of the {@link XsdAttributeGroup} element, which can only contain {@link XsdAttribute}
  * elements as children. Can also have {@link XsdAnnotation} children as per inheritance of
  * {@link XsdAnnotatedElementsVisitor}.
  */
-struct XsdAttributeGroupVisitor : XsdAnnotatedElementsVisitor
+struct XsdAttributeGroupVisitor : XsdNamedElementsVisitor
 {
   XsdAttributeGroupVisitor(std::shared_ptr<XsdAttributeGroup> _owner) : owner(_owner) { }
 
@@ -27,7 +27,7 @@ struct XsdAttributeGroupVisitor : XsdAnnotatedElementsVisitor
 
   virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
   {
-    XsdAnnotatedElementsVisitor::visit(element);
+    XsdNamedElementsVisitor::visit(element);
 
     if(std::dynamic_pointer_cast<XsdAttribute>(element))
       owner->addAttribute(ReferenceBase::createFromXsd(element));

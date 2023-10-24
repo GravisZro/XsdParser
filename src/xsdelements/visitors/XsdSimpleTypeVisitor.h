@@ -5,7 +5,7 @@
 #include <xsdelements/XsdUnion.h>
 #include <xsdelements/XsdList.h>
 #include <xsdelements/XsdRestriction.h>
-#include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/visitors/XsdNamedElementsVisitor.h>
 
 /**
  * Represents the restrictions of the {@link XsdSimpleType} element, which can contain {@link XsdList}, {@link XsdUnion}
@@ -13,7 +13,7 @@
  * {@link XsdAnnotatedElementsVisitor}.
  */
 
-struct XsdSimpleTypeVisitor : XsdAnnotatedElementsVisitor
+struct XsdSimpleTypeVisitor : XsdNamedElementsVisitor
 {
   XsdSimpleTypeVisitor(std::shared_ptr<XsdSimpleType> _owner) : owner(_owner) { }
 
@@ -28,14 +28,12 @@ struct XsdSimpleTypeVisitor : XsdAnnotatedElementsVisitor
 
   void visit(std::shared_ptr<XsdAbstractElement> element) override
   {
-    XsdAnnotatedElementsVisitor::visit(element);
+    XsdNamedElementsVisitor::visit(element);
     if(std::dynamic_pointer_cast<XsdList>(element))
       owner->setList(std::static_pointer_cast<XsdList>(element));
     else if(std::dynamic_pointer_cast<XsdUnion>(element))
       owner->setUnion(std::static_pointer_cast<XsdUnion>(element));
     else if(std::dynamic_pointer_cast<XsdList>(element))
       owner->setRestriction(std::static_pointer_cast<XsdRestriction>(element));
-    else
-      assert(false);
   }
 };

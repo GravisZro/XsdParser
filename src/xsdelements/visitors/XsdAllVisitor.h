@@ -3,13 +3,13 @@
 #include <xsdelements/XsdAll.h>
 #include <xsdelements/XsdAnnotation.h>
 #include <xsdelements/XsdElement.h>
-#include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/visitors/XsdNamedElementsVisitor.h>
 
 /**
  * Represents the restrictions of the {@link XsdAll} element, which can only contain {@link XsdElement} as children.
  * Can also have {@link XsdAnnotation} children as per inheritance of {@link XsdAnnotatedElementsVisitor}.
  */
-struct XsdAllVisitor : XsdAnnotatedElementsVisitor
+struct XsdAllVisitor : XsdNamedElementsVisitor
 {
   XsdAllVisitor(std::shared_ptr<XsdAll> _owner) : owner(_owner) { }
 
@@ -24,7 +24,7 @@ struct XsdAllVisitor : XsdAnnotatedElementsVisitor
 
   virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
   {
-    XsdAnnotatedElementsVisitor::visit(element);
+    XsdNamedElementsVisitor::visit(element);
     std::static_pointer_cast<XsdAll>(owner)->addElement(element);
   }
 };

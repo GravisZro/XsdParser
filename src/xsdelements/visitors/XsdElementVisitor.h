@@ -4,14 +4,14 @@
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdSimpleType.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/visitors/XsdNamedElementsVisitor.h>
 
 /**
  * Represents the restrictions of the {@link XsdElement} element, which can only contain {@link XsdSimpleType} or
  * {@link XsdComplexType} as children. Can also have {@link XsdAnnotation} children as per inheritance of
  * {@link XsdAnnotatedElementsVisitor}.
  */
-struct XsdElementVisitor : XsdAnnotatedElementsVisitor
+struct XsdElementVisitor : XsdNamedElementsVisitor
 {
   XsdElementVisitor(std::shared_ptr<XsdElement> _owner) : owner(_owner) { }
 
@@ -26,11 +26,10 @@ struct XsdElementVisitor : XsdAnnotatedElementsVisitor
 
   virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
   {
+    XsdNamedElementsVisitor::visit(element);
     if(std::dynamic_pointer_cast<XsdComplexType>(element))
       owner->setComplexType(ReferenceBase::createFromXsd(element));
     else if(std::dynamic_pointer_cast<XsdSimpleType>(element))
       owner->setSimpleType(ReferenceBase::createFromXsd(element));
-    else
-      assert(false);
   }
 };
