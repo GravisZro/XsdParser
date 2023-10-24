@@ -107,7 +107,7 @@ std::shared_ptr<XsdList> XsdSimpleType::getList(void)
 std::list<std::shared_ptr<XsdRestriction>> XsdSimpleType::getAllRestrictions(void)
 {
     std::map<std::string, std::shared_ptr<XsdRestriction>> restrictions;
-    StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToJava();
+    StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToCpp();
 
     if (m_restriction && m_restriction->getBase())
     {

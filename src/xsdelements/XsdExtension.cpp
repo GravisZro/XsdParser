@@ -27,7 +27,7 @@ void XsdExtension::initialize(void)
   {
     std::string baseValue = getAttribute(BASE_TAG);
 
-    if (XsdParserCore::getXsdTypesToJava().contains(baseValue))
+    if (XsdParserCore::getXsdTypesToCpp().contains(baseValue))
     {
       StringMap attributes;
       attributes.emplace(NAME_TAG, baseValue);

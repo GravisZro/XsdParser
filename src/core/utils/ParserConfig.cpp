@@ -69,148 +69,93 @@
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/ParserConfig.h>
 
-const std::map<std::string, std::string> ParserConfig::getXsdTypesToJava(void)
+const std::map<std::string, std::string> ParserConfig::getXsdTypesToCpp(void)
 {
-  std::map<std::string, std::string> xsdTypesToJava;
+  std::map<std::string, std::string> xsdTypesToCpp;
 
-  constexpr std::string_view string = "std::string";
-  constexpr std::string_view xmlGregorianCalendar = "XMLGregorianCalendar";
-  constexpr std::string_view duration = "Duration";
-  constexpr std::string_view bigInteger = "BigInteger";
-  constexpr std::string_view integer = "Integer";
-  constexpr std::string_view shortString = "Short";
-  constexpr std::string_view qName = "QName";
-  constexpr std::string_view longString = "Long";
-  constexpr std::string_view byteString = "Byte";
+  // string types
+  constexpr std::string_view stringType = "std::string";
+  constexpr std::string_view qNameType = "QName"; // specialized
+  // standard integer types
+  constexpr std::string_view booleanType = "bool";
+  constexpr std::string_view longType = "int64_t";
+  constexpr std::string_view uLongType = "uint64_t";
+  constexpr std::string_view integerType = "int32_t";
+  constexpr std::string_view uIntegerType = "uint32_t";
+  constexpr std::string_view shortType = "int16_t";
+  constexpr std::string_view uShortType = "uint16_t";
+  constexpr std::string_view byteType = "int8_t";
+  constexpr std::string_view uByteType = "uint8_t";
+  // floating point types
+  constexpr std::string_view floatType = "float";
+  constexpr std::string_view doubleType = "double";
 
-  xsdTypesToJava.emplace("xsd:anyURI", string);
-  xsdTypesToJava.emplace("xs:anyURI", string);
-  xsdTypesToJava.emplace("anyURI", string);
-  xsdTypesToJava.emplace("xsd:bool", "Boolean");
-  xsdTypesToJava.emplace("xs:bool", "Boolean");
-  xsdTypesToJava.emplace("bool", "Boolean");
-  xsdTypesToJava.emplace("xsd:date", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:date", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("date", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:dateTime", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:dateTime", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("dateTime", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:time", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:time", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("time", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:duration", duration);
-  xsdTypesToJava.emplace("xs:duration", duration);
-  xsdTypesToJava.emplace("duration", duration);
-  xsdTypesToJava.emplace("xsd:dayTimeDuration", duration);
-  xsdTypesToJava.emplace("xs:dayTimeDuration", duration);
-  xsdTypesToJava.emplace("dayTimeDuration", duration);
-  xsdTypesToJava.emplace("xsd:yearMonthDuration", duration);
-  xsdTypesToJava.emplace("xs:yearMonthDuration", duration);
-  xsdTypesToJava.emplace("yearMonthDuration", duration);
-  xsdTypesToJava.emplace("xsd:gDay", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:gDay", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("gDay", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:gMonth", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:gMonth", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("gMonth", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:gMonthDay", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:gMonthDay", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("gMonthDay", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:gYear", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:gYear", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("gYear", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:gYearMonth", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xs:gYearMonth", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("gYearMonth", xmlGregorianCalendar);
-  xsdTypesToJava.emplace("xsd:decimal", "BigDecimal");
-  xsdTypesToJava.emplace("xs:decimal", "BigDecimal");
-  xsdTypesToJava.emplace("decimal", "BigDecimal");
-  xsdTypesToJava.emplace("xsd:integer", bigInteger);
-  xsdTypesToJava.emplace("xs:integer", bigInteger);
-  xsdTypesToJava.emplace("integer", bigInteger);
-  xsdTypesToJava.emplace("xsd:nonPositiveInteger", bigInteger);
-  xsdTypesToJava.emplace("xs:nonPositiveInteger", bigInteger);
-  xsdTypesToJava.emplace("nonPositiveInteger", bigInteger);
-  xsdTypesToJava.emplace("xsd:negativeInteger", bigInteger);
-  xsdTypesToJava.emplace("xs:negativeInteger", bigInteger);
-  xsdTypesToJava.emplace("negativeInteger", bigInteger);
-  xsdTypesToJava.emplace("xsd:long", longString);
-  xsdTypesToJava.emplace("xs:long", longString);
-  xsdTypesToJava.emplace("long", longString);
-  xsdTypesToJava.emplace("xsd:int", integer);
-  xsdTypesToJava.emplace("xs:int", integer);
-  xsdTypesToJava.emplace("int", integer);
-  xsdTypesToJava.emplace("xsd:short", shortString);
-  xsdTypesToJava.emplace("xs:short", shortString);
-  xsdTypesToJava.emplace("short", shortString);
-  xsdTypesToJava.emplace("xsd:byte", byteString);
-  xsdTypesToJava.emplace("xs:byte", byteString);
-  xsdTypesToJava.emplace("byte", byteString);
-  xsdTypesToJava.emplace("xsd:nonNegativeInteger", bigInteger);
-  xsdTypesToJava.emplace("xs:nonNegativeInteger", bigInteger);
-  xsdTypesToJava.emplace("nonNegativeInteger", bigInteger);
-  xsdTypesToJava.emplace("xsd:unsignedLong", bigInteger);
-  xsdTypesToJava.emplace("xs:unsignedLong", bigInteger);
-  xsdTypesToJava.emplace("unsignedLong", bigInteger);
-  xsdTypesToJava.emplace("xsd:unsignedInt", longString);
-  xsdTypesToJava.emplace("xs:unsignedInt", longString);
-  xsdTypesToJava.emplace("unsignedInt", longString);
-  xsdTypesToJava.emplace("xsd:unsignedShort", integer);
-  xsdTypesToJava.emplace("xs:unsignedShort", integer);
-  xsdTypesToJava.emplace("unsignedShort", integer);
-  xsdTypesToJava.emplace("xsd:unsignedByte", shortString);
-  xsdTypesToJava.emplace("xs:unsignedByte", shortString);
-  xsdTypesToJava.emplace("unsignedByte", shortString);
-  xsdTypesToJava.emplace("xsd:positiveInteger", bigInteger);
-  xsdTypesToJava.emplace("xs:positiveInteger", bigInteger);
-  xsdTypesToJava.emplace("positiveInteger", bigInteger);
-  xsdTypesToJava.emplace("xsd:double", "Double");
-  xsdTypesToJava.emplace("xs:double", "Double");
-  xsdTypesToJava.emplace("double", "Double");
-  xsdTypesToJava.emplace("xsd:float", "Float");
-  xsdTypesToJava.emplace("xs:float", "Float");
-  xsdTypesToJava.emplace("float", "Float");
-  xsdTypesToJava.emplace("xsd:QName", qName);
-  xsdTypesToJava.emplace("xs:QName", qName);
-  xsdTypesToJava.emplace("QName", qName);
-  xsdTypesToJava.emplace("xsd:NOTATION", qName);
-  xsdTypesToJava.emplace("xs:NOTATION", qName);
-  xsdTypesToJava.emplace("NOTATION", qName);
-  xsdTypesToJava.emplace("xsd:string", string);
-  xsdTypesToJava.emplace("xs:string", string);
-  xsdTypesToJava.emplace("string", string);
-  xsdTypesToJava.emplace("xsd:normalizedString", string);
-  xsdTypesToJava.emplace("xs:normalizedString", string);
-  xsdTypesToJava.emplace("normalizedString", string);
-  xsdTypesToJava.emplace("xsd:token", string);
-  xsdTypesToJava.emplace("xs:token", string);
-  xsdTypesToJava.emplace("token", string);
-  xsdTypesToJava.emplace("xsd:language", string);
-  xsdTypesToJava.emplace("xs:language", string);
-  xsdTypesToJava.emplace("language", string);
-  xsdTypesToJava.emplace("xsd:NMTOKEN", string);
-  xsdTypesToJava.emplace("xs:NMTOKEN", string);
-  xsdTypesToJava.emplace("NMTOKEN", string);
-  xsdTypesToJava.emplace("xsd:Name", string);
-  xsdTypesToJava.emplace("xs:Name", string);
-  xsdTypesToJava.emplace("Name", string);
-  xsdTypesToJava.emplace("xsd:NCName", string);
-  xsdTypesToJava.emplace("xs:NCName", string);
-  xsdTypesToJava.emplace("NCName", string);
-  xsdTypesToJava.emplace("xsd:ID", string);
-  xsdTypesToJava.emplace("xs:ID", string);
-  xsdTypesToJava.emplace("ID", string);
-  xsdTypesToJava.emplace("xsd:IDREF", string);
-  xsdTypesToJava.emplace("xs:IDREF", string);
-  xsdTypesToJava.emplace("IDREF", string);
-  xsdTypesToJava.emplace("xsd:ENTITY", string);
-  xsdTypesToJava.emplace("xs:ENTITY", string);
-  xsdTypesToJava.emplace("ENTITY", string);
-  xsdTypesToJava.emplace("xsd:untypedAtomic", string);
-  xsdTypesToJava.emplace("xs:untypedAtomic", string);
-  xsdTypesToJava.emplace("untypedAtomic", string);
+  // time/date oriented types (specialized)
+  xsdTypesToCpp.emplace("date", "xs::date");
+  xsdTypesToCpp.emplace("dateTime", "xs::dateTime");
+  xsdTypesToCpp.emplace("time", "xs::time");
+  xsdTypesToCpp.emplace("duration", "xs::duration");
+  xsdTypesToCpp.emplace("dayTimeDuration", "xs::dayTimeDuration");
+  xsdTypesToCpp.emplace("yearMonthDuration", "xs::yearMonthDuration");
 
-  return xsdTypesToJava;
+  // calendar types
+  xsdTypesToCpp.emplace("gDay", "std::chrono::day");
+  xsdTypesToCpp.emplace("gMonth", "std::chrono::month");
+  xsdTypesToCpp.emplace("gMonthDay", "std::chrono::month_day");
+  xsdTypesToCpp.emplace("gYear", "std::chrono::year");
+  xsdTypesToCpp.emplace("gYearMonth", "std::chrono::year_month");
+
+  // weird integer types
+  xsdTypesToCpp.emplace("positiveInteger", uIntegerType);
+  xsdTypesToCpp.emplace("nonPositiveInteger", integerType);
+  xsdTypesToCpp.emplace("negativeInteger", integerType);
+  xsdTypesToCpp.emplace("nonNegativeInteger", uIntegerType);
+
+  // standard integer types
+  xsdTypesToCpp.emplace("bool", booleanType);
+  xsdTypesToCpp.emplace("long", longType);
+  xsdTypesToCpp.emplace("integer", integerType);
+  xsdTypesToCpp.emplace("int", integerType);
+  xsdTypesToCpp.emplace("short", shortType);
+  xsdTypesToCpp.emplace("byte", byteType);
+  xsdTypesToCpp.emplace("unsignedLong", uLongType);
+  xsdTypesToCpp.emplace("unsignedInt", uIntegerType);
+  xsdTypesToCpp.emplace("unsignedShort", uShortType);
+  xsdTypesToCpp.emplace("unsignedByte", uByteType);
+
+  // floating point types
+  xsdTypesToCpp.emplace("decimal", floatType);
+  xsdTypesToCpp.emplace("double", doubleType);
+  xsdTypesToCpp.emplace("float", floatType);
+
+  // string types
+  xsdTypesToCpp.emplace("anyURI", stringType);
+  xsdTypesToCpp.emplace("string", stringType);
+  xsdTypesToCpp.emplace("normalizedString", stringType);
+  xsdTypesToCpp.emplace("token", stringType);
+  xsdTypesToCpp.emplace("language", stringType);
+  xsdTypesToCpp.emplace("NMTOKEN", stringType);
+  xsdTypesToCpp.emplace("Name", stringType);
+  xsdTypesToCpp.emplace("NCName", stringType);
+  xsdTypesToCpp.emplace("ID", stringType);
+  xsdTypesToCpp.emplace("IDREF", stringType);
+  xsdTypesToCpp.emplace("ENTITY", stringType);
+  xsdTypesToCpp.emplace("untypedAtomic", stringType);
+
+  // qualified types
+  xsdTypesToCpp.emplace("QName", qNameType);
+  xsdTypesToCpp.emplace("NOTATION", qNameType);
+
+  for(auto& entry : xsdTypesToCpp)
+  {
+    if(!entry.first.contains(':'))
+    {
+      xsdTypesToCpp.emplace("xs:" + entry.first, entry.second);
+      xsdTypesToCpp.emplace("xsd:" + entry.first, entry.second);
+    }
+  }
+
+  return xsdTypesToCpp;
 }
 
 static StringMap generateAttributeMap(pugi::xml_node node)
@@ -268,33 +213,33 @@ static std::shared_ptr<XsdAbstractElementVisitor> genericVisitor(std::shared_ptr
 }
 
 template<typename T>
-static void addEntry(std::map<std::string_view, ConfigEntryData>& mapper, ConfigEntryData entry)
+static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper, ConfigEntryData entry)
 {
-  mapper.emplace(std::make_pair(T::XSD_TAG, entry ));
-  mapper.emplace(std::make_pair(T::XS_TAG, entry ));
-  mapper.emplace(std::make_pair(T::TAG, entry ));
+  mapper.emplace(std::make_pair(TAG<T>::xsd, entry ));
+  mapper.emplace(std::make_pair(TAG<T>::xs, entry ));
+  mapper.emplace(std::make_pair(TAG<T>::id, entry ));
 }
 
 #ifdef DEBUG
 template<typename T, typename V>
 static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
 {
-  addEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(T).name(), genericVisitor<T, V> });
+  addGenericEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(T).name(), genericVisitor<T, V> });
 }
 
 template<typename T>
 static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
 {
-  addEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(XsdAnnotatedElements).name(), genericVisitor<XsdAnnotatedElements, XsdAnnotatedElementsVisitor> });
+  addGenericEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(XsdAnnotatedElements).name(), genericVisitor<T, XsdAnnotatedElementsVisitor> });
 }
 #else
 template<typename T, typename V>
-static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
-  { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, V> }); }
+static void addElementEntry(std::map<std::string_view, ConfigEntryData>& mapper)
+  { addGenericEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, V> }); }
 
 template<typename T>
 static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
-  { addEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, XsdAnnotatedElementsVisitorWrapper<T>> }); }
+  { addGenericEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, XsdAnnotatedElementsVisitorWrapper<T>> }); }
 #endif
 
 const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
@@ -302,32 +247,32 @@ const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(
   std::map<std::string_view, ConfigEntryData> mappers;
 
 #ifdef DEBUG
-  addEntry<XsdSchema>(mappers, ConfigEntryData { typeid(XsdSchema).name(), schemaParser, typeid(XsdSchema).name(), genericVisitor<XsdSchema, XsdSchemaVisitor> });
+  addGenericEntry<XsdSchema>(mappers, ConfigEntryData { typeid(XsdSchema).name(), schemaParser, typeid(XsdSchema).name(), genericVisitor<XsdSchema, XsdSchemaVisitor> });
 
-  addEntry<XsdAppInfo>(mappers, ConfigEntryData { typeid(XsdAppInfo).name(), genericParser<XsdAppInfo>, typeid(std::nullopt_t).name(), nullptr });
-  addEntry<XsdDocumentation>(mappers, ConfigEntryData { typeid(XsdDocumentation).name(), genericParser<XsdDocumentation>, typeid(std::nullopt_t).name(), nullptr });
+  addGenericEntry<XsdAppInfo>(mappers, ConfigEntryData { typeid(XsdAppInfo).name(), genericParser<XsdAppInfo>, typeid(std::nullopt_t).name(), nullptr });
+  addGenericEntry<XsdDocumentation>(mappers, ConfigEntryData { typeid(XsdDocumentation).name(), genericParser<XsdDocumentation>, typeid(std::nullopt_t).name(), nullptr });
 #else
-  addEntry<XsdSchema>(mappers, ConfigEntryData { schemaParser, genericVisitor<XsdSchema, XsdSchemaVisitor> });
+  addGenericEntry<XsdSchema>(mappers, ConfigEntryData { schemaParser, genericVisitor<XsdSchema, XsdSchemaVisitor> });
 
-  addEntry<XsdAppInfo>(mappers, ConfigEntryData { genericParser<XsdAppInfo>, nullptr });
-  addEntry<XsdDocumentation>(mappers, ConfigEntryData { genericParser<XsdDocumentation>, nullptr });
+  addGenericEntry<XsdAppInfo>(mappers, ConfigEntryData { genericParser<XsdAppInfo>, nullptr });
+  addGenericEntry<XsdDocumentation>(mappers, ConfigEntryData { genericParser<XsdDocumentation>, nullptr });
 #endif
 
-  addGenericEntry<XsdAll, XsdAllVisitor>(mappers);
-  addGenericEntry<XsdAttribute, XsdAttributeVisitor>(mappers);
-  addGenericEntry<XsdAttributeGroup, XsdAttributeGroupVisitor>(mappers);
-  addGenericEntry<XsdChoice, XsdChoiceVisitor>(mappers);
-  addGenericEntry<XsdComplexType, XsdComplexTypeVisitor>(mappers);
-  addGenericEntry<XsdElement, XsdElementVisitor>(mappers);
-  addGenericEntry<XsdGroup, XsdGroupVisitor>(mappers);
-  addGenericEntry<XsdSequence, XsdSequenceVisitor>(mappers);
-  addGenericEntry<XsdSimpleType, XsdSimpleTypeVisitor>(mappers);
-  addGenericEntry<XsdList, XsdListVisitor>(mappers);
-  addGenericEntry<XsdRestriction, XsdRestrictionVisitor>(mappers);
-  addGenericEntry<XsdUnion, XsdUnionVisitor>(mappers);
-  addGenericEntry<XsdAnnotation, XsdAnnotationVisitor>(mappers);
-  addGenericEntry<XsdExtension, XsdExtensionVisitor>(mappers);
-  addGenericEntry<XsdSimpleContent, XsdSimpleContentVisitor>(mappers);
+  addElementEntry<XsdAll, XsdAllVisitor>(mappers);
+  addElementEntry<XsdAttribute, XsdAttributeVisitor>(mappers);
+  addElementEntry<XsdAttributeGroup, XsdAttributeGroupVisitor>(mappers);
+  addElementEntry<XsdChoice, XsdChoiceVisitor>(mappers);
+  addElementEntry<XsdComplexType, XsdComplexTypeVisitor>(mappers);
+  addElementEntry<XsdElement, XsdElementVisitor>(mappers);
+  addElementEntry<XsdGroup, XsdGroupVisitor>(mappers);
+  addElementEntry<XsdSequence, XsdSequenceVisitor>(mappers);
+  addElementEntry<XsdSimpleType, XsdSimpleTypeVisitor>(mappers);
+  addElementEntry<XsdList, XsdListVisitor>(mappers);
+  addElementEntry<XsdRestriction, XsdRestrictionVisitor>(mappers);
+  addElementEntry<XsdUnion, XsdUnionVisitor>(mappers);
+  addElementEntry<XsdAnnotation, XsdAnnotationVisitor>(mappers);
+  addElementEntry<XsdExtension, XsdExtensionVisitor>(mappers);
+  addElementEntry<XsdSimpleContent, XsdSimpleContentVisitor>(mappers);
 
   addAnnotatedEntry<XsdInclude>(mappers);
   addAnnotatedEntry<XsdImport>(mappers);

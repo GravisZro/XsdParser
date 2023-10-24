@@ -59,7 +59,7 @@ void XsdRestriction::initialize(void)
 
   if (m_baseString)
   {
-    if (XsdParserCore::getXsdTypesToJava().contains(m_baseString.value()))
+    if (XsdParserCore::getXsdTypesToCpp().contains(m_baseString.value()))
     {
       StringMap attributes;
       attributes.emplace(NAME_TAG, m_baseString.value());

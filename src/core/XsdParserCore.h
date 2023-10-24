@@ -27,7 +27,7 @@ private:
      * A {@link Map} object that contains the all the XSD types and their respective types in the Java
      * language.
      */
-    static StringMap m_xsdTypesToJava;
+    static StringMap m_xsdTypesToCpp;
 
 
     /**
@@ -155,9 +155,9 @@ public:
      */
   void addLocationToParse(SchemaLocation schemaLocation);
 
-  static StringMap getXsdTypesToJava(void)
+  static StringMap getXsdTypesToCpp(void)
   {
-    return m_xsdTypesToJava;
+    return m_xsdTypesToCpp;
   }
 
   static std::map<std::string_view, ConfigEntryData> getParseMappers(void)
@@ -173,7 +173,7 @@ public:
 
   static void updateConfig(ParserConfig config)
   {
-    m_xsdTypesToJava = config.getXsdTypesToJava();
+    m_xsdTypesToCpp = config.getXsdTypesToCpp();
     m_parseMappers = config.getParseMappers();
   }
 };

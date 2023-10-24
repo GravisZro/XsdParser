@@ -42,7 +42,7 @@ void XsdAttribute::initialize(void)
   if(haveAttribute(USE_TAG))
     m_use = AttributeValidations::belongsToEnum<UsageEnum>(getAttribute(USE_TAG));
 
-  if (m_type && !XsdParserCore::getXsdTypesToJava().contains(m_type.value()))
+  if (m_type && !XsdParserCore::getXsdTypesToCpp().contains(m_type.value()))
   {
       m_simpleType = create<UnsolvedReference>(
                        m_type.value(),

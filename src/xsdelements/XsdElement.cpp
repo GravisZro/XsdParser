@@ -33,7 +33,7 @@ void XsdElement::initialize(void)
   if (haveAttribute(TYPE_TAG))
   {
     std::string typeString = getAttribute(TYPE_TAG);
-    if (XsdParserCore::getXsdTypesToJava().contains(typeString))
+    if (XsdParserCore::getXsdTypesToCpp().contains(typeString))
     {
       StringMap attributes;
       attributes.emplace(*NAME_TAG, typeString);

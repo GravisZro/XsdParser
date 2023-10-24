@@ -9,7 +9,7 @@
 
 ParserConfig XsdParserCore::m_config;
 std::map<std::string_view, ConfigEntryData> XsdParserCore::m_parseMappers = m_config.getParseMappers();
-StringMap XsdParserCore::m_xsdTypesToJava = m_config.getXsdTypesToJava();
+StringMap XsdParserCore::m_xsdTypesToCpp = m_config.getXsdTypesToCpp();
 
 /**
  * Verifies if a given {@link DOMNode} object, i.e. {@code node} is a xsd:schema node.
