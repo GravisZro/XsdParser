@@ -62,13 +62,13 @@ bool SchemaLocation::operator ==(const SchemaLocation& other) const
 
 void SchemaLocation::insert(const std::string& entry)
 {
-  if(is_URL(entry) || std::filesystem::path(entry).is_absolute())
-    m_data.insert(entry);
-  else
+  m_data.insert(entry); // insert original reference name (could be relative filename or absolute)
+  m_data.insert(std::filesystem::path(entry).filename()); // insert filename (or do nothing if it's a duplicate)
+  if(!is_URL(entry) && !std::filesystem::path(entry).is_absolute()) // entry is a relative filename
   {
-    auto entrypath = std::filesystem::current_path() / entry;
+    auto entrypath = std::filesystem::current_path() / entry; // build (then verify) absolute filepath
     if(!std::filesystem::exists(entrypath))
       throw std::runtime_error("unable to location file");
-    m_data.insert(std::filesystem::absolute(entrypath));
+    m_data.insert(std::filesystem::canonical(entrypath)); // insert absolute filepath
   }
 }
