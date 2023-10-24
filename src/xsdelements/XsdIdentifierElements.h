@@ -26,6 +26,7 @@ public: // ctors
 public:
   virtual void initialize(void) override
   {
+    XsdAbstractElement::initialize();
     m_id.reset();
     if(haveAttribute(XsdAbstractElement::ID_TAG))
       m_id = getAttribute(XsdAbstractElement::ID_TAG);

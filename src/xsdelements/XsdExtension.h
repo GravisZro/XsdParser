@@ -27,9 +27,6 @@ class XsdExtension : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:extension";
-    constexpr static const std::string_view XS_TAG = "xs:extension";
-    constexpr static const std::string_view TAG = "extension";
 
 private:
     /**

@@ -21,10 +21,6 @@ class XsdMaxLength : public XsdIntegerRestrictions
 {
 public:
   using XsdIntegerRestrictions::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:maxLength";
-    constexpr static const std::string_view XS_TAG = "xs:maxLength";
-    constexpr static const std::string_view TAG = "maxLength";
-
 public: // ctors
   XsdMaxLength(std::shared_ptr<XsdParserCore> parser,
                StringMap attributesMap,
@@ -38,7 +34,7 @@ public:
   {
     XsdIntegerRestrictions::initialize();
     assert(haveAttribute(VALUE_TAG));
-    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
+    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*TAG<XsdMaxLength>::xsd, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override

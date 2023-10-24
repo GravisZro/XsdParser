@@ -19,9 +19,6 @@ class XsdSequence : public XsdMultipleElements
 {
 public:
   using XsdMultipleElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:sequence";
-  constexpr static const std::string_view XS_TAG = "xs:sequence";
-  constexpr static const std::string_view TAG = "sequence";
 
 private:
     /**
@@ -54,10 +51,10 @@ public:
     m_maxOccurs = "1";
 
     if(haveAttribute(MIN_OCCURS_TAG))
-      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdSequence>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
     if(haveAttribute(MAX_OCCURS_TAG))
-      m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
+      m_maxOccurs = AttributeValidations::maxOccursValidation(*TAG<XsdSequence>::xsd, getAttribute(MAX_OCCURS_TAG));
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;

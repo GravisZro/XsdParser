@@ -19,9 +19,6 @@ class XsdAppInfo : public XsdAnnotationChildren
 {
 public:
   using XsdAnnotationChildren::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:appinfo";
-  constexpr static const std::string_view XS_TAG = "xs:appinfo";
-  constexpr static const std::string_view TAG = "appinfo";
 
 public: // ctors
     XsdAppInfo(std::shared_ptr<XsdParserCore> parser,

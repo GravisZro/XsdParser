@@ -17,10 +17,6 @@ class XsdInclude : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:include";
-  constexpr static const std::string_view XS_TAG = "xs:include";
-  constexpr static const std::string_view TAG = "include";
-
 private:
     /**
      * Specifies the URI to the schema for the imported namespace.

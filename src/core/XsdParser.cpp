@@ -34,10 +34,10 @@ void XsdParser::parseLocation(const SchemaLocation& fileLocation)
   m_currentFile = fileLocation;
   ConfigEntryData xsdSchemaConfig;
 
-  if(m_parseMappers.contains(*XsdSchema::XSD_TAG))
-    xsdSchemaConfig = m_parseMappers.at(*XsdSchema::XSD_TAG);
-  else if(m_parseMappers.contains(*XsdSchema::XS_TAG))
-    xsdSchemaConfig = m_parseMappers.at(*XsdSchema::XS_TAG);
+  if(m_parseMappers.contains(TAG<XsdSchema>::xsd))
+    xsdSchemaConfig = m_parseMappers.at(TAG<XsdSchema>::xsd);
+  else if(m_parseMappers.contains(TAG<XsdSchema>::xs))
+    xsdSchemaConfig = m_parseMappers.at(TAG<XsdSchema>::xs);
 
   if (xsdSchemaConfig.parserFunction == nullptr &&
       xsdSchemaConfig.visitorFunction == nullptr)

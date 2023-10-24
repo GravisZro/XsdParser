@@ -17,10 +17,6 @@ class XsdImport : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:import";
-  constexpr static const std::string_view XS_TAG = "xs:import";
-  constexpr static const std::string_view TAG = "import";
-
 private:
     /**
      * Specifies the a namespace to import.

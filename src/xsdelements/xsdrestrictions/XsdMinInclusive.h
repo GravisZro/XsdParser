@@ -20,10 +20,6 @@ class XsdMinInclusive : public XsdStringRestrictions
 {
 public:
   using XsdStringRestrictions::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:minInclusive";
-    constexpr static const std::string_view XS_TAG = "xs:minInclusive";
-    constexpr static const std::string_view TAG = "minInclusive";
-
 private:
     /**
      * Indicates if the value is fixed.

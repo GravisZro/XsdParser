@@ -33,9 +33,6 @@ class XsdComplexType : public XsdNamedElements
 {
 public:
   using XsdNamedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:complexType";
-  constexpr static const std::string_view XS_TAG = "xs:complexType";
-  constexpr static const std::string_view TAG = "complexType";
 
 private:
     /**
@@ -135,7 +132,7 @@ private:
   void rule2(void)
   {
         if (m_simpleContent && haveAttribute(MIXED_TAG)){
-            throw ParsingException(XSD_TAG + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
+            throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
         }
     }
 

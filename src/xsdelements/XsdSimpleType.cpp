@@ -42,7 +42,7 @@ void XsdSimpleType::validateSchemaRules(void)
 void XsdSimpleType::rule2(void)
 {
     if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
-        throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
+        throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should only be used when the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
 }
 
 /**
@@ -52,7 +52,7 @@ void XsdSimpleType::rule2(void)
 void XsdSimpleType::rule3(void)
 {
     if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
-        throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
+        throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should is required the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
 }
 
 void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)

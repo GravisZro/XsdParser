@@ -22,10 +22,6 @@ class XsdSimpleContent : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:simpleContent";
-    constexpr static const std::string_view XS_TAG = "xs:simpleContent";
-    constexpr static const std::string_view TAG = "simpleContent";
-
 private:
     /**
      * The {@link XsdRestriction} instance that should be applied to the {@link XsdSimpleContent} instance.

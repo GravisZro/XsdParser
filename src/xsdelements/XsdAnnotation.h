@@ -16,9 +16,6 @@ class XsdAnnotation : public XsdIdentifierElements
 {
 public:
   using XsdIdentifierElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:annotation";
-  constexpr static const std::string_view XS_TAG = "xs:annotation";
-  constexpr static const std::string_view TAG = "annotation";
 
 private:
     /**

@@ -17,10 +17,6 @@ class XsdList : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:list";
-  constexpr static const std::string_view XS_TAG = "xs:list";
-  constexpr static const std::string_view TAG = "list";
-
 private:
     /**
      * The {@link XsdSimpleType} instance that states the type of the elements that belong to this {@link XsdList}

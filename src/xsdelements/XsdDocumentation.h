@@ -20,9 +20,6 @@ class XsdDocumentation : public XsdAnnotationChildren
 {
 public:
   using XsdAnnotationChildren::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:documentation";
-    constexpr static const std::string_view XS_TAG = "xs:documentation";
-    constexpr static const std::string_view TAG = "documentation";
 
 private:
     /**

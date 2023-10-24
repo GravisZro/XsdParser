@@ -17,10 +17,6 @@ class XsdUnion : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:union";
-  constexpr static const std::string_view XS_TAG = "xs:union";
-  constexpr static const std::string_view TAG = "union";
-
 private:
     /**
      * A List of {@link XsdSimpleType} instances that represent the {@link XsdUnion}.

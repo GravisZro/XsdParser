@@ -15,9 +15,6 @@ class XsdAll : public XsdMultipleElements
 {
 public:
   using XsdMultipleElements::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:all";
-    constexpr static const std::string_view XS_TAG = "xs:all";
-    constexpr static const std::string_view TAG = "all";
 
 private:
     /**
@@ -51,9 +48,9 @@ public:
     m_minOccurs = 1;
     m_maxOccurs = 1;
     if(haveAttribute(MIN_OCCURS_TAG))
-      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdAll>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
     if(haveAttribute(MAX_OCCURS_TAG))
-      m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MAX_OCCURS_TAG, getAttribute(MAX_OCCURS_TAG));
+      m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdAll>::xsd, *MAX_OCCURS_TAG, getAttribute(MAX_OCCURS_TAG));
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;

@@ -22,9 +22,6 @@ class XsdSchema : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:schema";
-  constexpr static const std::string_view XS_TAG = "xs:schema";
-  constexpr static const std::string_view TAG = "schema";
 
 private:
     /**

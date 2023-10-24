@@ -11,7 +11,7 @@
 
 #include <xsdelements/exceptions/ParsingException.h>
 
-#define xsdElementIsXsdSchema XsdElement::XSD_TAG + " is a " + XsdSchema::XSD_TAG + " element."
+#define xsdElementIsXsdSchema TAG<XsdElement>::xsd + " is a " + TAG<XsdSchema>::xsd + " element."
 
 void XsdElement::initialize(void)
 {
@@ -93,10 +93,10 @@ void XsdElement::initialize(void)
     m_finalObj = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
 
   if(haveAttribute(MIN_OCCURS_TAG))
-    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+    m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdElement>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
   if(haveAttribute(MAX_OCCURS_TAG))
-    m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
+    m_maxOccurs = AttributeValidations::maxOccursValidation(*TAG<XsdElement>::xsd, getAttribute(MAX_OCCURS_TAG));
 }
 
 
@@ -108,7 +108,7 @@ void XsdElement::initialize(void)
 void XsdElement::rule7(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && haveAttribute(FORM_TAG))
-    throw ParsingException(*XSD_TAG + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
 void XsdElement::rule6(void)
@@ -128,7 +128,7 @@ void XsdElement::rule5(void)
 void XsdElement::rule4(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && m_substitutionGroup)
-    throw ParsingException(*XSD_TAG + " element: The " + SUBSTITUTION_GROUP_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + SUBSTITUTION_GROUP_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
 /**
@@ -138,7 +138,7 @@ void XsdElement::rule4(void)
 void XsdElement::rule3(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && haveAttribute(REF_TAG))
-    throw ParsingException(*XSD_TAG + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
 /**
@@ -148,7 +148,7 @@ void XsdElement::rule3(void)
 void XsdElement::rule2(void)
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
-    throw ParsingException(*XSD_TAG + " element: The " + NAME_TAG + " attribute is required when the parent of the " + xsdElementIsXsdSchema);
+    throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + NAME_TAG + " attribute is required when the parent of the " + xsdElementIsXsdSchema);
 }
 
 

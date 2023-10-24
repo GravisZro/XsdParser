@@ -67,7 +67,7 @@ class XsdParserJar : public XsdParserCore
 //            DOMNode schemaNode = getSchemaNode(inputStream);
 //
 //            if (isXsdSchema(schemaNode)){
-//                ConfigEntryData xsdSchemaConfig = parseMappers.getOrDefault(XsdSchema::XSD_TAG, parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
+//                ConfigEntryData xsdSchemaConfig = parseMappers.getOrDefault(TAG<XsdSchema>::xsd, parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
 //
 //                if (xsdSchemaConfig == null){
 //                    throw ParserConfigurationException("XsdSchema not correctly configured.");
@@ -78,7 +78,7 @@ class XsdParserJar : public XsdParserCore
 //                throw ParsingException("The top level element of a XSD file should be the xsd:schema node.");
 //            }
 
-            ConfigEntryData xsdSchemaConfig = m_parseMappers.getOrDefault(XsdSchema::XSD_TAG, m_parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
+            ConfigEntryData xsdSchemaConfig = m_parseMappers.getOrDefault(TAG<XsdSchema>::xsd, m_parseMappers.getOrDefault(XsdSchema::XS_TAG, null));
 
             if (xsdSchemaConfig == null){
                 throw ParserConfigurationException("XsdSchema not correctly configured.");

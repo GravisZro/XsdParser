@@ -3,11 +3,14 @@
 
 #include <pugixml.hpp>
 #include <string>
+#include <string_view>
 #include <map>
 #include <list>
 
 #include <memory>
 #include <optional>
+
+#include "TagLookup.h"
 
 #include "NonDeletedPtr.h"
 
@@ -24,5 +27,7 @@ using ParserFunctionType = std::shared_ptr<ReferenceBase> (*)(std::shared_ptr<Xs
                                                               VisitorFunctionType,
                                                               std::shared_ptr<XsdAbstractElement>);
 
+using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 #endif // COMMONTYPES_H

@@ -19,10 +19,6 @@ class XsdPattern : public XsdStringRestrictions
 {
 public:
   using XsdStringRestrictions::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:pattern";
-  constexpr static const std::string_view XS_TAG = "xs:pattern";
-  constexpr static const std::string_view TAG = "pattern";
-
 public: // ctors
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,

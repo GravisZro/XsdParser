@@ -21,9 +21,6 @@ class XsdMinExclusive : public XsdStringRestrictions
 {
 public:
   using XsdStringRestrictions::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:minExclusive";
-    constexpr static const std::string_view XS_TAG = "xs:minExclusive";
-    constexpr static const std::string_view TAG = "minExclusive";
 private:
     /**
      * Indicates if the value is fixed.

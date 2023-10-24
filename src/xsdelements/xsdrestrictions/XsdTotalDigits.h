@@ -18,10 +18,6 @@ class XsdTotalDigits : public XsdIntegerRestrictions
 {
 public:
   using XsdIntegerRestrictions::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:totalDigits";
-  constexpr static const std::string_view XS_TAG = "xs:totalDigits";
-  constexpr static const std::string_view TAG = "totalDigits";
-
 public: // ctors
   XsdTotalDigits(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
@@ -35,7 +31,7 @@ public:
   {
     XsdIntegerRestrictions::initialize();
     assert(haveAttribute(VALUE_TAG));
-    m_value = AttributeValidations::validateRequiredPositiveInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
+    m_value = AttributeValidations::validateRequiredPositiveInteger(*TAG<XsdTotalDigits>::xsd, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
 
 public:

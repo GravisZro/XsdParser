@@ -20,6 +20,7 @@ HEADERS += \
   src/core/utils/ParserConfig.h \
   src/core/utils/SchemaLocation.h \
   src/core/utils/StringOperations.h \
+  src/core/utils/TagLookup.h \
   src/core/utils/UnsolvedReferenceItem.h \
   src/xsdelements/AttributeValidations.h \
   src/xsdelements/XsdAbstractElement.h \

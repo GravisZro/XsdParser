@@ -18,9 +18,6 @@ class XsdFractionDigits : public XsdIntegerRestrictions
 {
 public:
   using XsdIntegerRestrictions::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:fractionDigits";
-  constexpr static const std::string_view XS_TAG = "xs:fractionDigits";
-  constexpr static const std::string_view TAG = "fractionDigits";
 
 public: // ctors
   XsdFractionDigits(std::shared_ptr<XsdParserCore> parser,
@@ -36,7 +33,7 @@ public:
   {
     XsdIntegerRestrictions::initialize();
     assert(haveAttribute(VALUE_TAG));
-    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*XSD_TAG, *VALUE_TAG, getAttribute(VALUE_TAG));
+    m_value = AttributeValidations::validateRequiredNonNegativeInteger(*TAG<XsdFractionDigits>::xsd, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override

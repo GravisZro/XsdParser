@@ -20,9 +20,9 @@ bool XsdParserCore::isXsdSchema(pugi::xml_node node)
 {
     std::string schemaNodeName = node.name();
 
-    return schemaNodeName == XsdSchema::XSD_TAG ||
-         schemaNodeName == XsdSchema::XS_TAG ||
-         schemaNodeName == XsdSchema::TAG;
+    return schemaNodeName == TAG<XsdSchema>::xsd ||
+         schemaNodeName == TAG<XsdSchema>::xs ||
+         schemaNodeName == TAG<XsdSchema>::id;
 }
 
 /**

@@ -20,9 +20,6 @@ class XsdAttributeGroup : public XsdNamedElements
 {
 public:
   using XsdNamedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:attributeGroup";
-  constexpr static const std::string_view XS_TAG = "xs:attributeGroup";
-  constexpr static const std::string_view TAG = "attributeGroup";
 
 private:
     /**

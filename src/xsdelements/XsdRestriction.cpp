@@ -73,10 +73,10 @@ void XsdRestriction::initialize(void)
       auto parseMappers = XsdParserCore::getParseMappers();
 
       ConfigEntryData config;
-      if(parseMappers.contains(*XsdElement::XSD_TAG))
-        config = parseMappers.at(*XsdElement::XSD_TAG);
-      else if(parseMappers.contains(*XsdElement::XS_TAG))
-        config = parseMappers.at(*XsdElement::XS_TAG);
+      if(parseMappers.contains(TAG<XsdElement>::xsd))
+        config = parseMappers.at(TAG<XsdElement>::xsd);
+      else if(parseMappers.contains(TAG<XsdElement>::xs))
+        config = parseMappers.at(TAG<XsdElement>::xs);
 
       if (config.parserFunction == nullptr && config.visitorFunction == nullptr)
         throw ParsingException("Invalid Parsing Configuration for XsdElement.");
@@ -94,8 +94,6 @@ void XsdRestriction::initialize(void)
 
 void XsdRestriction::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
-  assert(getVisitor());
-
       XsdAnnotatedElements::replaceUnsolvedElements(element);
 
       std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->replaceUnsolvedAttributes(
@@ -196,16 +194,16 @@ std::shared_ptr<XsdRestriction> XsdRestriction::clone(StringMap placeHolderAttri
 
 
 
-std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void) {
-  assert(getVisitor());
-      return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributes();
-  }
+std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void)
+{
+  return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributes();
+}
 
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void) {
-  assert(getVisitor());
-      return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributeGroups();
-  }
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void)
+{
+  return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributeGroups();
+}
 
   /**
    * @return The {@link XsdComplexType} from which this extension extends or null if the {@link XsdParserCore} wasn't

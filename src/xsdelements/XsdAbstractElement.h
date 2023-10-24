@@ -108,10 +108,13 @@ public: // ctors
 
 public:
   virtual ~XsdAbstractElement(void) = default;
+
   virtual void initialize(void)
   {
     m_parentAvailable = bool(m_parent);
-    if(m_visitor == nullptr && m_visitorFunction)
+    m_visitor.reset();
+    m_cloneOf.reset();
+    if(m_visitorFunction)
       m_visitor = m_visitorFunction(shared_from_this());
   }
 

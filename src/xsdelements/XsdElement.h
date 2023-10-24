@@ -26,9 +26,6 @@ class XsdElement : public XsdNamedElements
 {
 public:
   using XsdNamedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:element";
-  constexpr static const std::string_view XS_TAG = "xs:element";
-  constexpr static const std::string_view TAG = "element";
 
 private:
     /**

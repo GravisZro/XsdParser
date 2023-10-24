@@ -20,10 +20,6 @@ class XsdMaxInclusive : public XsdStringRestrictions
 {
 public:
   using XsdStringRestrictions::clone;
-    constexpr static const std::string_view XSD_TAG = "xsd:maxInclusive";
-    constexpr static const std::string_view XS_TAG = "xs:maxInclusive";
-    constexpr static const std::string_view TAG = "maxInclusive";
-
 private:
     /**
      * Indicates if the value is fixed.

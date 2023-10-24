@@ -20,9 +20,6 @@ class XsdComplexContent : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:complexContent";
-  constexpr static const std::string_view XS_TAG = "xs:complexContent";
-  constexpr static const std::string_view TAG = "complexContent";
 
 private:
     /**

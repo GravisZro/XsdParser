@@ -30,9 +30,6 @@ class XsdAttribute : public XsdNamedElements
 {
 public:
   using XsdNamedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:attribute";
-  constexpr static const std::string_view XS_TAG = "xs:attribute";
-  constexpr static const std::string_view TAG = "attribute";
 
 private:
     /**
@@ -97,7 +94,7 @@ private:
     void rule3(void)
     {
         if (haveAttribute(REF_TAG) && (m_simpleType || m_form || m_type)){
-            throw ParsingException(XSD_TAG + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
+            throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
         }
     }
 
@@ -108,7 +105,7 @@ private:
     void rule2(void)
     {
         if (m_fixed && m_defaultElement){
-            throw ParsingException(XSD_TAG + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
+            throw ParsingException(TAG<XsdAttribute>::xsd  + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
         }
     }
 public:

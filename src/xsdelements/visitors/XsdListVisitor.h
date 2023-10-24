@@ -27,7 +27,7 @@ struct XsdListVisitor : XsdAnnotatedElementsVisitor
     XsdAnnotatedElementsVisitor::visit(element);
 
     if (owner->getItemType())
-      throw ParsingException(XsdList::XSD_TAG + " element: The element cannot have both the itemType attribute and a " + XsdSimpleType::XSD_TAG + " element as content at the same time." );
+      throw ParsingException(TAG<XsdList>::xsd + " element: The element cannot have both the itemType attribute and a " + TAG<XsdSimpleType>::xsd + " element as content at the same time." );
 
     owner->setSimpleType(std::static_pointer_cast<XsdSimpleType>(element));
   }

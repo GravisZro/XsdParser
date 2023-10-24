@@ -20,10 +20,6 @@ class XsdWhiteSpace : public XsdAnnotatedElements
 {
 public:
   using XsdAnnotatedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:whiteSpace";
-  constexpr static const std::string_view XS_TAG = "xs:whiteSpace";
-  constexpr static const std::string_view TAG = "whiteSpace";
-
 private:
   bool m_fixed;
   WhiteSpaceEnum m_value;

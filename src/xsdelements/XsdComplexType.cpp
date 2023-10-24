@@ -27,8 +27,6 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
                                               m_visitorFunction,
                                               nullptr);
 
-    assert(elementCopy->getVisitor());
-
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
 
     if (m_complexContent)
@@ -95,13 +93,11 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getXsdAttributeGro
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getAllXsdAttributeGroups(void)
 {
-  assert(getVisitor());
   return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllXsdAttributeGroups();
 }
 
 std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getAllXsdAttributes(void)
 {
-  assert(getVisitor());
   return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllAttributes();
 }
 

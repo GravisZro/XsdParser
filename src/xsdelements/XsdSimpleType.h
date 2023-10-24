@@ -22,10 +22,6 @@ class XsdSimpleType : public XsdNamedElements
 {
 public:
   using XsdNamedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:simpleType";
-  constexpr static const std::string_view XS_TAG = "xs:simpleType";
-  constexpr static const std::string_view TAG = "simpleType";
-
 private:
     /**
      * A {@link XsdRestriction} instance that is present in the {@link XsdSimpleType} instance.

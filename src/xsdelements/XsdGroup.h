@@ -23,9 +23,6 @@ class XsdGroup : public XsdNamedElements
 {
 public:
   using XsdNamedElements::clone;
-  constexpr static const std::string_view XSD_TAG = "xsd:group";
-  constexpr static const std::string_view XS_TAG = "xs:group";
-  constexpr static const std::string_view TAG = "group";
 
 private:
     /**
@@ -66,10 +63,10 @@ public:
     m_maxOccurs = "1";
 
     if(haveAttribute(MIN_OCCURS_TAG))
-      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*XSD_TAG, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
+      m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdGroup>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
     if(haveAttribute(MAX_OCCURS_TAG))
-      m_maxOccurs = AttributeValidations::maxOccursValidation(*XSD_TAG, getAttribute(MAX_OCCURS_TAG));
+      m_maxOccurs = AttributeValidations::maxOccursValidation(*TAG<XsdGroup>::xsd, getAttribute(MAX_OCCURS_TAG));
   }
 
     /**
@@ -91,7 +88,7 @@ private:
     void rule2(void)
     {
         if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
-            throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should only be used when the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
+            throw ParsingException(TAG<XsdGroup>::xsd + " element: The " + NAME_TAG + " should only be used when the parent of the " + TAG<XsdGroup>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
     }
 
     /**
@@ -101,7 +98,7 @@ private:
     void rule3(void)
     {
         if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
-            throw ParsingException(XSD_TAG + " element: The " + NAME_TAG + " should is required the parent of the " + XSD_TAG + " is the " + XsdSchema::XSD_TAG + " element.");
+            throw ParsingException(TAG<XsdGroup>::xsd + " element: The " + NAME_TAG + " should is required the parent of the " + TAG<XsdGroup>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override

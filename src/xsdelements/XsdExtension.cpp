@@ -42,10 +42,10 @@ void XsdExtension::initialize(void)
       auto parseMappers = XsdParserCore::getParseMappers();
       ConfigEntryData config;
 
-      if(parseMappers.contains(*XsdElement::XSD_TAG))
-        config = parseMappers.at(*XsdElement::XSD_TAG);
-      else if(parseMappers.contains(*XsdElement::XS_TAG))
-        config = parseMappers.at(*XsdElement::XS_TAG);
+      if(parseMappers.contains(TAG<XsdElement>::xsd))
+        config = parseMappers.at(TAG<XsdElement>::xsd);
+      else if(parseMappers.contains(TAG<XsdElement>::xs))
+        config = parseMappers.at(TAG<XsdElement>::xs);
 
       if (config.parserFunction == nullptr || config.visitorFunction == nullptr)
         throw ParsingException("Invalid Parsing Configuration for XsdElement.");
@@ -69,7 +69,6 @@ void XsdExtension::initialize(void)
  */
 void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
-  assert(getVisitor());
     XsdAnnotatedElements::replaceUnsolvedElements(element);
 
     auto elem = element->getElement();
@@ -108,8 +107,6 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
                                             placeHolderAttributes,
                                             m_visitorFunction,
                                             nullptr);
-
-    assert(elementCopy->getVisitor());
 
     for(auto& attribute : getXsdAttributes())
     {
@@ -194,13 +191,11 @@ std::shared_ptr<XsdBuiltInDataType> XsdExtension::getBaseAsBuiltInDataType(void)
 
 std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void)
 {
-  assert(getVisitor());
   return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributes();
 }
 
 std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void)
 {
-  assert(getVisitor());
   return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributeGroups();
 }
 
