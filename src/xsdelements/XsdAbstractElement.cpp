@@ -34,13 +34,13 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
                                                                     std::shared_ptr<XsdAbstractElement> element)
 {
     std::shared_ptr<XsdParserCore> parser = element->getParser();
+    auto parse_mappers = XsdParserCore::getParseMappers();
 
     for(pugi::xml_node child = node.first_child(); child; child = child.next_sibling())
     {
       if (child.type() == pugi::node_element)
       {
         std::string nodeName = child.name();
-        auto parse_mappers = XsdParserCore::getParseMappers();
         if(parse_mappers.contains(nodeName))
           if(auto configEntryData = parse_mappers.at(nodeName); configEntryData.parserFunction)
           {
