@@ -4,14 +4,9 @@
 #include <xsdelements/enums/XsdEnum.h>
 #include <xsdelements/exceptions/ParsingException.h>
 
-#include <algorithm>
 
-class AttributeValidations
+namespace AttributeValidations
 {
-private:
-  AttributeValidations(void) = delete;
-
-public:
     /**
      * Verifies if a given value is present in a given {@link Enum} type.
      * @param instance An instance of the concrete {@link Enum} type that is expected to contain the {@code value} received.
@@ -41,125 +36,78 @@ public:
                            "The possible values for the " + *T::getVariableName() + " attribute are:\n" + possibleValues);
   }
 
-    /**
-     * Checks if the maxOccurs attribute is unbounded or an {@link int} value.
-     * @param value The possible maxOccurs value.
-     * @param elementName The name of the element containing the maxOccurs attribute.
-     * @return The validated maxOccurs value.
-     */
-    static std::string maxOccursValidation(std::string elementName, std::string value);
+  /**
+   * Checks if the maxOccurs attribute is unbounded or an {@link int} value.
+   * @param value The possible maxOccurs value.
+   * @param elementName The name of the element containing the maxOccurs attribute.
+   * @return The validated maxOccurs value.
+   */
+  std::string maxOccursValidation(std::string elementName, std::string value);
 
-    /**
-     * Validates if a given std::string is a non negative {@link int}. Throws an exception if the {@link std::string} isn't a non
-     * negative {@link int}.
-     * @param elementName The element name containing the field with the {@link int} value.
-     * @param attributeName The name of the attribute with the {@link int}.
-     * @param value The value to be parsed to a {@link int} object.
-     * @return The parsed {@link int} value.
-     */
-    static int validateNonNegativeInteger(std::string elementName, std::string attributeName, std::string value);
+  /**
+   * Validates if a given std::string is a non negative {@link int}. Throws an exception if the {@link std::string} isn't a non
+   * negative {@link int}.
+   * @param elementName The element name containing the field with the {@link int} value.
+   * @param attributeName The name of the attribute with the {@link int}.
+   * @param value The value to be parsed to a {@link int} object.
+   * @return The parsed {@link int} value.
+   */
+  int validateNonNegativeInteger(std::string elementName, std::string attributeName, std::string value);
 
-    /**
-     * Validates if a given std::string is a non negative {@link int}. Throws an exception if the {@link std::string} isn't a
-     * non negative {@link int}.
-     * @param elementName The element name containing the field with the {@link int} value.
-     * @param attributeName The name of the attribute with the {@link int}.
-     * @param value The value to be parsed to a {@link int} object.
-     * @return The parsed {@link int} value.
-     */
-  static int validateRequiredNonNegativeInteger(std::string elementName, std::string attributeName, std::optional<std::string> value)
-  {
-    if(!value)
-      throw ParsingException(attributeMissingMessage(elementName, attributeName));
-    return validateNonNegativeInteger(elementName, attributeName, value.value());
-  }
+  /**
+   * Validates if a given std::string is a non negative {@link int}. Throws an exception if the {@link std::string} isn't a
+   * non negative {@link int}.
+   * @param elementName The element name containing the field with the {@link int} value.
+   * @param attributeName The name of the attribute with the {@link int}.
+   * @param value The value to be parsed to a {@link int} object.
+   * @return The parsed {@link int} value.
+   */
+  int validateRequiredNonNegativeInteger(std::string elementName, std::string attributeName, std::optional<std::string> value);
 
-private:
-    /**
-     * Validates if a given std::string is a positive {@link int}. Throws an exception if the {@link std::string} isn't a
-     * positive {@link int}.
-     * @param elementName The element name containing the field with the {@link int} value.
-     * @param attributeName The name of the attribute with the {@link int} type.
-     * @param value The value to be parsed to a {@link int} object.
-     * @return The parsed {@link int} value.
-     */
-  static int validatePositiveInteger(std::string elementName, std::string attributeName, std::string value);
-public:
-    /**
-     * Validates if a given std::string is a positive {@link int}. Throws an exception if the {@link std::string} isn't a
-     * positive {@link int}.
-     * @param elementName The element name containing the field with the {@link int} value.
-     * @param attributeName The name of the attribute with the {@link int} type.
-     * @param value The value to be parsed to a {@link int} object.
-     * @return The parsed {@link int} value.
-     */
-  static int validateRequiredPositiveInteger(std::string elementName, std::string attributeName, std::string value)
-  {
-    if (value.empty())
-      throw ParsingException(attributeMissingMessage(elementName, attributeName));
+  /**
+   * Validates if a given std::string is a positive {@link int}. Throws an exception if the {@link std::string} isn't a
+   * positive {@link int}.
+   * @param elementName The element name containing the field with the {@link int} value.
+   * @param attributeName The name of the attribute with the {@link int} type.
+   * @param value The value to be parsed to a {@link int} object.
+   * @return The parsed {@link int} value.
+   */
+  int validateRequiredPositiveInteger(std::string elementName, std::string attributeName, std::string value);
 
-        return validatePositiveInteger(elementName, attributeName, value);
-    }
+  bool validateBoolean(std::string value);
 
-  static bool validateBoolean(std::string value)
-  {
-    std::transform(std::begin(value), std::end(value), std::begin(value), ::tolower);
-    return value == "true";
-  }
+  /**
+   * Validates if a given {@link std::string} is a {@link double}. Throws an exception if the {@link std::string} isn't a {@link double}.
+   * @param elementName The element name containing the field with the {@link double} value.
+   * @param attributeName The name of the attribute with the type {@link double}.
+   * @param value The value to be parsed to a {@link double} object.
+   * @return The parsed {@link double} value.
+   */
+  double validateRequiredDouble(std::string elementName, std::string attributeName, std::string value);
 
-  private:
-    /**
-     * Validates if a given {@link std::string} is a {@link double}. Throws an exception if the {@link std::string} isn't a
-     * {@link double}.
-     * @param elementName The element name containing the field with the {@link double} value.
-     * @param attributeName The name of the attribute with the type {@link double}.
-     * @param value The value to be parsed to a {@link double} object.
-     * @return The parsed {@link double} value.
-     */
-  static double validateDouble(std::string elementName, std::string attributeName, std::string value);
-public:
-    /**
-     * Validates if a given {@link std::string} is a {@link double}. Throws an exception if the {@link std::string} isn't a {@link double}.
-     * @param elementName The element name containing the field with the {@link double} value.
-     * @param attributeName The name of the attribute with the type {@link double}.
-     * @param value The value to be parsed to a {@link double} object.
-     * @return The parsed {@link double} value.
-     */
-  static double validateRequiredDouble(std::string elementName, std::string attributeName, std::string value)
-  {
-    if (value.empty())
-      throw ParsingException(attributeMissingMessage(elementName, attributeName));
-    return validateDouble(elementName, attributeName, value);
-  }
+  /**
+   * Obtains the default value of the {@link XsdSchema#attributeFormDefault} attribute by iterating in the  element tree
+   * by going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
+   * element.
+   * @param parent The parent of the element requesting the default form value.
+   * @return The default value for the form attribute.
+   */
+  std::string getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
+  /**
+   * Obtains the default value of the {@link XsdSchema#finalDefault} attribute by iterating in the element tree by
+   * going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
+   * element.
+   * @param parent The parent of the element requesting the default final value.
+   * @return The default value for the final attribute.
+   */
+  std::string getFinalDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
 
-    /**
-     * Obtains the default value of the {@link XsdSchema#attributeFormDefault} attribute by iterating in the  element tree
-     * by going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
-     * element.
-     * @param parent The parent of the element requesting the default form value.
-     * @return The default value for the form attribute.
-     */
-    static std::string getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
-    /**
-     * Obtains the default value of the {@link XsdSchema#finalDefault} attribute by iterating in the element tree by
-     * going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
-     * element.
-     * @param parent The parent of the element requesting the default final value.
-     * @return The default value for the final attribute.
-     */
-    static std::string getFinalDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
-
-    /**
-     * Obtains the default value of the {@link XsdSchema#blockDefault} attribute by iterating in the element tree by
-     * going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
-     * element.
-     * @param parent The parent of the element requesting the default block value.
-     * @return The default value for the block attribute.
-     */
-    static std::string getBlockDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
-
-private:
-    static std::string attributeMissingMessage(std::string elementName, std::string attributeName){
-        return "The " + elementName + " " + attributeName + " is required to have a value attribute.";
-    }
+  /**
+   * Obtains the default value of the {@link XsdSchema#blockDefault} attribute by iterating in the element tree by
+   * going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
+   * element.
+   * @param parent The parent of the element requesting the default block value.
+   * @return The default value for the block attribute.
+   */
+  std::string getBlockDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
 };

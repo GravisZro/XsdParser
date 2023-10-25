@@ -58,7 +58,7 @@ void XsdAttribute::initialize(void)
 
 std::optional<std::string> XsdAttribute::getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent)
 {
-    if (!parent)
+    if (parent == nullptr)
       return {};
 
     if(auto p = std::dynamic_pointer_cast<XsdElement>(parent); p)
