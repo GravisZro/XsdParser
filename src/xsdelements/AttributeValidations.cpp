@@ -108,7 +108,12 @@ namespace AttributeValidations
   bool validateBoolean(std::string value)
   {
     std::transform(std::begin(value), std::end(value), std::begin(value), ::tolower);
-    return value == "true";
+    if(value == "false")
+      return false;
+    if(value == "true")
+      return true;
+
+    throw ParsingException("Invalid value provided for boolean: " + value);
   }
 
   /**
