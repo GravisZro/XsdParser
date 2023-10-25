@@ -18,9 +18,6 @@ class XsdElement;
  */
 class XsdMultipleElements : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
-
 protected:
     /**
      * A list of elements that are contained in the concrete implementation of the {@link XsdMultipleElements} instance.
@@ -52,18 +49,18 @@ public:
     /**
      * @return All the elements received in the parsing process.
      */
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
 
     /**
      * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
      */
-  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) override;
+  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
 
     /**
      * @return The children elements that are of the type {@link XsdElement}.
      */
     
-  std::list<std::shared_ptr<XsdElement>> getChildrenElements(void);
+  std::list<std::shared_ptr<XsdElement>> getChildrenElements(void) const;
 
   void addElement(std::shared_ptr<XsdAbstractElement> element);
 

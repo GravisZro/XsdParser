@@ -17,8 +17,6 @@
  */
 class XsdPattern : public XsdStringRestrictions
 {
-public:
-  using XsdStringRestrictions::clone;
 public: // ctors
   XsdPattern(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,
@@ -40,7 +38,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdPattern> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
         return create<XsdPattern>(getParser(),

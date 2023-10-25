@@ -115,7 +115,7 @@ bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> 
  * @return All the {@link ConcreteElement} objects present in the concrete implementation of the
  * {@link XsdAbstractElement} class. It doesn't return the {@link UnsolvedReference} objects.
  */
-std::list<std::shared_ptr<XsdAbstractElement>> XsdAbstractElement::getXsdElements(void)
+std::list<std::shared_ptr<XsdAbstractElement>> XsdAbstractElement::getXsdElements(void) const
 {
   std::list<std::shared_ptr<XsdAbstractElement>> xsd_elements;
   std::list<std::shared_ptr<ReferenceBase>> element_list = getElements();

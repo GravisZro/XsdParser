@@ -28,9 +28,6 @@
  */
 class XsdAttribute : public XsdNamedElements
 {
-public:
-  using XsdNamedElements::clone;
-
 private:
     /**
      * A {@link XsdSimpleType} instance wrapped in a {@link ReferenceBase} object which indicate any restrictions
@@ -79,7 +76,7 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) override
+  virtual void validateSchemaRules(void) const override
     {
         XsdNamedElements::validateSchemaRules();
         rule2();
@@ -91,7 +88,7 @@ private:
      * Asserts if the current object has a ref attribute at the same time as either a simpleType as children, a form attribute or a type attribute.
      * Throws an exception in that case.
      */
-    void rule3(void)
+    void rule3(void) const
     {
         if (haveAttribute(REF_TAG) && (m_simpleType || m_form || m_type)){
             throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
@@ -102,7 +99,7 @@ private:
      * Asserts if the current object has the fixed and default attributes at the same time, which isn't allowed, throwing
      * an exception in that case.
      */
-    void rule2(void)
+    void rule2(void) const
     {
         if (m_fixed && m_defaultElement){
             throw ParsingException(TAG<XsdAttribute>::xsd  + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
@@ -110,7 +107,7 @@ private:
     }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
-  std::shared_ptr<XsdAttribute> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper);
 
   void setSimpleType(std::shared_ptr<ReferenceBase> simpleType) {

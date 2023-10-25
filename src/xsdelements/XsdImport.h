@@ -15,8 +15,6 @@
  */
 class XsdImport : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 private:
     /**
      * Specifies the a namespace to import.

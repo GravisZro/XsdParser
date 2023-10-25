@@ -25,9 +25,6 @@ class XsdSequence;
  */
 class XsdExtension : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
-
 private:
     /**
      * The child element of the {@link XsdExtension} instance. Either a {@link XsdGroup}, {@link XsdAll},
@@ -57,13 +54,13 @@ public:
         visitorParam->visit(std::static_pointer_cast<XsdExtension>(shared_from_this()));
     }
 
-  std::shared_ptr<XsdExtension> clone(StringMap placeHolderAttributes);
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
-  std::shared_ptr<XsdNamedElements> getBase(void);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
+  std::shared_ptr<XsdNamedElements> getBase(void) const;
 
-  std::shared_ptr<XsdComplexType> getBaseAsComplexType(void);
-  std::shared_ptr<XsdSimpleType> getBaseAsSimpleType(void);
-  std::shared_ptr<XsdBuiltInDataType> getBaseAsBuiltInDataType(void);
+  std::shared_ptr<XsdComplexType> getBaseAsComplexType(void) const;
+  std::shared_ptr<XsdSimpleType> getBaseAsSimpleType(void) const;
+  std::shared_ptr<XsdBuiltInDataType> getBaseAsBuiltInDataType(void) const;
 
   
 
@@ -75,8 +72,8 @@ public:
         m_childElement = childElement;
     }
 
-  std::shared_ptr<XsdGroup> getChildAsGroup(void);
-  std::shared_ptr<XsdAll> getChildAsAll(void);
-  std::shared_ptr<XsdChoice> getChildAsChoice(void);
-  std::shared_ptr<XsdSequence> getChildAsSequence(void);
+  std::shared_ptr<XsdGroup> getChildAsGroup(void) const;
+  std::shared_ptr<XsdAll> getChildAsAll(void) const;
+  std::shared_ptr<XsdChoice> getChildAsChoice(void) const;
+  std::shared_ptr<XsdSequence> getChildAsSequence(void) const;
 };

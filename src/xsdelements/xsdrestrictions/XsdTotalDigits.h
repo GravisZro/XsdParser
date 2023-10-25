@@ -16,8 +16,6 @@
  */
 class XsdTotalDigits : public XsdIntegerRestrictions
 {
-public:
-  using XsdIntegerRestrictions::clone;
 public: // ctors
   XsdTotalDigits(std::shared_ptr<XsdParserCore> parser,
                  StringMap attributesMap,
@@ -47,7 +45,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdTotalDigits> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
         return create<XsdTotalDigits>(getParser(),

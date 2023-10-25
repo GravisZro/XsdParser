@@ -18,8 +18,6 @@
  */
 class XsdWhiteSpace : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 private:
   bool m_fixed;
   WhiteSpaceEnum m_value;
@@ -56,7 +54,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdWhiteSpace> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
         return create<XsdWhiteSpace>(getParser(),

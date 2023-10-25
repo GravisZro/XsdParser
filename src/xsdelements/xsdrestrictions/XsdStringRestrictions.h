@@ -11,8 +11,6 @@
  */
 class XsdStringRestrictions : public XsdAnnotatedElements
 {
-public:
-    using XsdAnnotatedElements::clone;
 private:
     /**
      * The value of associated with a given restriction. This field has different meanings depending on the concrete

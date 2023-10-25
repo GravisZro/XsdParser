@@ -18,9 +18,6 @@ class XsdAttribute;
  */
 class XsdAttributeGroup : public XsdNamedElements
 {
-public:
-  using XsdNamedElements::clone;
-
 private:
     /**
      * A list of {@link XsdAttributeGroup} children instances.
@@ -56,12 +53,13 @@ public:
         visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
     }
 
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
-  std::shared_ptr<XsdNamedElements> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void);
-  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void);
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
+
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
+  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void) const;
+  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void) const;
+  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
 
   void addAttribute(std::shared_ptr<ReferenceBase> attribute)
   {

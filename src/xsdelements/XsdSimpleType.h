@@ -20,8 +20,6 @@ class XsdList;
  */
 class XsdSimpleType : public XsdNamedElements
 {
-public:
-  using XsdNamedElements::clone;
 private:
     /**
      * A {@link XsdRestriction} instance that is present in the {@link XsdSimpleType} instance.
@@ -64,20 +62,20 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) override;
+  virtual void validateSchemaRules(void) const override;
 
 private:
     /**
      * Asserts that the current object has the required name attribute when not being a direct child of the XsdSchema element.
      * Throws an exception if the required attribute is not present.
      */
-    void rule2(void);
+    void rule2(void) const;
 
     /**
      * Asserts if the current has no value for its name attribute while being a direct child of the top level XsdSchema element,
      * which is required. Throws an exception if no name is present.
      */
-    void rule3(void);
+    void rule3(void) const;
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
     /**
@@ -86,7 +84,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdSimpleType> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   
 

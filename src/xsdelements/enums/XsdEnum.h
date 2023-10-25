@@ -29,7 +29,7 @@ public:
   /**
    * @return The concrete value of the current instance.
    */
-  std::optional<std::string> getValue(void) { return m_value; }
+  std::optional<std::string> getValue(void) const { return m_value; }
 
   /**
    * @return The name of the attribute that the {@link Enum} represents.

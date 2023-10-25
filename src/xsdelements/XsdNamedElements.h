@@ -10,9 +10,6 @@
  */
 class XsdNamedElements : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
-
 private:
     /**
      * The name of the element.
@@ -39,7 +36,7 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) override
+  virtual void validateSchemaRules(void) const override
     {
         rule1();
     }
@@ -49,7 +46,7 @@ public:
      * if they are both present.
      */
 private:
-  void rule1(void)
+  void rule1(void) const
   {
         if (m_name && haveAttribute(REF_TAG))
         {
@@ -62,7 +59,7 @@ public:
     /**
      * @return The name of the element, with all the special characters replaced with the '_' char.
      */
-  std::optional<std::string> getName(void)
+  std::optional<std::string> getName(void) const
   {
     if(m_name)
     {
@@ -77,7 +74,7 @@ public:
     return std::nullopt;
   }
 
-  std::optional<std::string> getRawName(void)
+  std::optional<std::string> getRawName(void) const
   {
         return m_name;
   }

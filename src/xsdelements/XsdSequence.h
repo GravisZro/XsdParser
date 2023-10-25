@@ -17,9 +17,6 @@ class XsdGroup;
  */
 class XsdSequence : public XsdMultipleElements
 {
-public:
-  using XsdMultipleElements::clone;
-
 private:
     /**
      * Specifies the minimum number of times this element can occur in the parent element. The value can be any
@@ -58,7 +55,7 @@ public:
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
-  std::shared_ptr<XsdSequence> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   int getMinOccurs(void) {
         return m_minOccurs;

@@ -58,7 +58,7 @@ void XsdSchema::initialize(void)
   }
 }
 
-std::list<std::shared_ptr<ReferenceBase>> XsdSchema::getElements(void)
+std::list<std::shared_ptr<ReferenceBase>> XsdSchema::getElements(void) const
 {
   std::list<std::shared_ptr<ReferenceBase>> rval;
   for(auto& element : m_elements)
@@ -84,7 +84,7 @@ void XsdSchema::add(std::shared_ptr<XsdAbstractElement> element)
 /**
  * @return The children elements that are of the type {@link XsdInclude}.
  */
-std::list<std::shared_ptr<XsdInclude>> XsdSchema::getChildrenIncludes(void)
+std::list<std::shared_ptr<XsdInclude>> XsdSchema::getChildrenIncludes(void) const
 {
   std::list<std::shared_ptr<XsdInclude>> includes;
   for(auto& element : getXsdElements())
@@ -96,7 +96,7 @@ std::list<std::shared_ptr<XsdInclude>> XsdSchema::getChildrenIncludes(void)
 /**
  * @return The children elements that are of the type {@link XsdImport}.
  */
-std::list<std::shared_ptr<XsdImport>> XsdSchema::getChildrenImports(void)
+std::list<std::shared_ptr<XsdImport>> XsdSchema::getChildrenImports(void) const
 {
   std::list<std::shared_ptr<XsdImport>> imports;
   for(auto& element : getXsdElements())
@@ -108,7 +108,7 @@ std::list<std::shared_ptr<XsdImport>> XsdSchema::getChildrenImports(void)
 /**
  * @return The children elements that are of the type {@link XsdAnnotation}.
  */
-std::list<std::shared_ptr<XsdAnnotation>> XsdSchema::getChildrenAnnotations(void)
+std::list<std::shared_ptr<XsdAnnotation>> XsdSchema::getChildrenAnnotations(void) const
 {
   std::list<std::shared_ptr<XsdAnnotation>> annotations;
   for(auto& element : getXsdElements())
@@ -120,7 +120,7 @@ std::list<std::shared_ptr<XsdAnnotation>> XsdSchema::getChildrenAnnotations(void
 /**
  * @return The children elements that are of the type {@link XsdSimpleType}.
  */
-std::list<std::shared_ptr<XsdSimpleType>> XsdSchema::getChildrenSimpleTypes(void)
+std::list<std::shared_ptr<XsdSimpleType>> XsdSchema::getChildrenSimpleTypes(void) const
 {
   std::list<std::shared_ptr<XsdSimpleType>> simple_types;
   for(auto& element : getXsdElements())
@@ -132,7 +132,7 @@ std::list<std::shared_ptr<XsdSimpleType>> XsdSchema::getChildrenSimpleTypes(void
 /**
  * @return The children elements that are of the type {@link XsdComplexType}.
  */
-std::list<std::shared_ptr<XsdComplexType>> XsdSchema::getChildrenComplexTypes(void)
+std::list<std::shared_ptr<XsdComplexType>> XsdSchema::getChildrenComplexTypes(void) const
 {
   std::list<std::shared_ptr<XsdComplexType>> complex_types;
   for(auto& element : getXsdElements())
@@ -144,7 +144,7 @@ std::list<std::shared_ptr<XsdComplexType>> XsdSchema::getChildrenComplexTypes(vo
 /**
  * @return The children elements that are of the type {@link XsdGroup}.
  */
-std::list<std::shared_ptr<XsdGroup>> XsdSchema::getChildrenGroups(void)
+std::list<std::shared_ptr<XsdGroup>> XsdSchema::getChildrenGroups(void) const
 {
   std::list<std::shared_ptr<XsdGroup>> groups;
   for(auto& element : getXsdElements())
@@ -156,7 +156,7 @@ std::list<std::shared_ptr<XsdGroup>> XsdSchema::getChildrenGroups(void)
 /**
  * @return The children elements that are of the type {@link XsdAttributeGroup}.
  */
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdSchema::getChildrenAttributeGroups(void)
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdSchema::getChildrenAttributeGroups(void) const
 {
   std::list<std::shared_ptr<XsdAttributeGroup>> attribute_groups;
   for(auto& element : getXsdElements())
@@ -168,7 +168,7 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdSchema::getChildrenAttributeGro
 /**
  * @return The children elements that are of the type {@link XsdElement}.
  */
-std::list<std::shared_ptr<XsdElement>> XsdSchema::getChildrenElements(void)
+std::list<std::shared_ptr<XsdElement>> XsdSchema::getChildrenElements(void) const
 {
   std::list<std::shared_ptr<XsdElement>> rval;
   for(auto& element : getXsdElements())
@@ -180,7 +180,7 @@ std::list<std::shared_ptr<XsdElement>> XsdSchema::getChildrenElements(void)
 /**
  * @return The children elements that are of the type {@link XsdAttribute}.
  */
-std::list<std::shared_ptr<XsdAttribute>> XsdSchema::getChildrenAttributes(void)
+std::list<std::shared_ptr<XsdAttribute>> XsdSchema::getChildrenAttributes(void) const
 {
   std::list<std::shared_ptr<XsdAttribute>> attributes;
   for(auto& element : getXsdElements())

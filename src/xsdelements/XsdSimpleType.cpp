@@ -27,7 +27,7 @@
 /**
  * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
  */
-void XsdSimpleType::validateSchemaRules(void)
+void XsdSimpleType::validateSchemaRules(void) const
 {
     XsdNamedElements::validateSchemaRules();
 
@@ -39,7 +39,7 @@ void XsdSimpleType::validateSchemaRules(void)
  * Asserts that the current object has the required name attribute when not being a direct child of the XsdSchema element.
  * Throws an exception if the required attribute is not present.
  */
-void XsdSimpleType::rule2(void)
+void XsdSimpleType::rule2(void) const
 {
     if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
         throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should only be used when the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
@@ -49,7 +49,7 @@ void XsdSimpleType::rule2(void)
  * Asserts if the current has no value for its name attribute while being a direct child of the top level XsdSchema element,
  * which is required. Throws an exception if no name is present.
  */
-void XsdSimpleType::rule3(void)
+void XsdSimpleType::rule3(void) const
 {
     if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
         throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should is required the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
@@ -67,7 +67,7 @@ void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorPar
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdSimpleType> XsdSimpleType::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdSimpleType::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
     placeHolderAttributes.erase(*REF_TAG);
@@ -78,13 +78,13 @@ std::shared_ptr<XsdSimpleType> XsdSimpleType::clone(StringMap placeHolderAttribu
                                              getParent());
 
     if (m_xsd_union)
-        elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(m_xsd_union->clone(m_xsd_union->getAttributesMap(), elementCopy));
+        elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(m_xsd_union->XsdAbstractElement::clone(m_xsd_union->getAttributesMap(), elementCopy));
 
     if (m_xsd_list)
-        elementCopy->m_xsd_list = std::static_pointer_cast<XsdList>(m_xsd_list->clone(m_xsd_list->getAttributesMap(), elementCopy));
+        elementCopy->m_xsd_list = std::static_pointer_cast<XsdList>(m_xsd_list->XsdAbstractElement::clone(m_xsd_list->getAttributesMap(), elementCopy));
 
     if (m_restriction)
-        elementCopy->m_restriction = std::static_pointer_cast<XsdRestriction>(m_restriction->clone(m_restriction->getAttributesMap(), elementCopy));
+        elementCopy->m_restriction = std::static_pointer_cast<XsdRestriction>(m_restriction->XsdAbstractElement::clone(m_restriction->getAttributesMap(), elementCopy));
 
     return elementCopy;
 }

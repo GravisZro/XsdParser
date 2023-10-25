@@ -118,19 +118,20 @@ public:
       m_visitor = m_visitorFunction(shared_from_this());
   }
 
-  bool haveAttribute(const std::string_view& attribute)
+  bool haveAttribute(const std::string_view& attribute) const
   {
     return m_attributesMap.contains(std::string(attribute));
   }
 
-  std::string getAttribute(const std::string_view& attribute)
+  std::string getAttribute(const std::string_view& attribute) const
   {
     return m_attributesMap.at(std::string(attribute));
   }
 
-  StringMap& getAttributesMap(void) {
-        return m_attributesMap;
-    }
+  StringMap getAttributesMap(void) const
+  {
+    return m_attributesMap;
+  }
 
 
   void setElementName(const std::string& name)
@@ -147,7 +148,7 @@ public:
      * Obtains the visitor of a concrete {@link XsdAbstractElement} instance.
      * @return The concrete visitor instance.
      */
-  virtual std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void)
+  virtual std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void) const
   {
     return m_visitor;
   }
@@ -155,7 +156,7 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) { }
+  virtual void validateSchemaRules(void) const { }
 
     /**
      * Base method for all accept methods. It serves as a way to guarantee that every accept call assigns the parent
@@ -164,7 +165,7 @@ public:
      */
   virtual void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor);
 
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) { return {}; }
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const { return {}; }
 
     /**
      * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -172,7 +173,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-    std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes)
+    virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes)
     {
       placeHolderAttributes.merge(getAttributesMap());
       auto elementCopy = create<XsdAbstractElement>(getParser(),
@@ -200,7 +201,7 @@ public:
      * @return All the {@link ConcreteElement} objects present in the concrete implementation of the
      * {@link XsdAbstractElement} class. It doesn't return the {@link UnsolvedReference} objects.
      */
-  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void);
+  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const;
 
   std::shared_ptr<XsdSchema> getXsdSchema(void);
 
@@ -272,7 +273,7 @@ public:
     /**
      * Sets source of the clone of the current {@link XsdAbstractElement} object.
      */
-  void setCloneOf(std::shared_ptr<XsdAbstractElement> cloneOf) {
+  void setCloneOf(const std::shared_ptr<XsdAbstractElement>& cloneOf) {
         m_cloneOf = cloneOf;
     }
 

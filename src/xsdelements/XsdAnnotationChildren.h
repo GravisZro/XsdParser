@@ -12,9 +12,6 @@
  */
 class XsdAnnotationChildren : public XsdAbstractElement
 {
-public:
-  using XsdAbstractElement::clone;
-
 private:
     /**
      * An URI that specifies a source for the application information.
@@ -46,16 +43,16 @@ public:
      * @return Always returns a {@link VisitorNotFoundException} since the descendants of this class shouldn't be
      * visited since they aren't allowed to have children.
      */
-  std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void) override
+  std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void) const override
     {
         throw VisitorNotFoundException("AppInfo/Documentation can't have children.");
     }
 
-  std::optional<std::string> getSource(void) {
+  std::optional<std::string> getSource(void) const {
         return m_source;
     }
 
-  std::optional<std::string> getContent(void) {
+  std::optional<std::string> getContent(void) const {
         return m_content;
     }
 

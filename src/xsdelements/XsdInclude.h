@@ -15,8 +15,6 @@
  */
 class XsdInclude : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 private:
     /**
      * Specifies the URI to the schema for the imported namespace.

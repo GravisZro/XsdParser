@@ -15,8 +15,6 @@
  */
 class XsdList : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 private:
     /**
      * The {@link XsdSimpleType} instance that states the type of the elements that belong to this {@link XsdList}
@@ -60,7 +58,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdList> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
 
@@ -71,7 +69,7 @@ public:
 
         if (m_simpleType)
             elementCopy->m_simpleType = std::static_pointer_cast<XsdSimpleType>(
-                                          m_simpleType->clone(m_simpleType->getAttributesMap(),
+                                          m_simpleType->XsdAbstractElement::clone(m_simpleType->getAttributesMap(),
                                                               elementCopy));
 
         return elementCopy;

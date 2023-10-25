@@ -15,8 +15,6 @@
  */
 class XsdIntegerRestrictions : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 protected:
     /**
      * Indicates if the value is fixed.

@@ -20,9 +20,6 @@ class XsdAttribute;
 
 class XsdSchema : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
-
 private:
     /**
      * Specifies if the form attribute for the current {@link XsdSchema} children attributes. The default value is
@@ -84,12 +81,12 @@ public: // ctors
 
 public:
   virtual void initialize(void) override;
-  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) override
+  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override
     {
         return m_elements;
     }
 
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override;
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
 
   
 
@@ -106,75 +103,75 @@ public:
 
   void add(std::shared_ptr<XsdAbstractElement> element);
 
-  std::optional<std::string> getAttributeFormDefault(void) {
+  std::optional<std::string> getAttributeFormDefault(void) const {
         return m_attributeFormDefault.getValue();
     }
 
-  std::optional<std::string> getElementFormDefault(void) {
+  std::optional<std::string> getElementFormDefault(void) const {
         return m_elementFormDefault.getValue();
     }
 
-  std::optional<std::string> getBlockDefault(void) {
+  std::optional<std::string> getBlockDefault(void) const {
         return m_blockDefault.getValue();
     }
 
     
-  std::optional<std::string> getFinalDefault(void) {
+  std::optional<std::string> getFinalDefault(void) const {
         return m_finalDefault.getValue();
     }
 
-  std::optional<std::string> getTargetNamespace(void) {
+  std::optional<std::string> getTargetNamespace(void) const {
         return m_targetNamespace;
     }
 
-  std::optional<std::string> getVersion(void) {
+  std::optional<std::string> getVersion(void) const {
         return m_version;
     }
 
     /**
      * @return The children elements that are of the type {@link XsdInclude}.
      */
-  std::list<std::shared_ptr<XsdInclude>> getChildrenIncludes(void);
+  std::list<std::shared_ptr<XsdInclude>> getChildrenIncludes(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdImport}.
      */
-  std::list<std::shared_ptr<XsdImport>> getChildrenImports(void);
+  std::list<std::shared_ptr<XsdImport>> getChildrenImports(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdAnnotation}.
      */
-  std::list<std::shared_ptr<XsdAnnotation>> getChildrenAnnotations(void);
+  std::list<std::shared_ptr<XsdAnnotation>> getChildrenAnnotations(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdSimpleType}.
      */
-  std::list<std::shared_ptr<XsdSimpleType>> getChildrenSimpleTypes(void);
+  std::list<std::shared_ptr<XsdSimpleType>> getChildrenSimpleTypes(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdComplexType}.
      */
-  std::list<std::shared_ptr<XsdComplexType>> getChildrenComplexTypes(void);
+  std::list<std::shared_ptr<XsdComplexType>> getChildrenComplexTypes(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdGroup}.
      */
-  std::list<std::shared_ptr<XsdGroup>> getChildrenGroups(void);
+  std::list<std::shared_ptr<XsdGroup>> getChildrenGroups(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdAttributeGroup}.
      */
-  std::list<std::shared_ptr<XsdAttributeGroup>> getChildrenAttributeGroups(void);
+  std::list<std::shared_ptr<XsdAttributeGroup>> getChildrenAttributeGroups(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdElement}.
      */
-  std::list<std::shared_ptr<XsdElement>> getChildrenElements(void);
+  std::list<std::shared_ptr<XsdElement>> getChildrenElements(void) const;
 
     /**
      * @return The children elements that are of the type {@link XsdAttribute}.
      */
-  std::list<std::shared_ptr<XsdAttribute>> getChildrenAttributes(void);
+  std::list<std::shared_ptr<XsdAttribute>> getChildrenAttributes(void) const;
 
   void resolveNameSpace(std::optional<std::string> Namespace, SchemaLocation schemaLocation);
 

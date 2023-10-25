@@ -15,8 +15,6 @@
  */
 class XsdUnion : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 private:
     /**
      * A List of {@link XsdSimpleType} instances that represent the {@link XsdUnion}.
@@ -51,7 +49,7 @@ public:
         visitorParam->visit(std::static_pointer_cast<XsdUnion>(shared_from_this()));
     }
 
-  std::shared_ptr<XsdUnion> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   std::list<std::shared_ptr<XsdSimpleType>> getUnionElements(){
         return m_simpleTypeList;

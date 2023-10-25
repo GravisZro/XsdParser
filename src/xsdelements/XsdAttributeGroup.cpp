@@ -10,7 +10,7 @@
  * either directly or present in its children {@link XsdAttributeGroup} in the
  * {@link XsdAttributeGroup#attributeGroups} field.
  */
-std::list<std::shared_ptr<ReferenceBase>> XsdAttributeGroup::getElements(void)
+std::list<std::shared_ptr<ReferenceBase>> XsdAttributeGroup::getElements(void) const
 {
   std::list<std::shared_ptr<ReferenceBase>> allAttributes = m_attributes;
   for(auto& attributeGroup : getXsdAttributeGroups())
@@ -25,7 +25,7 @@ std::list<std::shared_ptr<ReferenceBase>> XsdAttributeGroup::getElements(void)
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdNamedElements> XsdAttributeGroup::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdAttributeGroup::clone(StringMap placeHolderAttributes)
 {
   placeHolderAttributes.merge(getAttributesMap());
   placeHolderAttributes.erase(*REF_TAG);
@@ -71,7 +71,7 @@ void XsdAttributeGroup::replaceUnsolvedElements(std::shared_ptr<NamedConcreteEle
   }
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getXsdAttributeGroups(void)
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getXsdAttributeGroups(void) const
 {
   std::list<std::shared_ptr<XsdAttributeGroup>> rvals;
   for(auto& element : m_attributeGroups)
@@ -80,7 +80,7 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getXsdAttribute
   return rvals;
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getAllXsdAttributeGroups(void)
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getAllXsdAttributeGroups(void) const
 {
   std::list<std::shared_ptr<XsdAttributeGroup>> rvals;
   for(auto& attributeGroup : getXsdAttributeGroups())
@@ -94,7 +94,7 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getAllXsdAttrib
 /**
  * @return All the attributes of this attributeGroup and other attributeGroups contained within.
  */
-std::list<std::shared_ptr<XsdAttribute>> XsdAttributeGroup::getXsdAttributes(void)
+std::list<std::shared_ptr<XsdAttribute>> XsdAttributeGroup::getXsdAttributes(void) const
 {
   std::list<std::shared_ptr<XsdAttribute>> rvals;
   for(auto& element : m_attributes)

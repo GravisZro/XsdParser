@@ -17,7 +17,7 @@
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdComplexType::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
     placeHolderAttributes.erase(*REF_TAG);
@@ -30,10 +30,10 @@ std::shared_ptr<XsdComplexType> XsdComplexType::clone(StringMap placeHolderAttri
     elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
 
     if (m_complexContent)
-        elementCopy->m_complexContent = std::static_pointer_cast<XsdComplexContent>(m_complexContent->clone(m_complexContent->getAttributesMap(), elementCopy));
+        elementCopy->m_complexContent = std::static_pointer_cast<XsdComplexContent>(m_complexContent->XsdAbstractElement::clone(m_complexContent->getAttributesMap(), elementCopy));
 
     if (m_simpleContent)
-        elementCopy->m_simpleContent = std::static_pointer_cast<XsdSimpleContent>(m_simpleContent->clone(m_simpleContent->getAttributesMap(), elementCopy));
+        elementCopy->m_simpleContent = std::static_pointer_cast<XsdSimpleContent>(m_simpleContent->XsdAbstractElement::clone(m_simpleContent->getAttributesMap(), elementCopy));
 
     std::list<std::shared_ptr<ReferenceBase>> clonedAttributes;
     std::list<std::shared_ptr<ReferenceBase>> clonedAttributeGroups;

@@ -21,9 +21,6 @@
  */
 class XsdGroup : public XsdNamedElements
 {
-public:
-  using XsdNamedElements::clone;
-
 private:
     /**
      * The child element of the {@link XsdGroup} instance. It can be a {@link XsdAll}, {@link XsdChoice} or a
@@ -72,7 +69,7 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) override
+  virtual void validateSchemaRules(void) const override
     {
         XsdNamedElements::validateSchemaRules();
 
@@ -85,7 +82,7 @@ private:
      * Asserts if the current object has the name attribute when not being a direct child of the XsdSchema element, which is
      * not allowed, throwing an exception in that case.
      */
-    void rule2(void)
+    void rule2(void) const
     {
         if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
             throw ParsingException(TAG<XsdGroup>::xsd + " element: The " + NAME_TAG + " should only be used when the parent of the " + TAG<XsdGroup>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
@@ -95,7 +92,7 @@ private:
      * Asserts if the current has no value for its name attribute while being a direct child of the top level XsdSchema element,
      * which is required. Throws an exception if no name is present.
      */
-    void rule3(void)
+    void rule3(void) const
     {
         if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
             throw ParsingException(TAG<XsdGroup>::xsd + " element: The " + NAME_TAG + " should is required the parent of the " + TAG<XsdGroup>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
@@ -110,7 +107,7 @@ public:
     /**
      * @return A list with the child element of the {@link XsdGroup} instance.
      */
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
   {
     std::list<std::shared_ptr<ReferenceBase>> list;
     if (m_childElement)
@@ -124,7 +121,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdNamedElements> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
         placeHolderAttributes.erase(*REF_TAG);
@@ -148,7 +145,7 @@ public:
         m_childElement->setParent(shared_from_this());
     }
 
-  std::shared_ptr<XsdMultipleElements> getChildElement(void) {
+  std::shared_ptr<XsdMultipleElements> getChildElement(void) const {
         return m_childElement;
     }
 

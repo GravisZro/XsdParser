@@ -14,9 +14,6 @@ class XsdDocumentation;
  */
 class XsdAnnotation : public XsdIdentifierElements
 {
-public:
-  using XsdIdentifierElements::clone;
-
 private:
     /**
      * The list of {@link XsdAppInfo} children.

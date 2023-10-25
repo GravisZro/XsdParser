@@ -18,9 +18,6 @@ class XsdRestriction;
  */
 class XsdComplexContent : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
-
 private:
     /**
      * A {@link XsdRestriction} object wrapped in a {@link ReferenceBase} object.
@@ -63,7 +60,7 @@ public:
         visitorParam->visit(std::static_pointer_cast<XsdComplexContent>(shared_from_this()));
     }
 
-  std::shared_ptr<XsdComplexContent> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   bool isMixed(void) {
         return m_mixed;

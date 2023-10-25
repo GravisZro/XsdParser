@@ -15,7 +15,7 @@ void XsdSequence::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdSequence> XsdSequence::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdSequence::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
 

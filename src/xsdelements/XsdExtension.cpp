@@ -99,7 +99,7 @@ void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdExtension::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
 
@@ -112,7 +112,7 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
     {
         elementCopy->getVisitor()->visit(
               std::static_pointer_cast<XsdAttribute>(
-                attribute->clone(
+                attribute->XsdAbstractElement::clone(
                   attribute->getAttributesMap(),
                   elementCopy)));
     }
@@ -121,7 +121,7 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
     {
         elementCopy->getVisitor()->visit(
               std::static_pointer_cast<XsdAttributeGroup>(
-                attributeGroup->clone(
+                attributeGroup->XsdAbstractElement::clone(
                   attributeGroup->getAttributesMap(),
                   elementCopy)));
     }
@@ -136,7 +136,7 @@ std::shared_ptr<XsdExtension> XsdExtension::clone(StringMap placeHolderAttribute
 /**
  * @return Its children elements as his own.
  */
-std::list<std::shared_ptr<ReferenceBase>> XsdExtension::getElements(void)
+std::list<std::shared_ptr<ReferenceBase>> XsdExtension::getElements(void) const
 {
   if(m_childElement)
     return m_childElement->getElement()->getElements();
@@ -147,7 +147,7 @@ std::list<std::shared_ptr<ReferenceBase>> XsdExtension::getElements(void)
  * @return Either a {@link XsdComplexType} or a {@link XsdSimpleType} from which this extension extends or null if
  * the {@link XsdParserCore} wasn't able to replace the {@link UnsolvedReference} created by the base attribute value.
  */
-std::shared_ptr<XsdNamedElements> XsdExtension::getBase(void)
+std::shared_ptr<XsdNamedElements> XsdExtension::getBase(void) const
 {
   if(auto x = std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
     return x->getElement();
@@ -158,7 +158,7 @@ std::shared_ptr<XsdNamedElements> XsdExtension::getBase(void)
  * @return The {@link XsdComplexType} from which this extension extends or null if the {@link XsdParserCore} wasn't
  * able to replace the {@link UnsolvedReference} created by the base attribute value.
  */
-std::shared_ptr<XsdComplexType> XsdExtension::getBaseAsComplexType(void)
+std::shared_ptr<XsdComplexType> XsdExtension::getBaseAsComplexType(void) const
 {
 if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
   if(auto x = std::dynamic_pointer_cast<XsdComplexType>(m_base->getElement()); x)
@@ -170,7 +170,7 @@ return nullptr;
  * @return The {@link XsdSimpleType} from which this extension extends or null if the {@link XsdParserCore} wasn't
  * able to replace the {@link UnsolvedReference} created by the base attribute value.
  */
-std::shared_ptr<XsdSimpleType> XsdExtension::getBaseAsSimpleType(void)
+std::shared_ptr<XsdSimpleType> XsdExtension::getBaseAsSimpleType(void) const
 {
 if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
   if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(m_base->getElement()); x)
@@ -181,7 +181,7 @@ return nullptr;
 /**
  * @return The {@link XsdBuiltInDataType} from which this extension extends.
  */
-std::shared_ptr<XsdBuiltInDataType> XsdExtension::getBaseAsBuiltInDataType(void)
+std::shared_ptr<XsdBuiltInDataType> XsdExtension::getBaseAsBuiltInDataType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
     if(auto x = std::dynamic_pointer_cast<XsdBuiltInDataType>(m_base->getElement()); x)
@@ -210,7 +210,7 @@ std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement()
 /**
  * @return The childElement as a {@link XsdGroup} object or null if childElement isn't a {@link XsdGroup} instance.
  */
-std::shared_ptr<XsdGroup> XsdExtension::getChildAsGroup(void)
+std::shared_ptr<XsdGroup> XsdExtension::getChildAsGroup(void) const
 {
   return std::dynamic_pointer_cast<XsdGroup>(m_childElement->getElement());
 }
@@ -218,7 +218,7 @@ std::shared_ptr<XsdGroup> XsdExtension::getChildAsGroup(void)
 /**
  * @return The childElement as a {@link XsdAll} object or null if childElement isn't a {@link XsdAll} instance.
  */
-std::shared_ptr<XsdAll> XsdExtension::getChildAsAll(void)
+std::shared_ptr<XsdAll> XsdExtension::getChildAsAll(void) const
 {
   if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement()))
     return XsdMultipleElements::getChildAsAll(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
@@ -228,7 +228,7 @@ std::shared_ptr<XsdAll> XsdExtension::getChildAsAll(void)
 /**
  * @return The childElement as a {@link XsdChoice} object or null if childElement isn't a {@link XsdChoice} instance.
  */
-std::shared_ptr<XsdChoice> XsdExtension::getChildAsChoice(void)
+std::shared_ptr<XsdChoice> XsdExtension::getChildAsChoice(void) const
 {
   if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement()))
     return XsdMultipleElements::getChildAsChoice(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
@@ -238,7 +238,7 @@ std::shared_ptr<XsdChoice> XsdExtension::getChildAsChoice(void)
 /**
  * @return The childElement as a {@link XsdSequence} object or null if childElement isn't a {@link XsdSequence} instance.
  */
-std::shared_ptr<XsdSequence> XsdExtension::getChildAsSequence(void)
+std::shared_ptr<XsdSequence> XsdExtension::getChildAsSequence(void) const
 {
   if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement()))
     return XsdMultipleElements::getChildAsSequence(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));

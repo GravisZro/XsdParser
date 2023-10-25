@@ -24,9 +24,6 @@ class XsdSimpleType;
  */
 class XsdElement : public XsdNamedElements
 {
-public:
-  using XsdNamedElements::clone;
-
 private:
     /**
      * The {@link XsdComplexType} instance wrapped in a {@link ReferenceBase} object.
@@ -126,7 +123,7 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) override
+  virtual void validateSchemaRules(void) const override
     {
         XsdNamedElements::validateSchemaRules();
         rule2();
@@ -138,12 +135,12 @@ public:
     }
 
 private:
-    void rule7(void);
-    void rule6(void);
-    void rule5(void);
-    void rule4(void);
-    void rule3(void);
-    void rule2(void);
+    void rule7(void) const;
+    void rule6(void) const;
+    void rule5(void) const;
+    void rule4(void) const;
+    void rule3(void) const;
+    void rule2(void) const;
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {
@@ -151,7 +148,7 @@ public:
         visitorParam->visit(std::static_pointer_cast<XsdElement>(shared_from_this()));
     }
 
-  std::shared_ptr<XsdElement> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
 
   std::shared_ptr<XsdComplexType> getXsdComplexType(void);

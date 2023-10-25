@@ -18,8 +18,6 @@
  */
 class XsdMaxInclusive : public XsdStringRestrictions
 {
-public:
-  using XsdStringRestrictions::clone;
 private:
     /**
      * Indicates if the value is fixed.
@@ -54,7 +52,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdMaxInclusive> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
         return create<XsdMaxInclusive>(getParser(),

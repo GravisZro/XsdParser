@@ -9,7 +9,7 @@
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdComplexContent> XsdComplexContent::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdComplexContent::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
 

@@ -31,9 +31,6 @@ class XsdSequence;
  */
 class XsdComplexType : public XsdNamedElements
 {
-public:
-  using XsdNamedElements::clone;
-
 private:
     /**
      * The child element of {@link XsdComplexType}. Can be either a {@link XsdGroup} or a {@link XsdMultipleElements}
@@ -118,7 +115,7 @@ public:
     /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
-  virtual void validateSchemaRules(void) override
+  virtual void validateSchemaRules(void) const override
     {
         XsdNamedElements::validateSchemaRules();
         rule2();
@@ -129,7 +126,7 @@ private:
      * Asserts if the current object has a simpleContent as children and contains a value for the mixed attribute, which isn't allowed throwing
      * an exception in that case.
      */
-  void rule2(void)
+  void rule2(void) const
   {
         if (m_simpleContent && haveAttribute(MIXED_TAG)){
             throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
@@ -146,14 +143,14 @@ public:
     /**
      * @return The elements of his child as if they belong to the {@link XsdComplexType} instance.
      */
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) override
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
   {
     if(m_childElement)
       return m_childElement->getElement()->getElements();
     return {};
   }
 
-  std::shared_ptr<XsdComplexType> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
   std::shared_ptr<XsdAbstractElement> getXsdChildElement(void);
 

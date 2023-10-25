@@ -105,18 +105,18 @@ void XsdElement::initialize(void)
  * Asserts if the current object has a form attribute while being a direct child of the top level XsdSchema element,
  * which isn't allowed, throwing an exception in that case.
  */
-void XsdElement::rule7(void)
+void XsdElement::rule7(void) const
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && haveAttribute(FORM_TAG))
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
-void XsdElement::rule6(void)
+void XsdElement::rule6(void) const
 {
     //fixed 	Optional. Specifies a fixed value for the element (can only be used if the element's content is a simple type or text only)
 }
 
-void XsdElement::rule5(void)
+void XsdElement::rule5(void) const
 {
     // default 	Optional. Specifies a default value for the element (can only be used if the element's content is a simple type or text only)
 }
@@ -125,7 +125,7 @@ void XsdElement::rule5(void)
  * Asserts if the current object isn't a direct child of the top level XsdSchema and has a value for the substitutionGroup,
  * which isn't allowed, throwing an exception in that case.
  */
-void XsdElement::rule4(void)
+void XsdElement::rule4(void) const
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && m_substitutionGroup)
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + SUBSTITUTION_GROUP_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
@@ -135,7 +135,7 @@ void XsdElement::rule4(void)
  * Asserts if the current object has a ref attribute while being a direct child of the top level XsdSchema element, which isn't allowed,
  * throwing an exception in that case.
  */
-void XsdElement::rule3(void)
+void XsdElement::rule3(void) const
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && haveAttribute(REF_TAG))
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
@@ -145,7 +145,7 @@ void XsdElement::rule3(void)
  * Asserts if the current object is a direct child of the top level XsdSchema element and doesn't have a name, which isn't allowed,
  * throwing an exception in that case.
  */
-void XsdElement::rule2(void)
+void XsdElement::rule2(void) const
 {
   if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + NAME_TAG + " attribute is required when the parent of the " + xsdElementIsXsdSchema);
@@ -158,7 +158,7 @@ void XsdElement::rule2(void)
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdElement> XsdElement::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdElement::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
     placeHolderAttributes.erase(*TYPE_TAG);

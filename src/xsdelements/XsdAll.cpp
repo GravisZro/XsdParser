@@ -20,7 +20,7 @@ void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdAll> XsdAll::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdAll::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
 

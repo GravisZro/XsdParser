@@ -17,9 +17,6 @@
  */
 class XsdAppInfo : public XsdAnnotationChildren
 {
-public:
-  using XsdAnnotationChildren::clone;
-
 public: // ctors
     XsdAppInfo(std::shared_ptr<XsdParserCore> parser,
                StringMap attributesMap,

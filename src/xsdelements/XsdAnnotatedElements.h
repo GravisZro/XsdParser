@@ -12,7 +12,7 @@ class XsdAnnotatedElements : public XsdIdentifierElements
 {
 public:
   using XsdIdentifierElements::clone;
-  
+
 private:
     /**
      * The {@link XsdAnnotation} that is annotating the concrete instances of this class.

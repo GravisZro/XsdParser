@@ -33,7 +33,7 @@ void XsdMultipleElements::replaceUnsolvedElements(std::shared_ptr<NamedConcreteE
 /**
  * @return All the elements received in the parsing process.
  */
-std::list<std::shared_ptr<ReferenceBase>> XsdMultipleElements::getElements(void)
+std::list<std::shared_ptr<ReferenceBase>> XsdMultipleElements::getElements(void) const
 {
     return m_elements;
 }
@@ -41,7 +41,7 @@ std::list<std::shared_ptr<ReferenceBase>> XsdMultipleElements::getElements(void)
 /**
  * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
  */
-std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElements(void)
+std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElements(void) const
 {
   std::list<std::shared_ptr<XsdAbstractElement>> rval;
   for(auto& element : m_elements)
@@ -53,7 +53,7 @@ std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElemen
 /**
  * @return The children elements that are of the type {@link XsdElement}.
  */
-std::list<std::shared_ptr<XsdElement>> XsdMultipleElements::getChildrenElements(void)
+std::list<std::shared_ptr<XsdElement>> XsdMultipleElements::getChildrenElements(void) const
 {
   std::list<std::shared_ptr<XsdElement>> rval;
   for(auto& element : getXsdElements())

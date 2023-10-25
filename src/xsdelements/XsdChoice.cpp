@@ -9,7 +9,7 @@
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdChoice> XsdChoice::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdChoice::clone(StringMap placeHolderAttributes)
 {
     placeHolderAttributes.merge(getAttributesMap());
 

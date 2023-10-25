@@ -7,9 +7,6 @@
  */
 class XsdIdentifierElements : public XsdAbstractElement
 {
-public:
-  using XsdAbstractElement::clone;
-  
 private:
     /**
      * Specifies a unique ID for the element.

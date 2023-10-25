@@ -13,9 +13,6 @@ struct XsdAbstractElementVisitor;
  */
 class XsdAll : public XsdMultipleElements
 {
-public:
-  using XsdMultipleElements::clone;
-
 private:
     /**
      * Specifies the minimum number of times this element can occur in the parent element. The value can be any
@@ -63,7 +60,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdAll> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   int getMinOccurs(void) {
         return m_minOccurs;

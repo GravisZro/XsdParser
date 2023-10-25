@@ -20,8 +20,6 @@
  */
 class XsdSimpleContent : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
 private:
     /**
      * The {@link XsdRestriction} instance that should be applied to the {@link XsdSimpleContent} instance.
@@ -51,7 +49,7 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdSimpleContent> clone(StringMap placeHolderAttributes)
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
     {
         placeHolderAttributes.merge(getAttributesMap());
 

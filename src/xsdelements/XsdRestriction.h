@@ -33,9 +33,6 @@ class XsdGroup;
  */
 class XsdRestriction : public XsdAnnotatedElements
 {
-public:
-  using XsdAnnotatedElements::clone;
-
 private:
     /**
      * The {@link XsdSimpleType} instance of this {@link XsdRestriction} instance.
@@ -133,7 +130,7 @@ public:
     }
 
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
-  std::shared_ptr<XsdRestriction> clone(StringMap placeHolderAttributes);
+  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
   std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);

@@ -14,7 +14,7 @@ void XsdEnumeration::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstra
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdEnumeration> XsdEnumeration::clone(StringMap placeHolderAttributes)
+std::shared_ptr<XsdAbstractElement> XsdEnumeration::clone(StringMap placeHolderAttributes)
 {
   placeHolderAttributes.merge(getAttributesMap());
   return create<XsdEnumeration>(getParser(),

@@ -18,9 +18,6 @@
  */
 class XsdDocumentation : public XsdAnnotationChildren
 {
-public:
-  using XsdAnnotationChildren::clone;
-
 private:
     /**
      * Specifies the language used in the {@link XsdAnnotationChildren#content}
