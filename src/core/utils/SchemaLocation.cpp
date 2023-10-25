@@ -8,23 +8,33 @@ static bool is_URL(const std::string& target)
   return target.starts_with("https://") || target.starts_with("http://");
 }
 
+
+SchemaLocation::SchemaLocation(std::initializer_list<std::string> entries)
+{
+  for(auto& entry : entries)
+    insert(entry);
+}
+
+void SchemaLocation::reset(void)
+{
+  m_parentPaths.clear();
+  m_data.clear();
+}
+
+void SchemaLocation::setParentPaths(const SchemaLocation& parent)
+{
+  reset();
+  for(const std::string& path : parent.data())
+  {
+    if(std::filesystem::path entry(path); !entry.parent_path().empty())
+      m_parentPaths.insert(entry.parent_path());
+  }
+}
+
+
 bool SchemaLocation::contains(const std::string& entry) const
 {
-  if(m_data.contains(entry))
-    return true;
-
-  if(is_URL(entry))
-    return false;
-
-  if(m_parent == nullptr)
-    return false;
-
-  for(auto& parent : m_parent->data())
-    if(auto entrypath = std::filesystem::absolute(std::filesystem::path(parent).parent_path() / entry);
-      m_data.contains(entrypath))
-    return true;
-
-  return false;
+  return m_data.contains(entry);
 }
 
 void SchemaLocation::operator =(const std::string& entry)
@@ -45,18 +55,10 @@ void SchemaLocation::operator =(const std::string& entry)
 
 bool SchemaLocation::operator ==(const SchemaLocation& other) const
 {
-  if(std::any_of(std::begin(other.m_data),
-                     std::end(other.m_data),
-                     [this](const std::string& entry)
-                { return operator ==(entry); }))
-  {
-    if(m_parent == nullptr && other.m_parent != nullptr)
-      m_parent = other.m_parent;
-    else if(m_parent != nullptr && other.m_parent == nullptr)
-      other.m_parent = m_parent; // rule breaker! (mutable)
-    m_data.merge(static_cast<std::set<std::string>>(other.m_data));
-    return true;
-  }
+  for(const std::string& location : other.m_data)
+    if((std::filesystem::path(location).is_absolute() || is_URL(location)) && // only bother with absolute paths and URLs
+       m_data.contains(location))
+      return true;
   return false;
 }
 
@@ -66,9 +68,11 @@ void SchemaLocation::insert(const std::string& entry)
   m_data.insert(std::filesystem::path(entry).filename()); // insert filename (or do nothing if it's a duplicate)
   if(!is_URL(entry) && !std::filesystem::path(entry).is_absolute()) // entry is a relative filename
   {
-    auto entrypath = std::filesystem::current_path() / entry; // build (then verify) absolute filepath
-    if(!std::filesystem::exists(entrypath))
-      throw std::runtime_error("unable to location file");
-    m_data.insert(std::filesystem::canonical(entrypath)); // insert absolute filepath
+    for(const auto& parent_path : m_parentPaths)
+    {
+      auto entrypath = std::filesystem::path(parent_path) / entry; // build (then verify) absolute filepath
+      if(std::filesystem::exists(entrypath))
+        m_data.insert(std::filesystem::canonical(entrypath)); // insert absolute filepath
+    }
   }
 }

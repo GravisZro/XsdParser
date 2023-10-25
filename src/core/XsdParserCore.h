@@ -41,7 +41,7 @@ private:
      * suitable object to replace the reference. This list can be consulted after the parsing process to assert if there
      * is any missing information in the XSD file.
      */
-    std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElementsMap;
+    std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElements;
 
 public: // ctors
     SchemaLocation m_currentFile;
@@ -84,9 +84,10 @@ public:
      * objects matches a {@link NamedConcreteElement} object by having its ref attribute with the same value as the
      * name attribute of the {@link NamedConcreteElement}.
      */
-    void resolveRefs(void) {
-        resolveInnerRefs();
-        resolveOtherNamespaceRefs();
+    void resolveRefs(void)
+    {
+      resolveInnerRefs();
+      resolveOtherNamespaceRefs();
     }
 
     private:
@@ -122,7 +123,7 @@ public:
      */
   std::list<std::shared_ptr<UnsolvedReferenceItem>> getUnsolvedReferences(void)
   {
-    return m_parserUnsolvedElementsMap;
+    return m_parserUnsolvedElements;
   }
 
     /**
@@ -167,8 +168,7 @@ public:
 
   void addParsedElement(std::shared_ptr<ReferenceBase> wrappedElement)
   {
-    if(m_parseElements.contains(m_currentFile))
-      m_parseElements.at(m_currentFile).push_back(wrappedElement);
+    m_parseElements[m_currentFile].push_back(wrappedElement);
   }
 
   static void updateConfig(ParserConfig config)

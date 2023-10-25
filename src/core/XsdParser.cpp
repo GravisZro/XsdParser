@@ -8,9 +8,7 @@
 
 void XsdParser::parse(std::string filePath)
 {
-  if(std::filesystem::path(filePath).is_absolute())
-    std::filesystem::current_path(std::filesystem::path(filePath).parent_path());
-
+  m_currentFile.setParentPaths(std::filesystem::current_path().string());
   m_currentFile = filePath;
   if(!m_schemaLocations.contains(filePath))
     m_schemaLocations.insert(filePath);
@@ -61,27 +59,18 @@ void XsdParser::parseLocation(const SchemaLocation& fileLocation)
  */
 pugi::xml_node XsdParser::getSchemaNode(SchemaLocation fileLocation)
 {
-  SchemaLocation& parentLocation = m_schemaLocationsMap.at(fileLocation);
   std::optional<std::string> filePath;
-  for(auto& location : fileLocation.data())
+  for(const std::string& location : fileLocation.data())
   {
     if(std::filesystem::exists(location))
     {
       filePath = location;
       break;
     }
-    else if(std::filesystem::path(location).is_relative())
-    {
-      for(auto& parent_location : parentLocation.data())
-        if(std::filesystem::exists(std::filesystem::path(parent_location).parent_path() / location))
-          filePath = std::filesystem::path(parent_location).parent_path() / location;
-      if(filePath)
-        std::cout << "filePath: " << *filePath << std::endl;
-      else
-        std::cout << "filePath: not found!" << std::endl;
-    }
   }
   assert(filePath);
+
+  std::cout << "file path: " << *filePath << std::endl;
 
   pugi::xml_document& doc = m_documents[*filePath];
   pugi::xml_parse_result result = m_documents[*filePath].load_file(filePath->c_str());

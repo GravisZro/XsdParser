@@ -60,9 +60,23 @@ std::list<std::shared_ptr<XsdSchema>> XsdParserCore::getResultXsdSchemas(void)
   std::list<std::shared_ptr<XsdSchema>> rval;
   for(auto& pair : m_parseElements)
     for(auto& element : pair.second)
-      if(auto x = std::dynamic_pointer_cast<XsdSchema>(element); x)
+      if(auto x = std::dynamic_pointer_cast<XsdSchema>(element->getElement()); x)
         rval.push_back(x);
   return rval;
+}
+
+
+/* VERIFIED
+   getSubStringBefore() replaces this code:
+
+      SOMESTRING.substring(0, SOMESTRING.indexOf(TARGET));
+*/
+std::string getSubStringBefore(std::optional<std::string> input, const char target)
+{
+  assert(input);
+  if(input->contains(target))
+    return input->substr(0, input->find_first_of(target));
+  return std::string();
 }
 
 std::string getSubStringAfter(std::optional<std::string> input, const char target)
@@ -73,24 +87,79 @@ std::string getSubStringAfter(std::optional<std::string> input, const char targe
   return input.value();
 }
 
-std::shared_ptr<XsdSchema> findXsdSchema(const std::list<std::shared_ptr<ReferenceBase>>& haystack)
+
+/* VERIFIED
+   findXsdSchema() replaces this code:
+   Argument 1: parseElements.get(fileName)
+
+   XsdSchema xsdSchema = parseElements.get(fileName)
+                                    .stream()
+                                    .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdSchema)
+                                    .map(referenceBase -> (XsdSchema) referenceBase.getElement())
+                                    .findFirst()
+                                    .get();
+*/
+std::shared_ptr<XsdSchema> findXsdSchema(const std::list<std::shared_ptr<ReferenceBase>>& fileLocationElements)
 {
-  for(auto& referenceBase : haystack)
+  for(auto& referenceBase : fileLocationElements)
     if(std::dynamic_pointer_cast<ConcreteElement>(referenceBase))
       if(auto x = std::dynamic_pointer_cast<XsdSchema>(referenceBase->getElement()); x)
         return x;
   return nullptr;
 }
 
+/* VERIFIED
+  getUnsolvedReferenceList() replaces this code:
+  Argument 1: fileName
+  Argument 2: unsolvedElements
+
+  List<UnsolvedReference> unsolvedReferenceList = unsolvedElements
+          .getOrDefault(fileName, new ArrayList<>())
+          .stream()
+          .filter(unsolvedElement -> unsolvedElement.getRef().contains(":"))
+          .collect(Collectors.toList());
+*/
+auto getUnsolvedReferenceList(
+    const SchemaLocation& fileLocation,
+    const std::map<SchemaLocation, std::list<std::shared_ptr<UnsolvedReference>>>& unsolvedElements)
+{
+  std::list<std::shared_ptr<UnsolvedReference>> unsolvedReferenceList; // returned type
+  if(unsolvedElements.contains(fileLocation))
+    for(auto& unsolvedElement : unsolvedElements.at(fileLocation))
+      if(unsolvedElement->getRef().value_or("").contains(':'))
+        unsolvedReferenceList.push_back(unsolvedElement);
+  return unsolvedReferenceList;
+}
+
+/* VERIFIED
+  getConcreteImportedElements() replaces this code:
+  Argument 1: importedElements
+
+  Map<String, List<NamedConcreteElement>> concreteElementsMap =
+          importedElements.stream()
+                  .filter(concreteElement -> concreteElement instanceof NamedConcreteElement)
+                  .map(concreteElement -> (NamedConcreteElement) concreteElement)
+                  .collect(groupingBy(NamedConcreteElement::getName));
+*/
+auto getConcreteImportedElements(const std::list<std::shared_ptr<ReferenceBase>>& importedElements)
+{
+  std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap;
+  for(auto& concreteElement : importedElements)
+    if(auto x = std::dynamic_pointer_cast<NamedConcreteElement>(concreteElement); x)
+      concreteElementsMap[x->getName()].push_back(x);
+  return concreteElementsMap;
+}
+
+/* VERIFIED
+ */
 void XsdParserCore::resolveOtherNamespaceRefs(void)
 {
-
   for(auto& schema : getResultXsdSchemas())
   {
-    for(auto& xsdImport : schema->getChildrenImports())
+    for(const auto& xsdImport : schema->getChildrenImports())
       schema->resolveNameSpace(xsdImport->getNamespace(), xsdImport->getSchemaLocation());
 
-    for(auto pair : schema->getNamespaces())
+    for(const auto& pair : schema->getNamespaces())
       schema->resolveNameSpace(pair.first, schema->getFileLocation());
   }
 
@@ -99,67 +168,53 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
     auto& fileLocation = pair.first;
     std::shared_ptr<XsdSchema> xsdSchema = findXsdSchema(pair.second);
 
+    std::size_t startingUnsolvedReferenceListSize = 0;
     auto ns = xsdSchema->getNamespaces();
 
     std::list<std::shared_ptr<UnsolvedReference>> unsolvedReferenceList;
-    if(m_unsolvedElements.contains(fileLocation))
-      for(auto& unsolvedElement : m_unsolvedElements.at(fileLocation))
-        if(unsolvedElement->getRef().value_or("").contains(':'))
-          unsolvedReferenceList.push_back(unsolvedElement);
-
-
-    long startingUnsolvedReferenceListSize = 0;
-    long currentUnsolvedReferenceListSize = unsolvedReferenceList.size();
-
     do
     {
-      startingUnsolvedReferenceListSize = currentUnsolvedReferenceListSize;
+      startingUnsolvedReferenceListSize = unsolvedReferenceList.size();
+      unsolvedReferenceList = getUnsolvedReferenceList(fileLocation, m_unsolvedElements);
+
       for (auto unsolvedReference : unsolvedReferenceList)
       {
-        auto unsolvedElementNamespace = getSubStringAfter(unsolvedReference->getRef(), ':');
+        std::string unsolvedElementNamespace = getSubStringBefore(unsolvedReference->getRef(), ':');
 
-        if (ns.contains(unsolvedElementNamespace))
+        if (unsolvedElementNamespace.size() &&
+            ns.contains(unsolvedElementNamespace))
         {
-          auto namespaceInfo = ns.at(unsolvedElementNamespace);
+          const NamespaceInfo& unsolvedNamespaceInfo = ns.at(unsolvedElementNamespace);
           std::list<std::shared_ptr<ReferenceBase>> importedElements;
           auto unsolvedElementSchema = unsolvedReference->getElement()->getXsdSchema();
 
           if (unsolvedElementSchema &&
               unsolvedElementSchema->getTargetNamespace() &&
-              unsolvedElementSchema->getTargetNamespace() == namespaceInfo.getName())
+              unsolvedElementSchema->getTargetNamespace() == unsolvedNamespaceInfo.getName())
             importedElements = unsolvedElementSchema->getElements();
           else
           {
-            auto importedFileLocation = ns.at(unsolvedElementNamespace).getFile();
-            if(m_parseElements.contains(importedFileLocation))
-              importedElements = m_parseElements.at(importedFileLocation);
+            // Note: SchemaLocation results in a radical code reduction here
+            assert(m_parseElements.contains(ns.at(unsolvedElementNamespace).getFile()));
+            importedElements = m_parseElements.at(ns.at(unsolvedElementNamespace).getFile());
           }
 
-          std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap;
-          for(auto& concreteElement : importedElements)
-            if(auto x = std::dynamic_pointer_cast<NamedConcreteElement>(concreteElement); x)
-              concreteElementsMap[x->getName()].push_back(x);
+          auto concreteElementsMap = getConcreteImportedElements(importedElements);
           replaceUnsolvedImportedReference(concreteElementsMap, unsolvedReference, fileLocation);
         }
       }
-
-      unsolvedReferenceList.clear();
-      if(m_unsolvedElements.contains(fileLocation))
-        for(auto& unsolvedElement : m_unsolvedElements.at(fileLocation))
-          if(unsolvedElement->getRef().value_or("").contains(':'))
-            unsolvedReferenceList.push_back(unsolvedElement);
-
-      currentUnsolvedReferenceListSize = unsolvedReferenceList.size();
-    } while (currentUnsolvedReferenceListSize != startingUnsolvedReferenceListSize);
+    } while (startingUnsolvedReferenceListSize != unsolvedReferenceList.size());
   }
 }
 
 
-void XsdParserCore::replaceUnsolvedImportedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
-                                                     std::shared_ptr<UnsolvedReference> unsolvedReference,
-                                                     SchemaLocation fileLocation)
+void XsdParserCore::replaceUnsolvedImportedReference(
+    std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
+    std::shared_ptr<UnsolvedReference> unsolvedReference,
+    SchemaLocation fileLocation)
 {
-    std::list<std::shared_ptr<NamedConcreteElement>> concreteElements = concreteElementsMap.at(getSubStringAfter(unsolvedReference->getRef(), ':'));
+    std::list<std::shared_ptr<NamedConcreteElement>> concreteElements =
+        concreteElementsMap.at(getSubStringAfter(unsolvedReference->getRef(), ':'));
 
     if(concreteElements.empty())
       storeUnsolvedItem(unsolvedReference);
@@ -188,10 +243,77 @@ void XsdParserCore::replaceUnsolvedImportedReference(std::map<std::string, std::
 }
 
 
+/* VERIFIED
+  getIncludedLocations() replaces this code:
+  Argument 1: parseElements.get(fileName)
+
+  List<String> includedFiles =
+          parseElements.get(fileName)
+                  .stream()
+                  .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
+                  .map(referenceBase -> (((XsdInclude) referenceBase.getElement()).getSchemaLocation()))
+                  .collect(Collectors.toList());
+*/
+auto getIncludedLocations(const std::list<std::shared_ptr<ReferenceBase>>& fileLocationElements)
+{
+  std::set<SchemaLocation> includedLocations;
+  for(auto& referenceBase : fileLocationElements)
+    if(auto x = std::dynamic_pointer_cast<XsdInclude>(referenceBase->getElement());
+       std::dynamic_pointer_cast<ConcreteElement>(referenceBase) && x)
+      includedLocations.insert(x->getSchemaLocation());
+  return includedLocations;
+}
+
+
+/* VERIFIED
+  getTransitiveIncludes() replaces this code:
+  Argument 1: parseElements.get(fullIncludedFileName)
+
+  parseElements.get(fullIncludedFileName)
+          .stream()
+          .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
+          .map(referenceBase -> ( ((XsdInclude) referenceBase.getElement()) .getSchemaLocation())
+*/
+
+auto getTransitiveIncludes(const std::list<std::shared_ptr<ReferenceBase>>& locations)
+{
+  std::set<SchemaLocation> transitiveIncludes;
+  for(auto& referenceBase : locations)
+    if(auto x = std::dynamic_pointer_cast<XsdInclude>(referenceBase->getElement());
+       std::dynamic_pointer_cast<ConcreteElement>(referenceBase) && x)
+      transitiveIncludes.insert(x->getSchemaLocation());
+  return transitiveIncludes;
+}
+
+/* VERIFIED
+  findFirstTransitiveIncludedLocation() replaces this code:
+  Argument 1: includedFiles
+  Argument 2: parseElements
+
+  for(String includedFile : includedFiles){
+      parseElements.keySet()
+              .stream()
+              .filter(fileNameAux -> fileNameAux.endsWith(includedFile))
+              .findFirst()
+*/
+auto findFirstTransitiveIncludedLocation(
+    const std::set<SchemaLocation>& includedLocations,
+    const std::map<SchemaLocation, std::list<std::shared_ptr<ReferenceBase>>>& allLocations)
+{
+  for(auto& includedLocation : includedLocations)
+    for(auto& pair : allLocations)
+      if(pair.first == includedLocation)
+        return pair.second;
+  return std::list<std::shared_ptr<ReferenceBase>>{};
+}
+
 
 void XsdParserCore::resolveInnerRefs(void)
 {
   std::map<SchemaLocation, bool> doneList;
+
+  for(auto& element : m_parseElements)
+    doneList.emplace(element.first, false);
 
   while(std::ranges::any_of(doneList, [](auto& pair) { return pair.second == false; }))
   {
@@ -200,24 +322,8 @@ void XsdParserCore::resolveInnerRefs(void)
       auto& fileLocation = pair.first;
       if (!doneList.at(fileLocation))
       {
-        std::set<SchemaLocation> includedLocations;
-        for(auto& referenceBase : pair.second)
-          if(auto x = std::dynamic_pointer_cast<XsdInclude>(referenceBase->getElement());
-             std::dynamic_pointer_cast<ConcreteElement>(referenceBase) && x)
-            includedLocations.insert(x->getSchemaLocation());
-
-        std::set<SchemaLocation> transitiveIncludes;
-
-        for(auto& includedLocation : includedLocations)
-          for(auto& pair : m_parseElements)
-            if(pair.first == includedLocation)
-            {
-              for(auto& referenceBase : pair.second)
-                if(auto x = std::dynamic_pointer_cast<XsdInclude>(referenceBase->getElement());
-                   std::dynamic_pointer_cast<ConcreteElement>(referenceBase) && x)
-                  transitiveIncludes.insert(x->getSchemaLocation());
-              break;
-            }
+        auto includedLocations = getIncludedLocations(pair.second);
+        auto transitiveIncludes = getTransitiveIncludes(findFirstTransitiveIncludedLocation(includedLocations, m_parseElements));
 
         includedLocations.merge(transitiveIncludes);
         for(auto& schema : getResultXsdSchemas())
@@ -268,7 +374,7 @@ void XsdParserCore::resolveInnerRefs(void)
         do
         {
           unsolvedReferenceList.remove_if([this](auto& u)
-          { return std::ranges::any_of(m_parserUnsolvedElementsMap,
+          { return std::ranges::any_of(m_parserUnsolvedElements,
                                        [u](auto u1) { return u == u1->getUnsolvedReference(); });
           });
           unsolvedReferenceListNotEmpty = !unsolvedReferenceList.empty();
@@ -299,112 +405,121 @@ void XsdParserCore::resolveInnerRefs(void)
 
 
 
-/**
+/** VERIFIED
  * Replaces a single {@link UnsolvedReference} object, with the respective {@link NamedConcreteElement} object. If
  * there isn't a {@link NamedConcreteElement} object to replace the {@link UnsolvedReference} object, information
  * is stored informing the user of this Project of the occurrence.
  * @param concreteElementsMap The map containing all named concreteElements.
  * @param unsolvedReference The unsolved reference to solve.
  */
-void XsdParserCore::replaceUnsolvedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
-                                             std::shared_ptr<UnsolvedReference> unsolvedReference,
-                                             SchemaLocation fileLocation)
+void XsdParserCore::replaceUnsolvedReference(
+    std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
+    std::shared_ptr<UnsolvedReference> unsolvedReference,
+    SchemaLocation fileLocation)
 {
   assert(unsolvedReference->getRef());
   assert(concreteElementsMap.contains(unsolvedReference->getRef().value()));
 
   std::list<std::shared_ptr<NamedConcreteElement>> concreteElements = concreteElementsMap.at(unsolvedReference->getRef().value());
 
-    if (concreteElements.empty())
-      storeUnsolvedItem(unsolvedReference);
-    else
+  if (concreteElements.empty())
+    storeUnsolvedItem(unsolvedReference);
+  else
+  {
+    auto oldElementAttributes = unsolvedReference->getElement()->getAttributesMap();
+
+    for (auto& concreteElement : concreteElements)
     {
-        auto oldElementAttributes = unsolvedReference->getElement()->getAttributesMap();
+      std::shared_ptr<NamedConcreteElement> substitutionElementWrapper;
 
-        for (auto& concreteElement : concreteElements) {
-            std::shared_ptr<NamedConcreteElement> substitutionElementWrapper;
+      if (unsolvedReference->isTypeRef())
+        substitutionElementWrapper = concreteElement;
+      else
+      {
+        std::shared_ptr<XsdNamedElements> substitutionElement =
+            std::static_pointer_cast<XsdNamedElements>(
+              concreteElement->getElement()->clone(
+                oldElementAttributes,
+                concreteElement->getElement()->getParent()));
 
-            if (unsolvedReference->isTypeRef())
-              substitutionElementWrapper = concreteElement;
-            else
-            {
-                std::shared_ptr<XsdNamedElements> substitutionElement =
-                    std::static_pointer_cast<XsdNamedElements>(
-                      concreteElement->getElement()->clone(
-                        oldElementAttributes,
-                        concreteElement->getElement()->getParent()));
+        substitutionElementWrapper =
+            std::static_pointer_cast<NamedConcreteElement>(
+              ReferenceBase::createFromXsd(
+                substitutionElement));
+      }
 
-                substitutionElementWrapper =
-                    std::static_pointer_cast<NamedConcreteElement>(
-                      ReferenceBase::createFromXsd(
-                        substitutionElement));
-            }
-
-            unsolvedReference->getParent()->replaceUnsolvedElements(substitutionElementWrapper);
-        }
-
-        assert(m_unsolvedElements.contains(fileLocation));
-        m_unsolvedElements.at(fileLocation).remove(unsolvedReference);
+      unsolvedReference->getParent()->replaceUnsolvedElements(substitutionElementWrapper);
     }
+
+    assert(m_unsolvedElements.contains(fileLocation));
+    m_unsolvedElements.at(fileLocation).remove(unsolvedReference);
+  }
 }
 
 
+/* VERIFIED
+  getUnsolvedInnerElement() replaces this code:
+  Argument 1: unsolvedReference
+  Argument 2: parserUnsolvedElementsMap
 
-/**
+  Optional<UnsolvedReferenceItem> innerEntry =
+          parserUnsolvedElementsMap.stream()
+                  .filter(unsolvedReferenceObj ->
+                          unsolvedReferenceObj.getUnsolvedReference()
+                                  .getRef()
+                                  .equals(unsolvedReference.getRef()))
+                  .findFirst();
+*/
+auto getUnsolvedInnerElement(
+    std::shared_ptr<UnsolvedReference> unsolvedReference,
+    const std::list<std::shared_ptr<UnsolvedReferenceItem>>& unsolvedElements)
+{
+  for(auto& unsolvedReferenceObj : unsolvedElements)
+    if(unsolvedReference->getRef() &&
+       unsolvedReferenceObj->getUnsolvedReference()->getRef() == unsolvedReference->getRef())
+      return unsolvedReferenceObj;
+  return std::shared_ptr<UnsolvedReferenceItem>();
+}
+
+/** VERIFIED
  * Saves an occurrence of an element which couldn't be resolved in the {@link XsdParser#replaceUnsolvedReference}
  * method, which can be accessed at the end of the parsing process in order to verify if were there were any
  * references that couldn't be solved.
  * @param unsolvedReference The unsolved reference which couldn't be resolved.
  */
-void XsdParserCore::storeUnsolvedItem(std::shared_ptr<UnsolvedReference> unsolvedReference)
+void XsdParserCore::storeUnsolvedItem(
+    std::shared_ptr<UnsolvedReference> unsolvedReference)
 {
-    if (m_parserUnsolvedElementsMap.empty())
-        m_parserUnsolvedElementsMap.push_back(create<UnsolvedReferenceItem>(unsolvedReference));
+    if (m_parserUnsolvedElements.empty())
+        m_parserUnsolvedElements.push_back(create<UnsolvedReferenceItem>(unsolvedReference));
     else
     {
-      std::shared_ptr<UnsolvedReferenceItem> innerEntry;
-
-      for(auto& unsolvedReferenceObj : m_parserUnsolvedElementsMap)
-        if(unsolvedReference->getRef() &&
-           unsolvedReferenceObj->getUnsolvedReference()->getRef() == unsolvedReference->getRef())
-        {
-          innerEntry = unsolvedReferenceObj;
-          break;
-        }
-
-      if (innerEntry)
+      if(auto innerEntry = getUnsolvedInnerElement(unsolvedReference, m_parserUnsolvedElements); innerEntry)
         innerEntry->getParents().push_back(unsolvedReference->getParent());
       else
-        m_parserUnsolvedElementsMap.push_back(create<UnsolvedReferenceItem>(unsolvedReference));
+        m_parserUnsolvedElements.push_back(create<UnsolvedReferenceItem>(unsolvedReference));
     }
 }
 
 
 
-/**
+/** VERIFIED
  * Adds an {@link UnsolvedReference} object to the {@link XsdParser#unsolvedElements} list which should be solved
  * at a later time in the parsing process.
  * @param unsolvedReference The unsolvedReference to add to the unsolvedElements list.
  */
-void XsdParserCore::addUnsolvedReference(std::shared_ptr<UnsolvedReference> unsolvedReference)
+void XsdParserCore::addUnsolvedReference(
+    std::shared_ptr<UnsolvedReference> unsolvedReference)
 {
-    std::shared_ptr<XsdSchema> schema;
-    try
-    {
-      schema = XsdAbstractElement::getXsdSchema(unsolvedReference->getElement(), {});
-    }
-    catch(ParentAvailableException& e) { }
+  std::shared_ptr<XsdSchema> schema;
+  try { schema = XsdAbstractElement::getXsdSchema(unsolvedReference->getElement(), {}); }
+  catch(ParentAvailableException& e) { }
 
-    std::list<std::shared_ptr<UnsolvedReference>> unsolved;
-    if(schema)
-    {
-      if(m_unsolvedElements.contains(schema->getFileLocation()))
-        unsolved = m_unsolvedElements.at(schema->getFileLocation());
-    }
-    else if(m_unsolvedElements.contains(m_currentFile))
-      unsolved = m_unsolvedElements.at(m_currentFile);
-
-    unsolved.push_back(unsolvedReference);
+  // Note: refactored for ease of understanding
+  if(schema)
+    m_unsolvedElements[schema->getFileLocation()].push_back(unsolvedReference);
+  else
+    m_unsolvedElements[m_currentFile].push_back(unsolvedReference);
 }
 
 
@@ -415,7 +530,7 @@ void XsdParserCore::addUnsolvedReference(std::shared_ptr<UnsolvedReference> unso
  */
 void XsdParserCore::addLocationToParse(SchemaLocation schemaLocation)
 {
-  schemaLocation.setParent(&m_currentFile);
+  schemaLocation.setParentPaths(m_currentFile);
   m_schemaLocations.insert(schemaLocation);
   auto result = m_schemaLocationsMap.emplace(schemaLocation, m_currentFile);
   if(!result.second)
