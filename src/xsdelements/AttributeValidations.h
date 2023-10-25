@@ -19,27 +19,27 @@ public:
      * @param <T> The concrete type of the {@link Enum} type.
      * @return The instance of the concrete {@link Enum} type that represents {@code value} in the respective {@link Enum}.
      */
-  template<typename T>
+  template<typename T, std::enable_if_t<std::is_base_of_v<XsdEnum, T>, bool> = true>
   static T belongsToEnum(std::string value)
   {
-        if (value.empty())
-          return {};
+    if (value.empty())
+      return {};
 
-        T enumValue;
-        for(auto& val : T::getValues())
-          enumValue = val;
+    for(const std::string_view& val : T::getValues())
+      if(val == value)
+        return T(val);
 
-        if(enumValue)
-          return enumValue;
-
-        std::string possibleValues;
-        for(auto& val : T::getValues())
-          possibleValues += val + ",  ";
-
-      throw ParsingException("The attribute " + *T::getVariableName() + " doesn't support the value \"" + value + "\".\n" +
-                                 "The possible values for the " + *T::getVariableName() + " attribute are:\n" +
-                                 possibleValues.substr(0, possibleValues.length() - 2));
+    std::string possibleValues;
+    for(auto& val : T::getValues())
+    {
+      if(!possibleValues.empty())
+        possibleValues.append(", ");
+      possibleValues.append(val);
     }
+
+    throw ParsingException("The attribute " + *T::getVariableName() + " doesn't support the value \"" + value + "\".\n" +
+                           "The possible values for the " + *T::getVariableName() + " attribute are:\n" + possibleValues);
+  }
 
     /**
      * Checks if the maxOccurs attribute is unbounded or an {@link int} value.

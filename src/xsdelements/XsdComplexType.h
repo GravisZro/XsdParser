@@ -22,6 +22,7 @@ class XsdGroup;
 class XsdAll;
 class XsdChoice;
 class XsdSequence;
+class XsdMultipleElements;
 
 /**
  * A class representing the xsd:complexType element. Extends {@link XsdNamedElements} because it's one of the
@@ -152,50 +153,59 @@ public:
 
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
-  std::shared_ptr<XsdAbstractElement> getXsdChildElement(void);
+  std::shared_ptr<XsdAbstractElement> getXsdChildElement(void) const;
 
-  std::optional<std::string> getFinal(void);
+  std::optional<std::string> getFinal(void) const;
 
-  std::list<std::shared_ptr<ReferenceBase>> getAttributes(void);
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);
-  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void);
-  std::list<std::shared_ptr<XsdAttribute>> getAllXsdAttributes(void);
+  std::list<std::shared_ptr<ReferenceBase>> getAttributes(void) const;
+  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
+  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void) const;
+  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void) const;
+  std::list<std::shared_ptr<XsdAttribute>> getAllXsdAttributes(void) const;
 
-  std::shared_ptr<XsdSimpleContent> getSimpleContent(void) {
-        return m_simpleContent;
-    }
+  std::shared_ptr<XsdSimpleContent> getSimpleContent(void) const
+  {
+    return m_simpleContent;
+  }
 
-  std::shared_ptr<XsdComplexContent> getComplexContent(void) {
-        return m_complexContent;
-    }
+  std::shared_ptr<XsdComplexContent> getComplexContent(void) const
+  {
+    return m_complexContent;
+  }
 
-  bool isMixed(void) {
-        return m_mixed;
-    }
+  bool isMixed(void) const
+  {
+    return m_mixed;
+  }
 
-  bool isElementAbstract(void) {
-        return m_elementAbstract;
-    }
+  bool isElementAbstract(void) const
+  {
+    return m_elementAbstract;
+  }
 
-  void setChildElement(std::shared_ptr<ReferenceBase> childElement) {
-        m_childElement = childElement;
-    }
+  void setChildElement(std::shared_ptr<ReferenceBase> childElement)
+  {
+    m_childElement = childElement;
+  }
 
-  void setComplexContent(std::shared_ptr<XsdComplexContent> complexContent) {
-        m_complexContent = complexContent;
-    }
+  void setComplexContent(std::shared_ptr<XsdComplexContent> complexContent)
+  {
+    m_complexContent = complexContent;
+  }
 
-  void setSimpleContent(std::shared_ptr<XsdSimpleContent> simpleContent) {
-        m_simpleContent = simpleContent;
-    }
+  void setSimpleContent(std::shared_ptr<XsdSimpleContent> simpleContent)
+  {
+    m_simpleContent = simpleContent;
+  }
 
-  std::optional<std::string> getBlock(void) {
-        return m_block.getValue();
-    }
+  std::optional<std::string> getBlock(void) const
+  {
+    return m_block;
+  }
 
-  std::shared_ptr<XsdGroup> getChildAsGroup(void);
-  std::shared_ptr<XsdAll> getChildAsAll(void);
-  std::shared_ptr<XsdChoice> getChildAsChoice(void);
-  std::shared_ptr<XsdSequence> getChildAsSequence(void);
+  std::shared_ptr<XsdMultipleElements> getChildElement(void) const;
+  std::shared_ptr<XsdAll> getChildAsAll(void) const;
+  std::shared_ptr<XsdChoice> getChildAsChoice(void) const;
+  std::shared_ptr<XsdGroup> getChildAsGroup(void) const;
+  std::shared_ptr<XsdSequence> getChildAsSequence(void) const;
 };

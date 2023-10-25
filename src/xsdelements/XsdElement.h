@@ -165,7 +165,7 @@ public:
 
   std::optional<std::string> getFinal(void)
   {
-    return m_finalObj.getValue();
+    return m_finalObj;
   }
 
   bool isNillable(void) {
@@ -193,11 +193,11 @@ public:
   }
 
   std::optional<std::string> getBlock(void) {
-    return m_block.getValue();
+    return m_block;
   }
 
   std::optional<std::string> getForm(void) {
-    return m_form.getValue();
+    return m_form;
   }
 
   std::optional<std::string> getType(void);

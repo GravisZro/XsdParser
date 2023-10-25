@@ -17,6 +17,7 @@ class XsdGroup;
 class XsdAll;
 class XsdChoice;
 class XsdSequence;
+class XsdMultipleElements;
 
 /**
  * A class representing the xsd:extension element.
@@ -72,6 +73,7 @@ public:
         m_childElement = childElement;
     }
 
+  std::shared_ptr<XsdMultipleElements> getChildElement(void) const;
   std::shared_ptr<XsdGroup> getChildAsGroup(void) const;
   std::shared_ptr<XsdAll> getChildAsAll(void) const;
   std::shared_ptr<XsdChoice> getChildAsChoice(void) const;

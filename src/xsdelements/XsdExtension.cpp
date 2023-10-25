@@ -13,7 +13,12 @@
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 #include <xsdelements/exceptions/ParsingException.h>
+
+#include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdAll.h>
+#include <xsdelements/XsdGroup.h>
+#include <xsdelements/XsdChoice.h>
+#include <xsdelements/XsdSequence.h>
 
 #include <core/XsdParserCore.h>
 
@@ -207,12 +212,19 @@ std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement()
   return nullptr;
 }
 
+std::shared_ptr<XsdMultipleElements> XsdExtension::getChildElement(void) const
+{
+  if (m_childElement)
+    return std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement());
+  return nullptr;
+}
+
 /**
  * @return The childElement as a {@link XsdGroup} object or null if childElement isn't a {@link XsdGroup} instance.
  */
 std::shared_ptr<XsdGroup> XsdExtension::getChildAsGroup(void) const
 {
-  return std::dynamic_pointer_cast<XsdGroup>(m_childElement->getElement());
+  return std::dynamic_pointer_cast<XsdGroup>(getChildElement());
 }
 
 /**
@@ -220,9 +232,7 @@ std::shared_ptr<XsdGroup> XsdExtension::getChildAsGroup(void) const
  */
 std::shared_ptr<XsdAll> XsdExtension::getChildAsAll(void) const
 {
-  if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement()))
-    return XsdMultipleElements::getChildAsAll(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
-  return nullptr;
+  return std::dynamic_pointer_cast<XsdAll>(getChildElement());
 }
 
 /**
@@ -230,9 +240,7 @@ std::shared_ptr<XsdAll> XsdExtension::getChildAsAll(void) const
  */
 std::shared_ptr<XsdChoice> XsdExtension::getChildAsChoice(void) const
 {
-  if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement()))
-    return XsdMultipleElements::getChildAsChoice(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
-  return nullptr;
+  return std::dynamic_pointer_cast<XsdChoice>(getChildElement());
 }
 
 /**
@@ -240,7 +248,5 @@ std::shared_ptr<XsdChoice> XsdExtension::getChildAsChoice(void) const
  */
 std::shared_ptr<XsdSequence> XsdExtension::getChildAsSequence(void) const
 {
-  if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement()))
-    return XsdMultipleElements::getChildAsSequence(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
-  return nullptr;
+  return std::dynamic_pointer_cast<XsdSequence>(getChildElement());
 }

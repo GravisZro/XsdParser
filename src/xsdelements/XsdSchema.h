@@ -104,20 +104,20 @@ public:
   void add(std::shared_ptr<XsdAbstractElement> element);
 
   std::optional<std::string> getAttributeFormDefault(void) const {
-        return m_attributeFormDefault.getValue();
+        return m_attributeFormDefault;
     }
 
   std::optional<std::string> getElementFormDefault(void) const {
-        return m_elementFormDefault.getValue();
+        return m_elementFormDefault;
     }
 
   std::optional<std::string> getBlockDefault(void) const {
-        return m_blockDefault.getValue();
+        return m_blockDefault;
     }
 
     
   std::optional<std::string> getFinalDefault(void) const {
-        return m_finalDefault.getValue();
+        return m_finalDefault;
     }
 
   std::optional<std::string> getTargetNamespace(void) const {

@@ -23,13 +23,13 @@ public:
   void operator =(const std::string& value) { m_value = value; }
   void operator =(const std::optional<std::string>& value) { m_value = value; }
   operator bool (void) const { return m_value.has_value(); }
+  operator std::optional<std::string>(void) const { return m_value; }
 
   void reset(void) { m_value.reset(); }
 
   /**
    * @return The concrete value of the current instance.
    */
-  std::optional<std::string> getValue(void) const { return m_value; }
 
   /**
    * @return The name of the attribute that the {@link Enum} represents.

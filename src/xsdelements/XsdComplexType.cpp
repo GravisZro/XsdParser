@@ -1,10 +1,11 @@
 #include "XsdComplexType.h"
 
-#include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdComplexContent.h>
 #include <xsdelements/XsdSimpleContent.h>
-#include <xsdelements/XsdGroup.h>
+
+#include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdAll.h>
+#include <xsdelements/XsdGroup.h>
 #include <xsdelements/XsdChoice.h>
 #include <xsdelements/XsdSequence.h>
 
@@ -68,74 +69,79 @@ void XsdComplexType::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElemen
         m_childElement = element;
 }
 
-std::shared_ptr<XsdAbstractElement> XsdComplexType::getXsdChildElement(void)
+std::shared_ptr<XsdAbstractElement> XsdComplexType::getXsdChildElement(void) const
 {
-if(m_childElement)
-  return m_childElement->getElement();
-return nullptr;
+  if(m_childElement)
+    return m_childElement->getElement();
+  return nullptr;
 }
 
-std::optional<std::string> XsdComplexType::getFinal(void) {
-    return m_elementFinal.getValue();
-}
-
-std::list<std::shared_ptr<ReferenceBase>> XsdComplexType::getAttributes(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributes();
-}
-
-std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getXsdAttributes(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getXsdAttributes();
-}
-
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getXsdAttributeGroup(void) {
-    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getXsdAttributeGroups();
-}
-
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getAllXsdAttributeGroups(void)
+std::shared_ptr<XsdMultipleElements> XsdComplexType::getChildElement(void) const
 {
-  return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllXsdAttributeGroups();
+  if(m_childElement)
+    return std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement->getElement());
+  return nullptr;
 }
-
-std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getAllXsdAttributes(void)
-{
-  return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllAttributes();
-}
-
 
 /**
  * @return The childElement as a {@link XsdGroup} object or null if childElement isn't a {@link XsdGroup} instance.
  */
-std::shared_ptr<XsdGroup> XsdComplexType::getChildAsGroup(void)
+std::shared_ptr<XsdGroup> XsdComplexType::getChildAsGroup(void) const
 {
-  return std::dynamic_pointer_cast<XsdGroup>(m_childElement->getElement());
+  return std::dynamic_pointer_cast<XsdGroup>(getChildElement());
 }
 
 /**
  * @return The childElement as a {@link XsdAll} object or null if childElement isn't a {@link XsdAll} instance.
  */
-std::shared_ptr<XsdAll> XsdComplexType::getChildAsAll(void)
+std::shared_ptr<XsdAll> XsdComplexType::getChildAsAll(void) const
 {
-  if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement))
-    return XsdMultipleElements::getChildAsAll(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
-  return nullptr;
+  return std::dynamic_pointer_cast<XsdAll>(getChildElement());
 }
 
 /**
  * @return The childElement as a {@link XsdChoice} object or null if childElement isn't a {@link XsdChoice} instance.
  */
-std::shared_ptr<XsdChoice> XsdComplexType::getChildAsChoice(void)
+std::shared_ptr<XsdChoice> XsdComplexType::getChildAsChoice(void) const
 {
-  if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement))
-    return XsdMultipleElements::getChildAsChoice(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
-  return nullptr;
+  return std::dynamic_pointer_cast<XsdChoice>(getChildElement());
 }
 
 /**
  * @return The childElement as a {@link XsdSequence} object or null if childElement isn't a {@link XsdSequence} instance.
  */
-std::shared_ptr<XsdSequence> XsdComplexType::getChildAsSequence(void)
+std::shared_ptr<XsdSequence> XsdComplexType::getChildAsSequence(void) const
 {
-  if(std::dynamic_pointer_cast<XsdMultipleElements>(m_childElement))
-    return XsdMultipleElements::getChildAsSequence(std::static_pointer_cast<XsdMultipleElements>(m_childElement->getElement()));
-  return nullptr;
+  return std::dynamic_pointer_cast<XsdSequence>(getChildElement());
 }
+
+std::optional<std::string> XsdComplexType::getFinal(void) const
+{
+    return m_elementFinal;
+}
+
+std::list<std::shared_ptr<ReferenceBase>> XsdComplexType::getAttributes(void) const
+{
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributes();
+}
+
+std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getXsdAttributes(void) const
+{
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getXsdAttributes();
+}
+
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getXsdAttributeGroup(void) const
+{
+    return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getXsdAttributeGroups();
+}
+
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdComplexType::getAllXsdAttributeGroups(void) const
+{
+  return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllXsdAttributeGroups();
+}
+
+std::list<std::shared_ptr<XsdAttribute>> XsdComplexType::getAllXsdAttributes(void) const
+{
+  return std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAllAttributes();
+}
+

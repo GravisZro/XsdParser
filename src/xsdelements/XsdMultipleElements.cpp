@@ -65,27 +65,3 @@ std::list<std::shared_ptr<XsdElement>> XsdMultipleElements::getChildrenElements(
 void XsdMultipleElements::addElement(std::shared_ptr<XsdAbstractElement> element){
     m_elements.push_back(ReferenceBase::createFromXsd(element));
 }
-
-/**
- * @param element The element containing the child to return.
- * @return The childElement as a {@link XsdAll} object or null if childElement isn't a {@link XsdAll} instance.
- */
-std::shared_ptr<XsdAll> XsdMultipleElements::getChildAsAll(std::shared_ptr<XsdMultipleElements> element) {
-    return std::dynamic_pointer_cast<XsdAll>(element);
-}
-
-/**
- * @param element The element containing the child to return.
- * @return The childElement as a {@link XsdChoice} object or null if childElement isn't a {@link XsdChoice} instance.
- */
-std::shared_ptr<XsdChoice> XsdMultipleElements::getChildAsChoice(std::shared_ptr<XsdMultipleElements> element) {
-    return std::dynamic_pointer_cast<XsdChoice>(element);
-}
-
-/**
- * @param element The element containing the child to return.
- * @return The childElement as a {@link XsdSequence} object or null if childElement isn't a {@link XsdSequence} instance.
- */
-std::shared_ptr<XsdSequence> XsdMultipleElements::getChildAsSequence(std::shared_ptr<XsdMultipleElements> element) {
-  return std::dynamic_pointer_cast<XsdSequence>(element);
-}

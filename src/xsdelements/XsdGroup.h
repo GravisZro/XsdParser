@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/exceptions/ParsingException.h>
@@ -145,37 +142,19 @@ public:
         m_childElement->setParent(shared_from_this());
     }
 
-  std::shared_ptr<XsdMultipleElements> getChildElement(void) const {
-        return m_childElement;
-    }
+  int getMinOccurs(void)
+  {
+    return m_minOccurs;
+  }
 
-    /**
-     * @return The childElement as a {@link XsdAll} object or null if childElement isn't a {@link XsdAll} instance.
-     */
-  std::shared_ptr<XsdAll> getChildAsAll(void) {
-        return XsdMultipleElements::getChildAsAll(m_childElement);
-    }
+  std::string getMaxOccurs(void)
+  {
+    return m_maxOccurs;
+  }
 
-    /**
-     * @return The childElement as a {@link XsdChoice} object or null if childElement isn't a {@link XsdChoice} instance.
-     */
-  std::shared_ptr<XsdChoice> getChildAsChoice(void) {
-        return XsdMultipleElements::getChildAsChoice(m_childElement);
-    }
+  std::shared_ptr<XsdMultipleElements> getChildElement(void) const;
 
-    /**
-     * @return The childElement as a {@link XsdSequence} object or null if childElement isn't a {@link XsdSequence} instance.
-     */
-
-  std::shared_ptr<XsdSequence> getChildAsSequence(void) {
-        return XsdMultipleElements::getChildAsSequence(m_childElement);
-    }
-
-  int getMinOccurs(void) {
-        return m_minOccurs;
-    }
-
-  std::string getMaxOccurs(void) {
-        return m_maxOccurs;
-    }
+  std::shared_ptr<XsdAll> getChildAsAll(void) const;
+  std::shared_ptr<XsdChoice> getChildAsChoice(void) const;
+  std::shared_ptr<XsdSequence> getChildAsSequence(void) const;
 };

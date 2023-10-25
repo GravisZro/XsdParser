@@ -121,11 +121,11 @@ public:
     }
 
   std::optional<std::string> getUse(void) {
-        return m_use.getValue();
+        return m_use;
     }
 
   std::optional<std::string> getForm(void) {
-        return m_form.getValue();
+        return m_form;
     }
 
   std::optional<std::string> getFixed(void) {

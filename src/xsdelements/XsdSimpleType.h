@@ -143,6 +143,6 @@ public:
     }
 
   std::optional<std::string> getFinalObj(void) {
-        return m_finalObj.getValue();
+        return m_finalObj;
     }
 };

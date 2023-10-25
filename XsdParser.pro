@@ -121,6 +121,7 @@ SOURCES += \
   src/xsdelements/XsdComplexType.cpp \
   src/xsdelements/XsdElement.cpp \
   src/xsdelements/XsdExtension.cpp \
+  src/xsdelements/XsdGroup.cpp \
   src/xsdelements/XsdImport.cpp \
   src/xsdelements/XsdInclude.cpp \
   src/xsdelements/XsdMultipleElements.cpp \

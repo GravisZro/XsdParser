@@ -63,8 +63,4 @@ public:
   std::list<std::shared_ptr<XsdElement>> getChildrenElements(void) const;
 
   void addElement(std::shared_ptr<XsdAbstractElement> element);
-
-  static std::shared_ptr<XsdAll> getChildAsAll(std::shared_ptr<XsdMultipleElements> element);
-  static std::shared_ptr<XsdChoice> getChildAsChoice(std::shared_ptr<XsdMultipleElements> element);
-  static std::shared_ptr<XsdSequence> getChildAsSequence(std::shared_ptr<XsdMultipleElements> element);
 };
