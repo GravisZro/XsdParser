@@ -44,7 +44,7 @@ private:
     std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElements;
 
 protected:
-    SchemaLocation m_currentSchemaFile;
+    SchemaLocation m_currentSchemaLocation;
 
     /**
      * A {@link Map} object that contains a parse function to each {@link XsdAbstractElement} concrete
@@ -92,7 +92,7 @@ public:
     void resolveOtherNamespaceRefs(void);
     void replaceUnsolvedImportedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
                                           std::shared_ptr<UnsolvedReference> unsolvedReference,
-                                          SchemaLocation fileLocation);
+                                          SchemaLocation schemaLocation);
     
     void resolveInnerRefs(void);
 
@@ -105,7 +105,7 @@ public:
      */
     void replaceUnsolvedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
                                   std::shared_ptr<UnsolvedReference> unsolvedReference,
-                                  SchemaLocation fileLocation);
+                                  SchemaLocation schemaLocation);
 
     /**
      * Saves an occurrence of an element which couldn't be resolved in the {@link XsdParser#replaceUnsolvedReference}
@@ -166,7 +166,7 @@ public:
 
   void addParsedElement(std::shared_ptr<ReferenceBase> wrappedElement)
   {
-    m_parseElements[m_currentSchemaFile].push_back(wrappedElement);
+    m_parseElements[m_currentSchemaLocation].push_back(wrappedElement);
   }
 
   static void updateConfig(ParserConfig config)

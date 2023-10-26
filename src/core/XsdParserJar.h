@@ -60,7 +60,7 @@ class XsdParserJar : public XsdParserCore
      */
     private void parseJarFile(std::string filePath) {
         //https://www.mkyong.com/java/how-to-read-xml-file-in-java-dom-parser/
-        m_currentSchemaFile = filePath.replace("\\", "/");
+        m_currentSchemaLocation = filePath.replace("\\", "/");
         InputStream inputStream = classLoader.getResourceAsStream(filePath);
 
         try {

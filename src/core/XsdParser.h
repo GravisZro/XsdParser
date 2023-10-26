@@ -58,12 +58,12 @@ private:
      * Parses a XSD file and all its containing XSD elements. This code iterates on the nodes and parses the supported
      * ones. The supported types are all the XSD types that have their tag present in the {@link XsdParser#parseMappers}
      * field.
-     * @param filePath The path to the XSD file.
+     * @param schemaLocation The location of the XSD file.
      */
-  void parseLocation(const SchemaLocation& fileLocation);
+  void parseLocation(const SchemaLocation& schemaLocation);
 
 
-  pugi::xml_node getSchemaNode(SchemaLocation fileLocation);
+  pugi::xml_node getSchemaNode(SchemaLocation schemaLocation);
 
 private:
   std::map<std::string, pugi::xml_document> m_documents;
