@@ -49,17 +49,24 @@ public:
     /**
      * @return All the elements received in the parsing process.
      */
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
+  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
+  {
+    return m_elements;
+  }
 
-    /**
-     * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
-     */
+  /**
+   * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
+   */
   virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
 
-    /**
-     * @return The children elements that are of the templated type.
-     */    
-  template<typename T>
+  /**
+   * @tparam {@link XsdElement}, {@link XsdChoice}, {@link XsdSequence}, or {@link XsdGroup}
+   * @return The children elements that are of the templated type.
+   */
+  template<typename T, std::enable_if_t<std::is_same_v<XsdElement , T> ||
+                                        std::is_same_v<XsdChoice  , T> ||
+                                        std::is_same_v<XsdSequence, T> ||
+                                        std::is_same_v<XsdGroup   , T>, bool> = true>
   std::list<std::shared_ptr<T>> getChildren(void) const
   {
     std::list<std::shared_ptr<T>> targets;

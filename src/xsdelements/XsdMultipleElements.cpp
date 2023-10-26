@@ -34,14 +34,6 @@ void XsdMultipleElements::replaceUnsolvedElements(std::shared_ptr<NamedConcreteE
 }
 
 /**
- * @return All the elements received in the parsing process.
- */
-std::list<std::shared_ptr<ReferenceBase>> XsdMultipleElements::getElements(void) const
-{
-    return m_elements;
-}
-
-/**
  * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
  */
 std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElements(void) const

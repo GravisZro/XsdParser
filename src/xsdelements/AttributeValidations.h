@@ -1,9 +1,10 @@
 #pragma once
 
+#include <type_traits>
+
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/enums/XsdEnum.h>
 #include <xsdelements/exceptions/ParsingException.h>
-
 
 namespace AttributeValidations
 {

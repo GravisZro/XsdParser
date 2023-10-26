@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/exceptions/ParsingException.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
@@ -151,9 +153,15 @@ public:
     return m_maxOccurs;
   }
 
-  std::shared_ptr<XsdMultipleElements> getChildElement(void) const;
+  std::shared_ptr<XsdMultipleElements> getChildElement(void) const
+  {
+    return m_childElement;
+  }
 
-  std::shared_ptr<XsdAll> getChildAsAll(void) const;
-  std::shared_ptr<XsdChoice> getChildAsChoice(void) const;
-  std::shared_ptr<XsdSequence> getChildAsSequence(void) const;
+  /**
+   * @return The childElement as the templated type object or null if childElement isn't of the templated type's instance.
+   */
+  template<typename T, std::enable_if_t<std::is_base_of_v<XsdMultipleElements, T>, bool> = true>
+  std::shared_ptr<T> getChildAs(void) const
+    { return std::dynamic_pointer_cast<T>(getChildElement()); }
 };
