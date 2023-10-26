@@ -1,13 +1,7 @@
 #pragma once
 
-
-
-
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotationChildren.h>
-
-
 
 /**
  * A class representing the xsd:documentation element. This class extends from {@link XsdAnnotationChildren} since it

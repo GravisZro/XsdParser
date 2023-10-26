@@ -1,13 +1,13 @@
 #pragma once
 
 #include <xsdelements/XsdAnnotatedElements.h>
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 
 class ReferenceBase;
 class XsdAll;
 class XsdChoice;
 class XsdSequence;
 class XsdElement;
+class NamedConcreteElement;
 
 /**
  * A class that serves as a base class to three classes that share similarities, {@link XsdAll}, {@link XsdChoice} and
@@ -57,10 +57,17 @@ public:
   virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
 
     /**
-     * @return The children elements that are of the type {@link XsdElement}.
-     */
-    
-  std::list<std::shared_ptr<XsdElement>> getChildrenElements(void) const;
+     * @return The children elements that are of the templated type.
+     */    
+  template<typename T>
+  std::list<std::shared_ptr<T>> getChildren(void) const
+  {
+    std::list<std::shared_ptr<T>> targets;
+    for(auto& element : getXsdElements())
+      if(auto x = std::dynamic_pointer_cast<T>(element); x)
+        targets.push_back(x);
+    return targets;
+  }
 
   void addElement(std::shared_ptr<XsdAbstractElement> element);
 };

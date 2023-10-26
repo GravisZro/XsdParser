@@ -1,5 +1,8 @@
 #include "XsdAttributeGroup.h"
 
+#include <xsdelements/elementswrapper/UnsolvedReference.h>
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
+
 #include <xsdelements/XsdAttribute.h>
 #include <xsdelements/XsdAttributeGroup.h>
 

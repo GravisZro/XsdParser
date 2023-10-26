@@ -3,7 +3,6 @@
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/CommonTypes.h>
 
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotatedElements.h>
 

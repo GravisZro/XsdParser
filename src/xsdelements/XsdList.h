@@ -1,8 +1,6 @@
 #pragma once
 
 #include <xsdelements/XsdSimpleType.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -75,15 +73,18 @@ public:
         return elementCopy;
     }
 
-  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) {
-        return m_simpleType;
-    }
+  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) const
+  {
+    return m_simpleType;
+  }
 
-  std::optional<std::string> getItemType(void) {
-        return m_itemType;
-    }
+  std::optional<std::string> getItemType(void) const
+  {
+    return m_itemType;
+  }
 
-  void setSimpleType(std::shared_ptr<XsdSimpleType> simpleType) {
-        m_simpleType = simpleType;
-    }
+  void setSimpleType(std::shared_ptr<XsdSimpleType> simpleType)
+  {
+    m_simpleType = simpleType;
+  }
 };

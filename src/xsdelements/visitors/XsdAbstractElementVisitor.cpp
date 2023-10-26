@@ -5,8 +5,6 @@
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 #include <core/XsdParserCore.h>
-//#include <xsdelements/XsdAbstractElement.h>
-#include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAll.h>
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/XsdAnnotationChildren.h>

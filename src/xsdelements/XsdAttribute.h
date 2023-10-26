@@ -1,23 +1,13 @@
 #pragma once
 
-
-
-/*
-#include <xsdelements/elementswrapper/ConcreteElement.h>
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
-#include <xsdelements/exceptions/ParsingException.h>
-#include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/visitors/XsdSimpleTypeVisitor.h>
-*/
-
 #include <xsdelements/enums/FormEnum.h>
 #include <xsdelements/enums/UsageEnum.h>
 #include <xsdelements/XsdNamedElements.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 
 #include <xsdelements/XsdSimpleType.h>
+
+class NamedConcreteElement;
 
 /**
  * A class representing the xsd:attribute element. It can have a ref attribute and therefore extends from
@@ -110,29 +100,34 @@ public:
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper);
 
-  void setSimpleType(std::shared_ptr<ReferenceBase> simpleType) {
-        m_simpleType = simpleType;
-    }
+  void setSimpleType(std::shared_ptr<ReferenceBase> simpleType)
+  {
+    m_simpleType = simpleType;
+  }
 
-  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void);
+  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) const;
 
-  std::optional<std::string> getType(void) {
-        return m_type;
-    }
+  std::optional<std::string> getType(void) const
+  {
+    return m_type;
+  }
 
-  std::optional<std::string> getUse(void) {
-        return m_use;
-    }
+  std::optional<std::string> getUse(void) const
+  {
+    return m_use;
+  }
 
-  std::optional<std::string> getForm(void) {
-        return m_form;
-    }
+  std::optional<std::string> getForm(void) const
+  {
+    return m_form;
+  }
 
-  std::optional<std::string> getFixed(void) {
-        return m_fixed;
-    }
+  std::optional<std::string> getFixed(void) const
+  {
+    return m_fixed;
+  }
 
-  std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void);
+  std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void) const;
 
   
 };

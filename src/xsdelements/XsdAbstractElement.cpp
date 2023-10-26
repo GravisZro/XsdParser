@@ -3,9 +3,9 @@
 #include <core/XsdParserCore.h>
 
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
+#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/NamedConcreteElement.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 #include <xsdelements/XsdSchema.h>

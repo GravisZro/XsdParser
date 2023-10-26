@@ -3,7 +3,6 @@
 #include <core/XsdParserCore.h>
 
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)

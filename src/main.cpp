@@ -28,7 +28,6 @@ void parse_children(pugi::xml_node node, const std::list<std::shared_ptr<XsdAbst
   }
 }
 
-
 int main(void)
 {
   //std::filesystem::current_path("/home/gravis/project/XsdParser");

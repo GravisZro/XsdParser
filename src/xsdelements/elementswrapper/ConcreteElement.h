@@ -7,8 +7,8 @@
 /**
  * ConcreteElement is a wrapper class for an {@link XsdAbstractElement} object which doesn't have a ref attribute.
  */
-class ConcreteElement : public ReferenceBase
+struct ConcreteElement : ReferenceBase
 {
-  public:
-    ConcreteElement(std::shared_ptr<XsdAbstractElement> element);
+    ConcreteElement(std::shared_ptr<XsdAbstractElement> element)
+      : ReferenceBase(element) { }
 };

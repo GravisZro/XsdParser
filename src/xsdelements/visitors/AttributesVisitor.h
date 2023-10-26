@@ -48,29 +48,32 @@ public:
         m_attributes = attributes;
     }
 
-  void setAttributeGroups(std::list<std::shared_ptr<ReferenceBase>> attributeGroups) {
-        m_attributeGroups = attributeGroups;
-    }
+  void setAttributeGroups(std::list<std::shared_ptr<ReferenceBase>> attributeGroups)
+  {
+    m_attributeGroups = attributeGroups;
+  }
 
     /**
      * @return All the wrapped {@link XsdAttribute} objects received by this visitor.
      */
-  std::list<std::shared_ptr<ReferenceBase>> getAttributes(void) {
-        return m_attributes;
-    }
+  std::list<std::shared_ptr<ReferenceBase>> getAttributes(void) const
+  {
+    return m_attributes;
+  }
 
     /**
      * @return All the wrapped {@link XsdAttributeGroup} objects received by this visitor.
      */
-  std::list<std::shared_ptr<ReferenceBase>> getAttributeGroups(void) {
-        return m_attributeGroups;
-    }
+  std::list<std::shared_ptr<ReferenceBase>> getAttributeGroups(void) const
+  {
+    return m_attributeGroups;
+  }
 
     /**
      * @return All the {@link XsdAttribute} objects that are fully resolved by this visitor. The {@link XsdAttribute}
      * objects wrapped in {@link UnsolvedReference} objects are not returned.
      */
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void)
+  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const
   {
     std::list<std::shared_ptr<XsdAttribute>> xsd_attrs;
     for(auto& attribute : m_attributes)
@@ -83,7 +86,7 @@ public:
      * @return All the {@link XsdAttributeGroup} objects that are fully resolved by this visitor. The
      * {@link XsdAttributeGroup} objects wrapped in {@link UnsolvedReference} objects are not returned.
      */
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void)
+  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void) const
   {
     std::list<std::shared_ptr<XsdAttributeGroup>> xsd_attrgrps;
     for(auto& attributeGroup : m_attributeGroups)
@@ -92,7 +95,7 @@ public:
     return xsd_attrgrps;
   }
 
-  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void)
+  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void) const
   {
     std::list<std::shared_ptr<XsdAttributeGroup>> allXsdAttributeGroups;
     for(auto& element : m_attributeGroups)
@@ -148,7 +151,7 @@ public:
     }
   }
 
-  std::list<std::shared_ptr<XsdAttribute>> getAllAttributes(void)
+  std::list<std::shared_ptr<XsdAttribute>> getAllAttributes(void) const
   {
     std::list<std::shared_ptr<XsdAttribute>> allAttributes = getXsdAttributes();
     for(auto& attributeGroup : getXsdAttributeGroups())

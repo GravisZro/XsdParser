@@ -1,6 +1,7 @@
 #include "XsdRestriction.h"
 
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 
 #include <xsdelements/xsdrestrictions/XsdEnumeration.h>
 #include <xsdelements/xsdrestrictions/XsdFractionDigits.h>
@@ -28,10 +29,7 @@
 #include <xsdelements/XsdSequence.h>
 #include <xsdelements/XsdGroup.h>
 
-
 #include <core/XsdParserCore.h>
-
-
 
 void XsdRestriction::initialize(void)
 {
@@ -194,13 +192,13 @@ std::shared_ptr<XsdAbstractElement> XsdRestriction::clone(StringMap placeHolderA
 
 
 
-std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void)
+std::list<std::shared_ptr<XsdAttribute>> XsdRestriction::getXsdAttributes(void) const
 {
   return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributes();
 }
 
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void)
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGroup(void) const
 {
   return std::static_pointer_cast<XsdRestrictionVisitor>(getVisitor())->getXsdAttributeGroups();
 }
@@ -209,7 +207,7 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdRestriction::getXsdAttributeGro
    * @return The {@link XsdComplexType} from which this extension extends or null if the {@link XsdParserCore} wasn't
    * able to replace the {@link UnsolvedReference} created by the base attribute value.
    */
-std::shared_ptr<XsdComplexType> XsdRestriction::getBaseAsComplexType(void)
+std::shared_ptr<XsdComplexType> XsdRestriction::getBaseAsComplexType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
     if(auto x = std::dynamic_pointer_cast<XsdComplexType>(m_base->getElement()); x)
@@ -221,7 +219,7 @@ std::shared_ptr<XsdComplexType> XsdRestriction::getBaseAsComplexType(void)
    * @return The {@link XsdSimpleType} from which this extension extends or null if the {@link XsdParserCore} wasn't
    * able to replace the {@link UnsolvedReference} created by the base attribute value.
    */
-std::shared_ptr<XsdSimpleType> XsdRestriction::getBaseAsSimpleType(void)
+std::shared_ptr<XsdSimpleType> XsdRestriction::getBaseAsSimpleType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
     if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(m_base->getElement()); x)
@@ -232,7 +230,7 @@ std::shared_ptr<XsdSimpleType> XsdRestriction::getBaseAsSimpleType(void)
   /**
    * @return The {@link XsdBuiltInDataType} from which this extension extends.
    */
-std::shared_ptr<XsdBuiltInDataType> XsdRestriction::getBaseAsBuiltInDataType(void)
+std::shared_ptr<XsdBuiltInDataType> XsdRestriction::getBaseAsBuiltInDataType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
     if(auto x = std::dynamic_pointer_cast<XsdBuiltInDataType>(m_base->getElement()); x)
@@ -241,7 +239,7 @@ std::shared_ptr<XsdBuiltInDataType> XsdRestriction::getBaseAsBuiltInDataType(voi
 }
 
 
-std::shared_ptr<XsdGroup> XsdRestriction::getGroup(void)
+std::shared_ptr<XsdGroup> XsdRestriction::getGroup(void) const
 {
   if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_group); x)
     return std::static_pointer_cast<XsdGroup>(x->getElement());

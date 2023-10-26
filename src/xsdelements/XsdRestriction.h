@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xsdelements/XsdAbstractElement.h>
+#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/XsdAnnotatedElements.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
@@ -25,6 +26,7 @@ class XsdAttributeGroup;
 class XsdComplexType;
 class XsdSimpleType;
 class XsdGroup;
+class NamedConcreteElement;
 
 /**
  * A class representing the xsd:restriction element.
@@ -132,143 +134,175 @@ public:
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);
-  std::shared_ptr<XsdComplexType> getBaseAsComplexType(void);
-  std::shared_ptr<XsdSimpleType> getBaseAsSimpleType(void);
-  std::shared_ptr<XsdBuiltInDataType> getBaseAsBuiltInDataType(void);
+  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
+  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void) const;
+  std::shared_ptr<XsdComplexType> getBaseAsComplexType(void) const;
+  std::shared_ptr<XsdSimpleType> getBaseAsSimpleType(void) const;
+  std::shared_ptr<XsdBuiltInDataType> getBaseAsBuiltInDataType(void) const;
 
-  std::optional<std::string> getBase(void) {
-        return m_baseString;
-    }
+  std::optional<std::string> getBase(void) const
+  {
+    return m_baseString;
+  }
 
-  std::list<std::shared_ptr<XsdEnumeration>> getEnumeration(void) {
-        return m_enumeration;
-    }
+  std::list<std::shared_ptr<XsdEnumeration>> getEnumeration(void) const
+  {
+    return m_enumeration;
+  }
 
-    void setEnumeration(std::list<std::shared_ptr<XsdEnumeration>> enumeration){
-        m_enumeration = enumeration;
+    void setEnumeration(std::list<std::shared_ptr<XsdEnumeration>> enumeration)
+    {
+      m_enumeration = enumeration;
     }
 
   std::shared_ptr<XsdFractionDigits> getFractionDigits(void) {
         return m_fractionDigits;
     }
 
-  void setFractionDigits(std::shared_ptr<XsdFractionDigits> fractionDigits) {
-        m_fractionDigits = fractionDigits;
-    }
+  void setFractionDigits(std::shared_ptr<XsdFractionDigits> fractionDigits)
+  {
+    m_fractionDigits = fractionDigits;
+  }
 
-  std::shared_ptr<XsdLength> getLength(void) {
-        return m_length;
-    }
+  std::shared_ptr<XsdLength> getLength(void) const
+  {
+    return m_length;
+  }
 
-  void setLength(std::shared_ptr<XsdLength> length) {
-        m_length = length;
-    }
+  void setLength(std::shared_ptr<XsdLength> length)
+  {
+    m_length = length;
+  }
 
-  std::shared_ptr<XsdMaxExclusive> getMaxExclusive(void) {
-        return m_maxExclusive;
-    }
+  std::shared_ptr<XsdMaxExclusive> getMaxExclusive(void) const
+  {
+    return m_maxExclusive;
+  }
 
-  void setMaxExclusive(std::shared_ptr<XsdMaxExclusive> maxExclusive) {
-        m_maxExclusive = maxExclusive;
-    }
+  void setMaxExclusive(std::shared_ptr<XsdMaxExclusive> maxExclusive)
+  {
+    m_maxExclusive = maxExclusive;
+  }
 
-  std::shared_ptr<XsdMaxInclusive> getMaxInclusive(void) {
-        return m_maxInclusive;
-    }
+  std::shared_ptr<XsdMaxInclusive> getMaxInclusive(void) const
+  {
+    return m_maxInclusive;
+  }
 
-  void setMaxInclusive(std::shared_ptr<XsdMaxInclusive> maxInclusive) {
-        m_maxInclusive = maxInclusive;
-    }
+  void setMaxInclusive(std::shared_ptr<XsdMaxInclusive> maxInclusive)
+  {
+    m_maxInclusive = maxInclusive;
+  }
 
-  std::shared_ptr<XsdMaxLength> getMaxLength(void) {
-        return m_maxLength;
-    }
+  std::shared_ptr<XsdMaxLength> getMaxLength(void) const
+  {
+    return m_maxLength;
+  }
 
-  void setMaxLength(std::shared_ptr<XsdMaxLength> maxLength) {
-        m_maxLength = maxLength;
-    }
+  void setMaxLength(std::shared_ptr<XsdMaxLength> maxLength)
+  {
+    m_maxLength = maxLength;
+  }
 
-  std::shared_ptr<XsdMinExclusive> getMinExclusive(void) {
-        return m_minExclusive;
-    }
+  std::shared_ptr<XsdMinExclusive> getMinExclusive(void) const
+  {
+    return m_minExclusive;
+  }
 
-  void setMinExclusive(std::shared_ptr<XsdMinExclusive> minExclusive) {
-        m_minExclusive = minExclusive;
-    }
+  void setMinExclusive(std::shared_ptr<XsdMinExclusive> minExclusive)
+  {
+    m_minExclusive = minExclusive;
+  }
 
-  std::shared_ptr<XsdMinInclusive> getMinInclusive(void) {
-        return m_minInclusive;
-    }
+  std::shared_ptr<XsdMinInclusive> getMinInclusive(void) const
+  {
+    return m_minInclusive;
+  }
 
-  void setMinInclusive(std::shared_ptr<XsdMinInclusive> minInclusive) {
-        m_minInclusive = minInclusive;
-    }
+  void setMinInclusive(std::shared_ptr<XsdMinInclusive> minInclusive)
+  {
+    m_minInclusive = minInclusive;
+  }
 
-  std::shared_ptr<XsdMinLength> getMinLength(void) {
-        return m_minLength;
-    }
+  std::shared_ptr<XsdMinLength> getMinLength(void) const
+  {
+    return m_minLength;
+  }
 
-  void setMinLength(std::shared_ptr<XsdMinLength> minLength) {
-        m_minLength = minLength;
-    }
+  void setMinLength(std::shared_ptr<XsdMinLength> minLength)
+  {
+    m_minLength = minLength;
+  }
 
-  std::shared_ptr<XsdPattern> getPattern(void) {
-        return m_pattern;
-    }
+  std::shared_ptr<XsdPattern> getPattern(void) const
+  {
+    return m_pattern;
+  }
 
-  void setPattern(std::shared_ptr<XsdPattern> pattern) {
-        m_pattern = pattern;
-    }
+  void setPattern(std::shared_ptr<XsdPattern> pattern)
+  {
+    m_pattern = pattern;
+  }
 
-  std::shared_ptr<XsdTotalDigits> getTotalDigits(void) {
-        return m_totalDigits;
-    }
+  std::shared_ptr<XsdTotalDigits> getTotalDigits(void) const
+  {
+    return m_totalDigits;
+  }
 
-  void setTotalDigits(std::shared_ptr<XsdTotalDigits> totalDigits) {
-        m_totalDigits = totalDigits;
-    }
+  void setTotalDigits(std::shared_ptr<XsdTotalDigits> totalDigits)
+  {
+    m_totalDigits = totalDigits;
+  }
 
-  std::shared_ptr<XsdWhiteSpace> getWhiteSpace(void) {
-        return m_whiteSpace;
-    }
+  std::shared_ptr<XsdWhiteSpace> getWhiteSpace(void) const
+  {
+    return m_whiteSpace;
+  }
 
-  void setWhiteSpace(std::shared_ptr<XsdWhiteSpace> whiteSpace) {
-        m_whiteSpace = whiteSpace;
-    }
+  void setWhiteSpace(std::shared_ptr<XsdWhiteSpace> whiteSpace)
+  {
+    m_whiteSpace = whiteSpace;
+  }
 
-  void add(std::shared_ptr<XsdEnumeration> enumerationMember) {
-        m_enumeration.push_back(enumerationMember);
-    }
+  void add(std::shared_ptr<XsdEnumeration> enumerationMember)
+  {
+    m_enumeration.push_back(enumerationMember);
+  }
 
-  std::shared_ptr<XsdGroup> getGroup(void);
+  std::shared_ptr<XsdGroup> getGroup(void) const;
 
-  void setGroup(std::shared_ptr<ReferenceBase> group) {
-        m_group = group;
-    }
+  void setGroup(std::shared_ptr<ReferenceBase> group)
+  {
+    m_group = group;
+  }
 
-  std::shared_ptr<XsdAll> getAll(void) {
-        return m_all;
-    }
+  std::shared_ptr<XsdAll> getAll(void) const
+  {
+    return m_all;
+  }
 
-  void setAll(std::shared_ptr<XsdAll> all) {
-        m_all = all;
-    }
+  void setAll(std::shared_ptr<XsdAll> all)
+  {
+    m_all = all;
+  }
 
-  std::shared_ptr<XsdChoice> getChoice(void) {
-        return m_choice;
-    }
+  std::shared_ptr<XsdChoice> getChoice(void) const
+  {
+    return m_choice;
+  }
 
-  void setChoice(std::shared_ptr<XsdChoice> choice) {
-        m_choice = choice;
-    }
+  void setChoice(std::shared_ptr<XsdChoice> choice)
+  {
+    m_choice = choice;
+  }
 
-  std::shared_ptr<XsdSequence> getSequence(void) {
-        return m_sequence;
-    }
+  std::shared_ptr<XsdSequence> getSequence(void) const
+  {
+    return m_sequence;
+  }
 
-  void setSequence(std::shared_ptr<XsdSequence> sequence) {
-        m_sequence = sequence;
-    }
+  void setSequence(std::shared_ptr<XsdSequence> sequence)
+  {
+    m_sequence = sequence;
+  }
 };

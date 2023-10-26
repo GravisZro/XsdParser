@@ -1,5 +1,6 @@
 #include "XsdChoice.h"
 
+#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/XsdSequence.h>
 #include <xsdelements/XsdGroup.h>
 
@@ -21,40 +22,4 @@ std::shared_ptr<XsdAbstractElement> XsdChoice::clone(StringMap placeHolderAttrib
         elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
     return elementCopy;
-}
-
-/**
- * @return The children elements that are of the type {@link XsdChoice}.
- */
-std::list<std::shared_ptr<XsdChoice>> XsdChoice::getChildrenChoices(void)
-{
-  std::list<std::shared_ptr<XsdChoice>> rvals;
-  for(auto& element : getXsdElements())
-    if(auto x = std::dynamic_pointer_cast<XsdChoice>(element); x)
-      rvals.push_back(x);
-  return rvals;
-}
-
-/**
- * @return The children elements that are of the type {@link XsdSequence}.
- */
-std::list<std::shared_ptr<XsdSequence>> XsdChoice::getChildrenSequences(void)
-{
-  std::list<std::shared_ptr<XsdSequence>> rvals;
-  for(auto& element : getXsdElements())
-    if(auto x = std::dynamic_pointer_cast<XsdSequence>(element); x)
-      rvals.push_back(x);
-  return rvals;
-}
-
-/**
- * @return The children elements that are of the type {@link XsdGroup}.
- */
-std::list<std::shared_ptr<XsdGroup>> XsdChoice::getChildrenGroups(void)
-{
-  std::list<std::shared_ptr<XsdGroup>> rvals;
-  for(auto& element : getXsdElements())
-    if(auto x = std::dynamic_pointer_cast<XsdGroup>(element); x)
-      rvals.push_back(x);
-  return rvals;
 }

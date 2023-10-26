@@ -36,24 +36,8 @@ public:
       m_value = getAttribute(VALUE_TAG);
   }
 
-    /**
-     * Compares two different objects of this type.
-     * @param o1 The first object.
-     * @param o2 The object to compare.
-     * @return True if the value of both classes is different, False if the value is equal.
-     */
-    static bool hasDifferentValue(std::shared_ptr<XsdStringRestrictions> o1, std::shared_ptr<XsdStringRestrictions> o2)
-    {
-      if (!o1 && !o2)
-        return false;
-
-      if (o1 && o2)
-        return o1->getValue() == o2->getValue();
-
-      return false;
-    }
-
-  std::optional<std::string> getValue(void) {
-        return m_value;
-    }
+  std::optional<std::string> getValue(void) const
+  {
+    return m_value;
+  }
 };

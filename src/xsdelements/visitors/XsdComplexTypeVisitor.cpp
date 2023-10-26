@@ -1,5 +1,6 @@
 #include "XsdComplexTypeVisitor.h"
 
+#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdGroup.h>
 #include <xsdelements/XsdComplexContent.h>

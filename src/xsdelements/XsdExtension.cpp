@@ -194,17 +194,17 @@ std::shared_ptr<XsdBuiltInDataType> XsdExtension::getBaseAsBuiltInDataType(void)
   return nullptr;
 }
 
-std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void)
+std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void) const
 {
   return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributes();
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void)
+std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void) const
 {
   return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributeGroups();
 }
 
-std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement()
+std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement(void) const
 {
   if (m_childElement &&
       std::dynamic_pointer_cast<UnsolvedReference>(m_childElement) == nullptr)

@@ -23,5 +23,5 @@ public:
 
   std::shared_ptr<XsdAbstractElement> getParent(void) const;
 
-  std::shared_ptr<XsdNamedElements> getElement(void);
+  std::shared_ptr<XsdNamedElements> getElement(void) const;
 };

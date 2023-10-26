@@ -4,7 +4,6 @@
 #include <core/utils/StringOperations.h>
 
 
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/enums/ComplexTypeBlockEnum.h>
 #include <xsdelements/enums/FinalEnum.h>
@@ -23,6 +22,7 @@ class XsdAll;
 class XsdChoice;
 class XsdSequence;
 class XsdMultipleElements;
+class NamedConcreteElement;
 
 /**
  * A class representing the xsd:complexType element. Extends {@link XsdNamedElements} because it's one of the

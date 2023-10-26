@@ -1,7 +1,5 @@
 #pragma once
 
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdMultipleElements.h>
 
@@ -57,15 +55,13 @@ public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
-  int getMinOccurs(void) {
-        return m_minOccurs;
-    }
+  int getMinOccurs(void) const
+  {
+    return m_minOccurs;
+  }
 
-  std::string getMaxOccurs(void) {
-        return m_maxOccurs;
-    }
-
-  std::list<std::shared_ptr<XsdChoice>> getChildrenChoices(void);
-  std::list<std::shared_ptr<XsdSequence>> getChildrenSequences(void);
-  std::list<std::shared_ptr<XsdGroup>> getChildrenGroups(void);
+  std::string getMaxOccurs(void) const
+  {
+    return m_maxOccurs;
+  }
 };

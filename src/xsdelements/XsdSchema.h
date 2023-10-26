@@ -2,7 +2,6 @@
 
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/NamespaceInfo.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/enums/BlockDefaultEnum.h>
 #include <xsdelements/enums/FinalDefaultEnum.h>
 #include <xsdelements/enums/FormEnum.h>
@@ -17,6 +16,7 @@ class XsdGroup;
 class XsdAttributeGroup;
 class XsdElement;
 class XsdAttribute;
+class ReferenceBase;
 
 class XsdSchema : public XsdAnnotatedElements
 {
@@ -103,85 +103,61 @@ public:
 
   void add(std::shared_ptr<XsdAbstractElement> element);
 
-  std::optional<std::string> getAttributeFormDefault(void) const {
-        return m_attributeFormDefault;
-    }
+  std::optional<std::string> getAttributeFormDefault(void) const
+  {
+    return m_attributeFormDefault;
+  }
 
-  std::optional<std::string> getElementFormDefault(void) const {
-        return m_elementFormDefault;
-    }
+  std::optional<std::string> getElementFormDefault(void) const
+  {
+    return m_elementFormDefault;
+  }
 
-  std::optional<std::string> getBlockDefault(void) const {
-        return m_blockDefault;
-    }
+  std::optional<std::string> getBlockDefault(void) const
+  {
+    return m_blockDefault;
+  }
 
     
-  std::optional<std::string> getFinalDefault(void) const {
-        return m_finalDefault;
-    }
+  std::optional<std::string> getFinalDefault(void) const
+  {
+    return m_finalDefault;
+  }
 
-  std::optional<std::string> getTargetNamespace(void) const {
-        return m_targetNamespace;
-    }
+  std::optional<std::string> getTargetNamespace(void) const
+  {
+    return m_targetNamespace;
+  }
 
-  std::optional<std::string> getVersion(void) const {
-        return m_version;
-    }
+  std::optional<std::string> getVersion(void) const
+  {
+    return m_version;
+  }
 
-    /**
-     * @return The children elements that are of the type {@link XsdInclude}.
-     */
-  std::list<std::shared_ptr<XsdInclude>> getChildrenIncludes(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdImport}.
-     */
-  std::list<std::shared_ptr<XsdImport>> getChildrenImports(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdAnnotation}.
-     */
-  std::list<std::shared_ptr<XsdAnnotation>> getChildrenAnnotations(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdSimpleType}.
-     */
-  std::list<std::shared_ptr<XsdSimpleType>> getChildrenSimpleTypes(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdComplexType}.
-     */
-  std::list<std::shared_ptr<XsdComplexType>> getChildrenComplexTypes(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdGroup}.
-     */
-  std::list<std::shared_ptr<XsdGroup>> getChildrenGroups(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdAttributeGroup}.
-     */
-  std::list<std::shared_ptr<XsdAttributeGroup>> getChildrenAttributeGroups(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdElement}.
-     */
-  std::list<std::shared_ptr<XsdElement>> getChildrenElements(void) const;
-
-    /**
-     * @return The children elements that are of the type {@link XsdAttribute}.
-     */
-  std::list<std::shared_ptr<XsdAttribute>> getChildrenAttributes(void) const;
+  /**
+   * @return The children elements that are of the templated type.
+   */
+  template<typename T>
+  std::list<std::shared_ptr<T>> getChildren(void) const
+  {
+    std::list<std::shared_ptr<T>> targets;
+    for(auto& element : getXsdElements())
+      if(auto x = std::dynamic_pointer_cast<T>(element); x)
+        targets.push_back(x);
+    return targets;
+  }
 
   void resolveNameSpace(std::optional<std::string> Namespace, SchemaLocation schemaLocation);
 
-  std::map<std::string, NamespaceInfo> getNamespaces(void) {
-        return m_namespaces;
-    }
+  std::map<std::string, NamespaceInfo> getNamespaces(void) const
+  {
+    return m_namespaces;
+  }
 
-  SchemaLocation getFileLocation(void) {
-        return m_fileLocation;
-    }
+  SchemaLocation getFileLocation(void) const
+  {
+    return m_fileLocation;
+  }
 
   void setFileLocation(SchemaLocation filePath)
   {

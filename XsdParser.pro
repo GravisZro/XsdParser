@@ -131,7 +131,6 @@ SOURCES += \
   src/xsdelements/XsdSequence.cpp \
   src/xsdelements/XsdSimpleType.cpp \
   src/xsdelements/XsdUnion.cpp \
-  src/xsdelements/elementswrapper/ConcreteElement.cpp \
   src/xsdelements/elementswrapper/NamedConcreteElement.cpp \
   src/xsdelements/elementswrapper/ReferenceBase.cpp \
   src/xsdelements/elementswrapper/UnsolvedReference.cpp \

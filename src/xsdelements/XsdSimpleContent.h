@@ -1,11 +1,7 @@
 #pragma once
 
-
-
-
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -65,14 +61,14 @@ public:
         return elementCopy;
     }
 
-  std::shared_ptr<XsdExtension> getXsdExtension(void)
+  std::shared_ptr<XsdExtension> getXsdExtension(void) const
   {
     if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_extension); x)
       return std::static_pointer_cast<XsdExtension>(x->getElement());
     return nullptr;
   }
 
-  std::shared_ptr<XsdRestriction> getXsdRestriction(void)
+  std::shared_ptr<XsdRestriction> getXsdRestriction(void) const
   {
     if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_restriction); x)
       return std::static_pointer_cast<XsdRestriction>(x->getElement());

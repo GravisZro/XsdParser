@@ -2,9 +2,7 @@
 
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/StringOperations.h>
-#include <core/XsdParserCore.h>
 
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/XsdAnnotatedElements.h>
 
@@ -31,17 +29,7 @@ public: // ctors
   {
   }
 public:
-  virtual void initialize(void) override
-  {
-    XsdAnnotatedElements::initialize();
-    m_schemaLocation.reset();
-    if(haveAttribute(SCHEMA_LOCATION))
-    {
-      m_schemaLocation = getAttribute(SCHEMA_LOCATION);
-      getParser()->addLocationToParse(m_schemaLocation);
-    }
-  }
-
+  virtual void initialize(void) override;
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
     {

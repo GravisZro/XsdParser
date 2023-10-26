@@ -1,7 +1,6 @@
 #pragma once
 
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/exceptions/ParsingException.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 

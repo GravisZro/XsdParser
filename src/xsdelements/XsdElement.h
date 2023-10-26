@@ -1,9 +1,7 @@
 #pragma once
 
 #include <xsdelements/elementswrapper/ConcreteElement.h>
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/enums/BlockEnum.h>
 #include <xsdelements/enums/FinalEnum.h>
 #include <xsdelements/enums/FormEnum.h>
@@ -11,10 +9,10 @@
 
 #include <xsdelements/XsdNamedElements.h>
 #include <xsdelements/XsdBuiltInDataType.h>
-#include <xsdelements/AttributeValidations.h>
 
 class XsdComplexType;
 class XsdSimpleType;
+class NamedConcreteElement;
 
 /**
  * A class representing the xsd:element element. Extends {@link XsdNamedElements} because it's one of the
@@ -151,61 +149,69 @@ public:
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
 
-  std::shared_ptr<XsdComplexType> getXsdComplexType(void);
-  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void);
+  std::shared_ptr<XsdComplexType> getXsdComplexType(void) const;
+  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) const;
 
 private:
-  std::shared_ptr<XsdComplexType> getXsdComplexTypeFromType(void);
-  std::shared_ptr<XsdSimpleType> getXsdSimpleTypeFromType(void);
+  std::shared_ptr<XsdComplexType> getXsdComplexTypeFromType(void) const;
+  std::shared_ptr<XsdSimpleType> getXsdSimpleTypeFromType(void) const;
 public:
-  std::shared_ptr<XsdNamedElements> getTypeAsXsd(void);
-  std::shared_ptr<XsdComplexType> getTypeAsComplexType(void);
-  std::shared_ptr<XsdSimpleType> getTypeAsSimpleType(void);
-  std::shared_ptr<XsdBuiltInDataType> getTypeAsBuiltInDataType(void);
+  std::shared_ptr<XsdNamedElements> getTypeAsXsd(void) const;
+  std::shared_ptr<XsdComplexType> getTypeAsComplexType(void) const;
+  std::shared_ptr<XsdSimpleType> getTypeAsSimpleType(void) const;
+  std::shared_ptr<XsdBuiltInDataType> getTypeAsBuiltInDataType(void) const;
 
-  std::optional<std::string> getFinal(void)
+  std::optional<std::string> getFinal(void) const
   {
     return m_finalObj;
   }
 
-  bool isNillable(void) {
+  bool isNillable(void) const
+  {
     return m_nillable;
   }
 
-  int getMinOccurs(void) {
+  int getMinOccurs(void) const
+  {
     return m_minOccurs;
   }
 
-  std::string getMaxOccurs(void) {
+  std::string getMaxOccurs(void) const
+  {
     return m_maxOccurs;
   }
 
-  bool isAbstractObj(void) {
+  bool isAbstractObj(void) const
+  {
     return m_abstractObj;
   }
 
-  void setComplexType(std::shared_ptr<ReferenceBase> complexType) {
+  void setComplexType(std::shared_ptr<ReferenceBase> complexType)
+  {
     m_complexType = complexType;
   }
 
-  void setSimpleType(std::shared_ptr<ReferenceBase> simpleType) {
+  void setSimpleType(std::shared_ptr<ReferenceBase> simpleType)
+  {
     m_simpleType = simpleType;
   }
 
-  std::optional<std::string> getBlock(void) {
+  std::optional<std::string> getBlock(void) const
+  {
     return m_block;
   }
 
-  std::optional<std::string> getForm(void) {
+  std::optional<std::string> getForm(void) const
+  {
     return m_form;
   }
 
-  std::optional<std::string> getType(void);
+  std::optional<std::string> getType(void) const;
 
-  std::shared_ptr<ReferenceBase> getSubstitutionGroup(void)
+  std::shared_ptr<ReferenceBase> getSubstitutionGroup(void) const
   {
     return m_substitutionGroup;
   }
 
-  std::shared_ptr<XsdElement> getXsdSubstitutionGroup(void);
+  std::shared_ptr<XsdElement> getXsdSubstitutionGroup(void) const;
 };

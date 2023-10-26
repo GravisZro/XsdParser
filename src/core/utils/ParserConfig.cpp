@@ -1,6 +1,6 @@
 #include "ParserConfig.h"
 
-#include <xsdelements/AttributeValidations.h>
+#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdAll.h>
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -69,7 +69,7 @@
 #include <core/utils/SchemaLocation.h>
 #include <core/utils/ParserConfig.h>
 
-const std::map<std::string, std::string> ParserConfig::getXsdTypesToCpp(void)
+const std::map<std::string, std::string> ParserConfig::getXsdTypesToCpp(void) const
 {
   std::map<std::string, std::string> xsdTypesToCpp;
 
@@ -189,7 +189,7 @@ static std::shared_ptr<ReferenceBase> schemaParser(std::shared_ptr<XsdParserCore
   auto xsdSchemaRef = genericParser<XsdSchema>(parserInstance, node, visitorFunction, parent);
   auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
 
-  std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildrenImports();
+  std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildren<XsdImport>();
 
   std::map<std::string, SchemaLocation> prefixLocations;
   for(auto& nspair : xsdSchema->getNamespaces())
@@ -242,7 +242,7 @@ static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mappe
   { addGenericEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, XsdAnnotatedElementsVisitorWrapper<T>> }); }
 #endif
 
-const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void)
+const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void) const
 {
   std::map<std::string_view, ConfigEntryData> mappers;
 

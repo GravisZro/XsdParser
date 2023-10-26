@@ -1,7 +1,5 @@
 #pragma once
 
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/enums/SimpleTypeFinalEnum.h>
 #include <xsdelements/exceptions/ParsingException.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
@@ -86,17 +84,17 @@ public:
      */
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
-  
+  std::shared_ptr<XsdRestriction> getRestriction(void) const
+  {
+    return m_restriction;
+  }
 
-  std::shared_ptr<XsdRestriction> getRestriction(void) {
-        return m_restriction;
-    }
+  std::shared_ptr<XsdUnion> getUnion(void) const
+  {
+    return m_xsd_union;
+  }
 
-  std::shared_ptr<XsdUnion> getUnion(void) {
-        return m_xsd_union;
-    }
-
-  std::shared_ptr<XsdList> getList(void);
+  std::shared_ptr<XsdList> getList(void) const;
 
     /**
      * This method obtains all the restrictions for the current {@link XsdSimpleType} element. It also joins multiple
@@ -104,45 +102,26 @@ public:
      * In case of restriction overlap an exception is thrown because the information on the xsd file is contradictory.
      * @return A xsd_list of restrictions.
      */
-  std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void);
+  std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void) const;
 
-private:
-    /**
-     * Joins two distinct {@link XsdRestriction} instances. This method assumes that the information of both
-     * {@link XsdRestriction} objects don't have overlapping or contradictory information.
-     * @param existing The existing restriction.
-     * @param newRestriction The new restriction.
-     */
-    void updateExistingRestriction(std::shared_ptr<XsdRestriction> existing, std::shared_ptr<XsdRestriction> newRestriction);
-
-    /**
-     * Updates the existing {@link XsdRestriction} with the restrictions of the new {@link XsdRestriction} instance.
-     * @param existing The existing {@link XsdRestriction} instance.
-     * @param newRestriction The new {@link XsdRestriction} instance.
-     */
-    void updateExistingRestrictionEnumerations(std::shared_ptr<XsdRestriction> existing, std::shared_ptr<XsdRestriction> newRestriction);
-
-    /**
-     * Checks for any restriction overlap between two different {@link XsdRestriction} instances.
-     * @param existing The existing restriction.
-     * @param newRestriction The second restriction found.
-     * @return True if an overlap between the restrictions occur, false if it doesn't occur.
-     */
-    bool existsRestrictionOverlap(std::shared_ptr<XsdRestriction> existing, std::shared_ptr<XsdRestriction> newRestriction);
 public:
-  void setList(std::shared_ptr<XsdList> xsd_list) {
-        m_xsd_list = xsd_list;
-    }
+  void setList(std::shared_ptr<XsdList> xsd_list)
+  {
+    m_xsd_list = xsd_list;
+  }
 
-  void setUnion(std::shared_ptr<XsdUnion> xsd_union) {
-        m_xsd_union = xsd_union;
-    }
+  void setUnion(std::shared_ptr<XsdUnion> xsd_union)
+  {
+    m_xsd_union = xsd_union;
+  }
 
-  void setRestriction(std::shared_ptr<XsdRestriction> restriction) {
-        m_restriction = restriction;
-    }
+  void setRestriction(std::shared_ptr<XsdRestriction> restriction)
+  {
+    m_restriction = restriction;
+  }
 
-  std::optional<std::string> getFinalObj(void) {
-        return m_finalObj;
-    }
+  std::optional<std::string> getFinalObj(void) const
+  {
+    return m_finalObj;
+  }
 };

@@ -121,7 +121,7 @@ public:
      * @return The {@link List} of {@link UnsolvedReferenceItem} that represent all the objects with a reference that couldn't
      * be solved.
      */
-  std::list<std::shared_ptr<UnsolvedReferenceItem>> getUnsolvedReferences(void)
+  std::list<std::shared_ptr<UnsolvedReferenceItem>> getUnsolvedReferences(void) const
   {
     return m_parserUnsolvedElements;
   }

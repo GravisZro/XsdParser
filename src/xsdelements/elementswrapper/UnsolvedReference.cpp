@@ -24,7 +24,7 @@ std::shared_ptr<XsdAbstractElement> UnsolvedReference::getParent(void) const
   return m_element->getParent();
 }
 
-std::shared_ptr<XsdNamedElements> UnsolvedReference::getElement(void)
+std::shared_ptr<XsdNamedElements> UnsolvedReference::getElement(void) const
 {
   return std::static_pointer_cast<XsdNamedElements>(m_element);
 }

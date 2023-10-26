@@ -9,8 +9,8 @@
 #include <xsdelements/XsdChoice.h>
 #include <xsdelements/XsdSequence.h>
 
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/visitors/XsdComplexTypeVisitor.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 /**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace

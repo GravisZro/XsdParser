@@ -1,7 +1,5 @@
 #pragma once
 
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>
 
 struct XsdAbstractElementVisitor;

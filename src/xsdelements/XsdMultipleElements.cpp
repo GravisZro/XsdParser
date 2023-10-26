@@ -1,5 +1,8 @@
 #include "XsdMultipleElements.h"
 
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
+#include <xsdelements/elementswrapper/ReferenceBase.h>
+#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdGroup.h>
@@ -50,18 +53,7 @@ std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElemen
   return rval;
 }
 
-/**
- * @return The children elements that are of the type {@link XsdElement}.
- */
-std::list<std::shared_ptr<XsdElement>> XsdMultipleElements::getChildrenElements(void) const
+void XsdMultipleElements::addElement(std::shared_ptr<XsdAbstractElement> element)
 {
-  std::list<std::shared_ptr<XsdElement>> rval;
-  for(auto& element : getXsdElements())
-    if(auto x = std::dynamic_pointer_cast<XsdElement>(element); x)
-      rval.push_back(x);
-  return rval;
-}
-
-void XsdMultipleElements::addElement(std::shared_ptr<XsdAbstractElement> element){
     m_elements.push_back(ReferenceBase::createFromXsd(element));
 }

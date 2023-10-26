@@ -1,7 +1,5 @@
 #include "XsdUnion.h"
 
-#include <ranges>
-
 /**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
  * {@link UnsolvedReference} objects in the reference solving process.
@@ -30,10 +28,14 @@ std::shared_ptr<XsdAbstractElement> XsdUnion::clone(StringMap placeHolderAttribu
 
 std::list<std::string> XsdUnion::getMemberTypesList(void)
 {
-  std::list<std::string> rval; // TODO
-  for(auto val : std::ranges::views::split(m_memberTypes, " "))
-    rval.push_back(val.data());
-  rval.unique();
-  rval.remove_if([](const std::string& val){ return val.empty(); });
+  std::list<std::string> rval;
+  std::size_t new_pos = 0, pos = 0;
+  do
+  {
+    new_pos = m_memberTypes.find(' ', pos);
+    std::string str = m_memberTypes.substr(pos, new_pos - pos);
+    if(!str.empty())
+      rval.push_back(str);
+  } while(pos = new_pos + 1, pos);
   return rval;
 }

@@ -2,7 +2,6 @@
 
 #include <xsdelements/elementswrapper/ConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
@@ -62,19 +61,22 @@ public:
 
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
-  bool isMixed(void) {
-        return m_mixed;
-    }
+  bool isMixed(void) const
+  {
+    return m_mixed;
+  }
 
-  std::shared_ptr<XsdExtension> getXsdExtension(void);
-  std::shared_ptr<XsdRestriction> getXsdRestriction(void);
+  std::shared_ptr<XsdExtension> getXsdExtension(void) const;
+  std::shared_ptr<XsdRestriction> getXsdRestriction(void) const;
 
 
-  void setExtension(std::shared_ptr<ReferenceBase> extension) {
-        m_extension = extension;
-    }
+  void setExtension(std::shared_ptr<ReferenceBase> extension)
+  {
+    m_extension = extension;
+  }
 
-  void setRestriction(std::shared_ptr<ReferenceBase> restriction) {
-        m_restriction = restriction;
-    }
+  void setRestriction(std::shared_ptr<ReferenceBase> restriction)
+  {
+    m_restriction = restriction;
+  }
 };

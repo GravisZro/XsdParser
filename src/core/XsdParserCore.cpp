@@ -46,7 +46,7 @@ std::list<std::shared_ptr<XsdElement>> XsdParserCore::getResultChildrenElements(
 {
   std::list<std::shared_ptr<XsdElement>> rval;
   for(auto& schema : getResultXsdSchemas())
-    for(auto& element : schema->getChildrenElements())
+    for(auto& element : schema->getChildren<XsdElement>())
       rval.push_back(element);
   return rval;
 }
@@ -156,7 +156,7 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
 {
   for(auto& schema : getResultXsdSchemas())
   {
-    for(const auto& xsdImport : schema->getChildrenImports())
+    for(const auto& xsdImport : schema->getChildren<XsdImport>())
       schema->resolveNameSpace(xsdImport->getNamespace(), xsdImport->getSchemaLocation());
 
     for(const auto& pair : schema->getNamespaces())
@@ -327,7 +327,7 @@ void XsdParserCore::resolveInnerRefs(void)
 
         includedLocations.merge(transitiveIncludes);
         for(auto& schema : getResultXsdSchemas())
-          if(std::ranges::any_of(schema->getChildrenIncludes(),
+          if(std::ranges::any_of(schema->getChildren<XsdInclude>(),
                                  [fileLocation](auto& xsdInclude) -> bool { return xsdInclude->getSchemaLocation() == fileLocation; }))
             includedLocations.insert(schema->getFileLocation());
 

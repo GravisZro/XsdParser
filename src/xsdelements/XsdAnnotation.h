@@ -42,9 +42,15 @@ public:
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
 
-  std::list<std::shared_ptr<XsdAppInfo>>& getAppInfoList(void);
+  const std::list<std::shared_ptr<XsdAppInfo>>& getAppInfoList(void) const
+  {
+    return m_appInfoList;
+  }
 
-  std::list<std::shared_ptr<XsdDocumentation>>& getDocumentations(void);
+  const std::list<std::shared_ptr<XsdDocumentation>>& getDocumentations(void) const
+  {
+    return m_documentations;
+  }
 
   void add(std::shared_ptr<XsdAnnotationChildren> element);
   

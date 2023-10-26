@@ -6,6 +6,7 @@
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdSimpleType.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 #include <xsdelements/visitors/XsdSimpleTypeVisitor.h>
 
@@ -126,14 +127,14 @@ void XsdAttribute::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
     }
 }
 
-std::shared_ptr<XsdSimpleType> XsdAttribute::getXsdSimpleType(void)
+std::shared_ptr<XsdSimpleType> XsdAttribute::getXsdSimpleType(void) const
 {
 if (std::dynamic_pointer_cast<ConcreteElement>(m_simpleType))
   return std::dynamic_pointer_cast<XsdSimpleType>(m_simpleType->getElement());
 return nullptr;
 }
 
-std::list<std::shared_ptr<XsdRestriction>> XsdAttribute::getAllRestrictions(void)
+std::list<std::shared_ptr<XsdRestriction>> XsdAttribute::getAllRestrictions(void) const
 {
   auto simpleTypeObj = getXsdSimpleType();
   if (simpleTypeObj)

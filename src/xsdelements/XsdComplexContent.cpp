@@ -25,14 +25,14 @@ std::shared_ptr<XsdAbstractElement> XsdComplexContent::clone(StringMap placeHold
     return elementCopy;
 }
 
-std::shared_ptr<XsdExtension> XsdComplexContent::getXsdExtension(void)
+std::shared_ptr<XsdExtension> XsdComplexContent::getXsdExtension(void) const
 {
 if(auto e = std::dynamic_pointer_cast<ConcreteElement>(m_extension))
   return std::static_pointer_cast<XsdExtension>(e->getElement());
 return nullptr;
 }
 
-std::shared_ptr<XsdRestriction> XsdComplexContent::getXsdRestriction(void)
+std::shared_ptr<XsdRestriction> XsdComplexContent::getXsdRestriction(void) const
 {
 if(auto r = std::dynamic_pointer_cast<ConcreteElement>(m_restriction))
   return std::static_pointer_cast<XsdRestriction>(r->getElement());

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/AttributesVisitor.h>
 #include <xsdelements/XsdComplexType.h>
 

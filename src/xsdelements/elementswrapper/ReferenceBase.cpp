@@ -7,15 +7,6 @@
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/XsdAbstractElement.h>
 
-
-ReferenceBase::ReferenceBase(std::shared_ptr<XsdAbstractElement> element)
-{
-    m_element = element;
-}
-
-std::shared_ptr<XsdAbstractElement> ReferenceBase::getElement(void)
-{ return m_element; }
-
 /**
  * This method creates a ReferenceBase object that serves as a wrapper to {@link XsdAbstractElement} objects.
  * If a {@link XsdAbstractElement} has a ref attribute it results in a {@link UnsolvedReference} object. If it

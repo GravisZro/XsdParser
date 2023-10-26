@@ -11,11 +11,13 @@ class ReferenceBase
 public:
   std::shared_ptr<XsdAbstractElement> m_element;
 public: // ctors
-    ReferenceBase(std::shared_ptr<XsdAbstractElement> element);
+    ReferenceBase(std::shared_ptr<XsdAbstractElement> element)
+      : m_element(element) { }
+
     virtual ~ReferenceBase(void) = default;
     virtual void initialize(void) { }
 
-  std::shared_ptr<XsdAbstractElement> getElement(void);
+  std::shared_ptr<XsdAbstractElement> getElement(void) const { return m_element; }
 
     /**
      * This method creates a ReferenceBase object that serves as a wrapper to {@link XsdAbstractElement} objects.
@@ -35,6 +37,5 @@ public: // ctors
 
 private:
   static std::optional<std::string> getName(std::shared_ptr<XsdAbstractElement> element);
-
   static std::optional<std::string> getNodeValue(std::shared_ptr<XsdAbstractElement> element, std::string nodeName);
 };

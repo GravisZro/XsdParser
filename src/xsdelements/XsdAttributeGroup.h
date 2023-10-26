@@ -1,13 +1,12 @@
 #pragma once
 
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
-#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 
 #include <xsdelements/XsdNamedElements.h>
 
 class XsdAttribute;
+class NamedConcreteElement;
 
 /**
  * A class is representing xsd:attributeGroup elements. It can have a ref attribute and therefore extends from

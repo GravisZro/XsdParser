@@ -1,8 +1,10 @@
 #include "XsdElement.h"
 
 #include <core/XsdParserCore.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
+
+#include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdElement.h>
 #include <xsdelements/XsdSchema.h>
 
@@ -233,14 +235,14 @@ void XsdElement::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> e
     }
 }
 
-std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexType(void)
+std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexType(void) const
 {
   if(!m_complexType || std::dynamic_pointer_cast<UnsolvedReference>(m_complexType))
     return getXsdComplexTypeFromType();
   return std::static_pointer_cast<XsdComplexType>(m_complexType->getElement());
 }
 
-std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleType(void)
+std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleType(void) const
 {
   if(!m_simpleType || std::dynamic_pointer_cast<UnsolvedReference>(m_simpleType))
     return getXsdSimpleTypeFromType();
@@ -249,7 +251,7 @@ std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleType(void)
 
 
 
-std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexTypeFromType(void)
+std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexTypeFromType(void) const
 {
   if (std::dynamic_pointer_cast<ConcreteElement>(m_type))
     if(auto x = std::dynamic_pointer_cast<XsdComplexType>(m_type->getElement()); x)
@@ -257,7 +259,7 @@ std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexTypeFromType(void)
   return nullptr;
 }
 
-std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleTypeFromType(void)
+std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleTypeFromType(void) const
 {
   if (std::dynamic_pointer_cast<ConcreteElement>(m_type))
     if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(m_type->getElement()); x)
@@ -265,14 +267,14 @@ std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleTypeFromType(void)
   return nullptr;
 }
 
-std::shared_ptr<XsdNamedElements> XsdElement::getTypeAsXsd(void)
+std::shared_ptr<XsdNamedElements> XsdElement::getTypeAsXsd(void) const
 {
   if (auto x = std::dynamic_pointer_cast<NamedConcreteElement>(m_type); x)
     return x->getElement();
   return nullptr;
 }
 
-std::shared_ptr<XsdComplexType> XsdElement::getTypeAsComplexType(void)
+std::shared_ptr<XsdComplexType> XsdElement::getTypeAsComplexType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_type))
     if(auto x = std::dynamic_pointer_cast<XsdComplexType>(m_type->getElement()); x)
@@ -280,7 +282,7 @@ std::shared_ptr<XsdComplexType> XsdElement::getTypeAsComplexType(void)
   return nullptr;
 }
 
-std::shared_ptr<XsdSimpleType> XsdElement::getTypeAsSimpleType(void)
+std::shared_ptr<XsdSimpleType> XsdElement::getTypeAsSimpleType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_type))
     if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(m_type->getElement()); x)
@@ -288,7 +290,7 @@ std::shared_ptr<XsdSimpleType> XsdElement::getTypeAsSimpleType(void)
   return nullptr;
 }
 
-std::shared_ptr<XsdBuiltInDataType> XsdElement::getTypeAsBuiltInDataType(void)
+std::shared_ptr<XsdBuiltInDataType> XsdElement::getTypeAsBuiltInDataType(void) const
 {
   if (std::dynamic_pointer_cast<NamedConcreteElement>(m_type))
     if(auto x = std::dynamic_pointer_cast<XsdBuiltInDataType>(m_type->getElement()); x)
@@ -296,9 +298,7 @@ std::shared_ptr<XsdBuiltInDataType> XsdElement::getTypeAsBuiltInDataType(void)
   return nullptr;
 }
 
-
-
-std::optional<std::string> XsdElement::getType(void)
+std::optional<std::string> XsdElement::getType(void) const
 {
   if (auto x = std::dynamic_pointer_cast<NamedConcreteElement>(m_type); x)
     return x->getName();
@@ -307,7 +307,7 @@ std::optional<std::string> XsdElement::getType(void)
   return std::nullopt;
 }
 
-std::shared_ptr<XsdElement> XsdElement::getXsdSubstitutionGroup(void)
+std::shared_ptr<XsdElement> XsdElement::getXsdSubstitutionGroup(void) const
 {
   if (std::dynamic_pointer_cast<ConcreteElement>(m_substitutionGroup))
     if(auto x = std::dynamic_pointer_cast<XsdElement>(m_substitutionGroup->getElement()); x)

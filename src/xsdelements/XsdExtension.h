@@ -18,6 +18,7 @@ class XsdAll;
 class XsdChoice;
 class XsdSequence;
 class XsdMultipleElements;
+class NamedConcreteElement;
 
 /**
  * A class representing the xsd:extension element.
@@ -65,13 +66,14 @@ public:
 
   
 
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void);
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void);
-  std::shared_ptr<XsdAbstractElement> getXsdChildElement();
+  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
+  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void) const;
+  std::shared_ptr<XsdAbstractElement> getXsdChildElement(void) const;
 
-  void setChildElement(std::shared_ptr<ReferenceBase> childElement) {
-        m_childElement = childElement;
-    }
+  void setChildElement(std::shared_ptr<ReferenceBase> childElement)
+  {
+    m_childElement = childElement;
+  }
 
   std::shared_ptr<XsdMultipleElements> getChildElement(void) const;
   std::shared_ptr<XsdGroup> getChildAsGroup(void) const;

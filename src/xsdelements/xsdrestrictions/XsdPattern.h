@@ -1,11 +1,6 @@
 #pragma once
 
-
-
-
 #include <xsdelements/XsdAbstractElement.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
 #include <xsdelements/xsdrestrictions/XsdStringRestrictions.h>

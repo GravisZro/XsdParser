@@ -4,7 +4,6 @@
 #include <pugixml.hpp>
 
 #include <core/utils/ConfigEntryData.h>
-
 #include <xsdelements/exceptions/ParentAvailableException.h>
 #include <xsdelements/exceptions/ParsingException.h>
 
@@ -14,6 +13,7 @@ struct XsdAbstractElementVisitor;
 class XsdSchema;
 class NamedConcreteElement;
 class UnsolvedReference;
+class ReferenceBase;
 
 /**
  * This class serves as a base to every element class, i.e. {@link XsdElement}, {@link XsdAttribute}, etc.

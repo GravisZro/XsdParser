@@ -1,13 +1,8 @@
 #pragma once
 
-
-
-
 #include <xsdelements/AttributeValidations.h>
 #include <xsdelements/XsdAbstractElement.h>
 #include <xsdelements/XsdAnnotatedElements.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
-#include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/enums/WhiteSpaceEnum.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
 
@@ -63,18 +58,13 @@ public:
                                      nullptr);
     }
 
-  bool isFixed(void) {
-        return m_fixed;
-    }
-
-  WhiteSpaceEnum getValue(void) {
-        return m_value;
-    }
-
-  static bool hasDifferentValue(std::shared_ptr<XsdWhiteSpace> o1, std::shared_ptr<XsdWhiteSpace> o2)
+  bool isFixed(void) const
   {
-    if (o1 && o2)
-      return o1->getValue() == o2->getValue();
-    return false;
+    return m_fixed;
+  }
+
+  WhiteSpaceEnum getValue(void) const
+  {
+    return m_value;
   }
 };
