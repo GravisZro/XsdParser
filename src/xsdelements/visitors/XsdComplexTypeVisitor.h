@@ -1,7 +1,12 @@
 #pragma once
 
-#include <xsdelements/visitors/AttributesVisitor.h>
+#include <xsdelements/elementswrapper/ReferenceBase.h>
+#include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdComplexType.h>
+
+#include <xsdelements/visitors/AttributesVisitor.h>
+
+class XsdComplexType;
 
 /**
  * Represents the restrictions of the {@link XsdComplexType} element, which can contain the following children:
@@ -25,5 +30,18 @@ struct XsdComplexTypeVisitor : AttributesVisitor
   virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
     { return std::static_pointer_cast<XsdAbstractElement>(owner); }
 
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override;
+  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  {
+    XsdNamedElementsVisitor::visit(element);
+    AttributesVisitor::visit(element);
+
+    if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
+       std::dynamic_pointer_cast<XsdGroup>(element))
+      owner->setChildElement(ReferenceBase::createFromXsd(element));
+    else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
+      owner->setComplexContent(std::static_pointer_cast<XsdComplexContent>(element));
+    else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
+      owner->setSimpleContent(std::static_pointer_cast<XsdSimpleContent>(element));
+  }
+
 };

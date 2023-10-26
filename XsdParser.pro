@@ -130,14 +130,8 @@ SOURCES += \
   src/xsdelements/XsdSequence.cpp \
   src/xsdelements/XsdSimpleType.cpp \
   src/xsdelements/XsdUnion.cpp \
-  src/xsdelements/elementswrapper/NamedConcreteElement.cpp \
   src/xsdelements/elementswrapper/ReferenceBase.cpp \
-  src/xsdelements/elementswrapper/UnsolvedReference.cpp \
-  src/xsdelements/visitors/XsdAbstractElementVisitor.cpp \
-  src/xsdelements/visitors/XsdComplexTypeVisitor.cpp \
-  src/xsdelements/visitors/XsdNamedElementsVisitor.cpp \
   src/xsdelements/visitors/XsdRestrictionVisitor.cpp \
   src/xsdelements/visitors/XsdSchemaVisitor.cpp \
-  src/xsdelements/visitors/XsdSimpleTypeVisitor.cpp \
   src/xsdelements/xsdrestrictions/XsdEnumeration.cpp
 

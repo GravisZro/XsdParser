@@ -67,7 +67,9 @@ void XsdRestriction::initialize(void)
                                               attributes,
                                               nullptr,
                                               shared_from_this())));
-    } else {
+    }
+    else
+    {
       auto parseMappers = XsdParserCore::getParseMappers();
 
       ConfigEntryData config;
