@@ -54,6 +54,15 @@ std::list<std::shared_ptr<XsdElement>> XsdParserCore::getResultChildrenElements(
 /**
  * @return A {@link List} of all the {@link XsdSchema} elements parsed by this class. You can use the {@link XsdSchema}
  * instances to navigate through the whole element tree.
+ *
+ * @oldcode (Java)
+ *         return parseElements
+ *                .values()
+ *                .stream()
+ *                .flatMap(List::stream)
+ *                .filter(element -> element.getElement() instanceof XsdSchema)
+ *                .map(element -> (XsdSchema) element.getElement());
+ * @note VERIFIED
  */
 std::list<std::shared_ptr<XsdSchema>> XsdParserCore::getResultXsdSchemas(void)
 {
@@ -166,7 +175,7 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
       schema->resolveNameSpace(xsdImport->getNamespace(), xsdImport->getSchemaLocation());
 
     for(const auto& pair : schema->getNamespaces())
-      schema->resolveNameSpace(pair.first, schema->getFileLocation());
+      schema->resolveNameSpace(pair.first, schema->getSchemaLocation());
   }
 
   for(auto& pair : m_parseElements)
@@ -253,47 +262,49 @@ void XsdParserCore::replaceUnsolvedImportedReference(
 
 
 /**
- * @fn getIncludedLocations
- * @param fileLocationElements Java: parseElements.get(fileName)
+ * @fn getTransitiveIncludes
+ * @param references Java: parseElements.get(fileName)
  * @oldcode (Java)
- * List<String> includedFiles =
- *          parseElements.get(fileName)
- *                  .stream()
- *                  .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
- *                  .map(referenceBase -> (((XsdInclude) referenceBase.getElement()).getSchemaLocation()))
- *                  .collect(Collectors.toList());
+ *  parseElements.get(fileName)
+ *          .stream()
+ *          .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
+ *          .map(referenceBase -> ( ((XsdInclude) referenceBase.getElement()) .getSchemaLocation())
  * @note VERIFIED
  */
-auto getIncludedLocations(const std::list<std::shared_ptr<ReferenceBase>>& fileLocationElements)
+auto getIncludedSchemaLocations(const std::list<std::shared_ptr<ReferenceBase>>& references)
 {
   std::set<SchemaLocation> includedLocations;
-  for(auto& referenceBase : fileLocationElements)
+  for(auto& referenceBase : references)
     if(auto x = std::dynamic_pointer_cast<XsdInclude>(referenceBase->getElement());
        std::dynamic_pointer_cast<ConcreteElement>(referenceBase) && x)
       includedLocations.insert(x->getSchemaLocation());
   return includedLocations;
 }
 
-
 /**
- * @fn getTransitiveIncludes
- * @param locations Java: parseElements.get(fullIncludedFileName)
+ * @fn getIncludedLocations
+ * @param fileLocation Java: fileName
+ * @param allSchemas Java: getResultXsdSchemas()
  * @oldcode (Java)
- *  parseElements.get(fullIncludedFileName)
- *          .stream()
- *          .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
- *          .map(referenceBase -> ( ((XsdInclude) referenceBase.getElement()) .getSchemaLocation())
- * @note VERIFIED
+ * getResultXsdSchemas()
+ *     .filter(schema -> schema.getChildrenIncludes()
+ *             .anyMatch(xsdInclude -> xsdInclude.getSchemaLocation().equals(fileName))
+ *             )
+ *     .map(XsdSchema::getFilePath)
+ *     .distinct()
+ *     .collect(Collectors.toList())
  */
-
-auto getTransitiveIncludes(const std::list<std::shared_ptr<ReferenceBase>>& locations)
+auto getSchemaIncludedLocations(
+    const SchemaLocation& fileLocation,
+    std::list<std::shared_ptr<XsdSchema>> allSchemas)
 {
-  std::set<SchemaLocation> transitiveIncludes;
-  for(auto& referenceBase : locations)
-    if(auto x = std::dynamic_pointer_cast<XsdInclude>(referenceBase->getElement());
-       std::dynamic_pointer_cast<ConcreteElement>(referenceBase) && x)
-      transitiveIncludes.insert(x->getSchemaLocation());
-  return transitiveIncludes;
+
+  std::set<SchemaLocation> includedLocations;
+  for(auto& schema : allSchemas)
+    if(std::ranges::any_of(schema->getChildren<XsdInclude>(),
+                           [fileLocation](auto& xsdInclude) -> bool { return xsdInclude->getSchemaLocation() == fileLocation; }))
+      includedLocations.insert(schema->getSchemaLocation());
+  return includedLocations;
 }
 
 /**
@@ -320,6 +331,10 @@ auto findFirstTransitiveIncludedLocation(
 }
 
 
+
+/**
+ * @fn resolveInnerRefs
+ */
 void XsdParserCore::resolveInnerRefs(void)
 {
   std::map<SchemaLocation, bool> doneList;
@@ -334,14 +349,10 @@ void XsdParserCore::resolveInnerRefs(void)
       auto& fileLocation = pair.first;
       if (!doneList.at(fileLocation))
       {
-        auto includedLocations = getIncludedLocations(pair.second);
-        auto transitiveIncludes = getTransitiveIncludes(findFirstTransitiveIncludedLocation(includedLocations, m_parseElements));
-
-        includedLocations.merge(transitiveIncludes);
-        for(auto& schema : getResultXsdSchemas())
-          if(std::ranges::any_of(schema->getChildren<XsdInclude>(),
-                                 [fileLocation](auto& xsdInclude) -> bool { return xsdInclude->getSchemaLocation() == fileLocation; }))
-            includedLocations.insert(schema->getFileLocation());
+        auto includedLocations = getIncludedSchemaLocations(pair.second);
+        includedLocations.merge(getIncludedSchemaLocations(
+                                  findFirstTransitiveIncludedLocation(includedLocations, m_parseElements)));
+        includedLocations.merge(getSchemaIncludedLocations(fileLocation, getResultXsdSchemas()));
 
         std::list<std::shared_ptr<ReferenceBase>> includedElements = pair.second;
 
@@ -533,9 +544,9 @@ void XsdParserCore::addUnsolvedReference(
 
   // Note: refactored for ease of understanding
   if(schema)
-    m_unsolvedElements[schema->getFileLocation()].push_back(unsolvedReference);
+    m_unsolvedElements[schema->getSchemaLocation()].push_back(unsolvedReference);
   else
-    m_unsolvedElements[m_currentFile].push_back(unsolvedReference);
+    m_unsolvedElements[m_currentSchemaFile].push_back(unsolvedReference);
 }
 
 
@@ -546,9 +557,9 @@ void XsdParserCore::addUnsolvedReference(
  */
 void XsdParserCore::addLocationToParse(SchemaLocation schemaLocation)
 {
-  schemaLocation.setParentPaths(m_currentFile);
+  schemaLocation.setParentPaths(m_currentSchemaFile);
   m_schemaLocations.insert(schemaLocation);
-  auto result = m_schemaLocationsMap.emplace(schemaLocation, m_currentFile);
+  auto result = m_schemaLocationsMap.emplace(schemaLocation, m_currentSchemaFile);
   if(!result.second)
-    assert(m_schemaLocationsMap.at(schemaLocation) == m_currentFile);
+    assert(m_schemaLocationsMap.at(schemaLocation) == m_currentSchemaFile);
 }

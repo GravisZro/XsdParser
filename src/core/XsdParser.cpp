@@ -8,8 +8,8 @@
 
 void XsdParser::parse(std::string filePath)
 {
-  m_currentFile.setParentPaths(std::filesystem::current_path().string());
-  m_currentFile = filePath;
+  m_currentSchemaFile.setParentPaths(std::filesystem::current_path().string());
+  m_currentSchemaFile = filePath;
   if(!m_schemaLocations.contains(filePath))
     m_schemaLocations.insert(filePath);
 
@@ -27,9 +27,9 @@ void XsdParser::parse(std::string filePath)
  * field.
  * @param filePath The path to the XSD file.
  */
-void XsdParser::parseLocation(const SchemaLocation& fileLocation)
+void XsdParser::parseLocation(const SchemaLocation& schemaLocation)
 {
-  m_currentFile = fileLocation;
+  m_currentSchemaFile = schemaLocation;
   ConfigEntryData xsdSchemaConfig;
 
   if(m_parseMappers.contains(TAG<XsdSchema>::xsd))
@@ -42,10 +42,10 @@ void XsdParser::parseLocation(const SchemaLocation& fileLocation)
     throw std::runtime_error("XsdSchema not correctly configured.");
 
   auto schemaReference = xsdSchemaConfig.parserFunction(shared_from_this(),
-                                                        getSchemaNode(fileLocation),
+                                                        getSchemaNode(schemaLocation),
                                                         xsdSchemaConfig.visitorFunction,
                                                         nullptr);
-  std::static_pointer_cast<XsdSchema>(schemaReference->getElement())->setFileLocation(fileLocation);
+  std::static_pointer_cast<XsdSchema>(schemaReference->getElement())->setSchemaLocation(schemaLocation);
 }
 
 /**

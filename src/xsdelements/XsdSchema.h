@@ -63,7 +63,7 @@ private:
      */
     std::optional<std::string> m_xmlns;
 
-    SchemaLocation m_fileLocation;
+    SchemaLocation m_schemaLocation;
 
     std::map<std::string, NamespaceInfo> m_namespaces;
 
@@ -172,13 +172,13 @@ public:
     return m_namespaces;
   }
 
-  SchemaLocation getFileLocation(void) const
+  SchemaLocation getSchemaLocation(void) const
   {
-    return m_fileLocation;
+    return m_schemaLocation;
   }
 
-  void setFileLocation(SchemaLocation filePath)
+  void setSchemaLocation(SchemaLocation schemaLocation)
   {
-    m_fileLocation = filePath;
+    m_schemaLocation = schemaLocation;
   }
 };

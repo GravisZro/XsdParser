@@ -43,10 +43,8 @@ private:
      */
     std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElements;
 
-public: // ctors
-    SchemaLocation m_currentFile;
-
-public:
+protected:
+    SchemaLocation m_currentSchemaFile;
 
     /**
      * A {@link Map} object that contains a parse function to each {@link XsdAbstractElement} concrete
@@ -67,7 +65,7 @@ public:
   std::set<SchemaLocation> m_schemaLocations;
   std::map<SchemaLocation, SchemaLocation> m_schemaLocationsMap;
 
-
+public:
     /**
      * Verifies if a given {@link DOMNode} object, i.e. {@code node} is a xsd:schema node.
      * @param node The node to verify.
@@ -168,7 +166,7 @@ public:
 
   void addParsedElement(std::shared_ptr<ReferenceBase> wrappedElement)
   {
-    m_parseElements[m_currentFile].push_back(wrappedElement);
+    m_parseElements[m_currentSchemaFile].push_back(wrappedElement);
   }
 
   static void updateConfig(ParserConfig config)
