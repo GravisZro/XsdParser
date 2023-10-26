@@ -37,13 +37,14 @@ public:
     XsdAnnotatedElements::initialize();
     m_elements.clear();
   }
-    /**
-     * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their
-     * {@link UnsolvedReference#ref} field matches the {@link NamedConcreteElement#name} field.
-     * @param elementWrapper A {@link NamedConcreteElement} with a name that will replace an {@link UnsolvedReference}
-     *                       object, if a match between the {@link NamedConcreteElement#name} attribute and the
-     *                       {@link UnsolvedReference#ref} attribute.
-     */
+
+  /**
+   * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their
+   * {@link UnsolvedReference#ref} field matches the {@link NamedConcreteElement#name} field.
+   * @param elementWrapper A {@link NamedConcreteElement} with a name that will replace an {@link UnsolvedReference}
+   *                       object, if a match between the {@link NamedConcreteElement#name} attribute and the
+   *                       {@link UnsolvedReference#ref} attribute.
+   */
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper);
 
     /**
@@ -60,7 +61,11 @@ public:
   virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
 
   /**
-   * @tparam {@link XsdElement}, {@link XsdChoice}, {@link XsdSequence}, or {@link XsdGroup}
+   * @tparam One of the following classes:
+   *      * {@link XsdElement}
+   *      * {@link XsdChoice}
+   *      * {@link XsdSequence}
+   *      * {@link XsdGroup}
    * @return The children elements that are of the templated type.
    */
   template<typename T, std::enable_if_t<std::is_same_v<XsdElement , T> ||

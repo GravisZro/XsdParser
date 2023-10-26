@@ -135,9 +135,16 @@ public:
   }
 
   /**
-   * @tparam {@link XsdInclude}, {@link XsdImport}, {@link XsdAnnotation}, {@link XsdSimpleType},
-   *         {@link XsdComplexType}, {@link XsdGroup}, {@link XsdAttributeGroup}, {@link XsdElement},
-   *         or {@link XsdAttribute]
+   * @tparam One of the following classes:
+   *      * {@link XsdInclude}
+   *      * {@link XsdImport}
+   *      * {@link XsdAnnotation}
+   *      * {@link XsdSimpleType}
+   *      * {@link XsdComplexType}
+   *      * {@link XsdGroup}
+   *      * {@link XsdAttributeGroup}
+   *      * {@link XsdElement}
+   *      * {@link XsdAttribute}
    * @return The children elements that are of the templated type.
    */
   template<typename T, std::enable_if_t<std::is_same_v<XsdInclude       , T> ||

@@ -66,11 +66,12 @@ std::list<std::shared_ptr<XsdSchema>> XsdParserCore::getResultXsdSchemas(void)
 }
 
 
-/* VERIFIED
-   getSubStringBefore() replaces this code:
-
-      SOMESTRING.substring(0, SOMESTRING.indexOf(TARGET));
-*/
+/**
+ * @fn getSubStringBefore
+ * @oldcode (Java)
+ * SOMESTRING.substring(0, SOMESTRING.indexOf(TARGET));
+ * @note VERIFIED
+ */
 std::string getSubStringBefore(std::optional<std::string> input, const char target)
 {
   assert(input);
@@ -88,17 +89,18 @@ std::string getSubStringAfter(std::optional<std::string> input, const char targe
 }
 
 
-/* VERIFIED
-   findXsdSchema() replaces this code:
-   Argument 1: parseElements.get(fileName)
-
-   XsdSchema xsdSchema = parseElements.get(fileName)
-                                    .stream()
-                                    .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdSchema)
-                                    .map(referenceBase -> (XsdSchema) referenceBase.getElement())
-                                    .findFirst()
-                                    .get();
-*/
+/**
+ * @fn findXsdSchema
+ * @param fileLocationElements Java: parseElements.get(fileName)
+ * @oldcode (Java)
+ * XsdSchema xsdSchema = parseElements.get(fileName)
+ *                                   .stream()
+ *                                   .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdSchema)
+ *                                   .map(referenceBase -> (XsdSchema) referenceBase.getElement())
+ *                                   .findFirst()
+ *                                   .get();
+ * @note VERIFIED
+ */
 std::shared_ptr<XsdSchema> findXsdSchema(const std::list<std::shared_ptr<ReferenceBase>>& fileLocationElements)
 {
   for(auto& referenceBase : fileLocationElements)
@@ -108,17 +110,18 @@ std::shared_ptr<XsdSchema> findXsdSchema(const std::list<std::shared_ptr<Referen
   return nullptr;
 }
 
-/* VERIFIED
-  getUnsolvedReferenceList() replaces this code:
-  Argument 1: fileName
-  Argument 2: unsolvedElements
-
-  List<UnsolvedReference> unsolvedReferenceList = unsolvedElements
-          .getOrDefault(fileName, new ArrayList<>())
-          .stream()
-          .filter(unsolvedElement -> unsolvedElement.getRef().contains(":"))
-          .collect(Collectors.toList());
-*/
+/**
+ * @fn getUnsolvedReferenceList
+ * @param fileLocation Java: fileName
+ * @param unsolvedElements Java: unsolvedElements
+ * @oldcode (Java)
+ * List<UnsolvedReference> unsolvedReferenceList = unsolvedElements
+ *         .getOrDefault(fileName, new ArrayList<>())
+ *         .stream()
+ *         .filter(unsolvedElement -> unsolvedElement.getRef().contains(":"))
+ *         .collect(Collectors.toList());
+ * @note VERIFIED
+ */
 auto getUnsolvedReferenceList(
     const SchemaLocation& fileLocation,
     const std::map<SchemaLocation, std::list<std::shared_ptr<UnsolvedReference>>>& unsolvedElements)
@@ -131,16 +134,17 @@ auto getUnsolvedReferenceList(
   return unsolvedReferenceList;
 }
 
-/* VERIFIED
-  getConcreteImportedElements() replaces this code:
-  Argument 1: importedElements
-
-  Map<String, List<NamedConcreteElement>> concreteElementsMap =
-          importedElements.stream()
-                  .filter(concreteElement -> concreteElement instanceof NamedConcreteElement)
-                  .map(concreteElement -> (NamedConcreteElement) concreteElement)
-                  .collect(groupingBy(NamedConcreteElement::getName));
-*/
+/**
+ * @fn getConcreteImportedElements
+ * @param importedElements Java: importedElements
+ * @oldcode (Java)
+ * Map<String, List<NamedConcreteElement>> concreteElementsMap =
+ *         importedElements.stream()
+ *                  .filter(concreteElement -> concreteElement instanceof NamedConcreteElement)
+ *                  .map(concreteElement -> (NamedConcreteElement) concreteElement)
+ *                  .collect(groupingBy(NamedConcreteElement::getName));
+ * @note VERIFIED
+ */
 auto getConcreteImportedElements(const std::list<std::shared_ptr<ReferenceBase>>& importedElements)
 {
   std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap;
@@ -150,7 +154,9 @@ auto getConcreteImportedElements(const std::list<std::shared_ptr<ReferenceBase>>
   return concreteElementsMap;
 }
 
-/* VERIFIED
+/**
+ * @fn resolveOtherNamespaceRefs
+ * @note VERIFIED
  */
 void XsdParserCore::resolveOtherNamespaceRefs(void)
 {
@@ -207,7 +213,10 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
   }
 }
 
-
+/**
+ * @fn replaceUnsolvedImportedReference
+ * @note VERIFIED
+ */
 void XsdParserCore::replaceUnsolvedImportedReference(
     std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
     std::shared_ptr<UnsolvedReference> unsolvedReference,
@@ -243,17 +252,18 @@ void XsdParserCore::replaceUnsolvedImportedReference(
 }
 
 
-/* VERIFIED
-  getIncludedLocations() replaces this code:
-  Argument 1: parseElements.get(fileName)
-
-  List<String> includedFiles =
-          parseElements.get(fileName)
-                  .stream()
-                  .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
-                  .map(referenceBase -> (((XsdInclude) referenceBase.getElement()).getSchemaLocation()))
-                  .collect(Collectors.toList());
-*/
+/**
+ * @fn getIncludedLocations
+ * @param fileLocationElements Java: parseElements.get(fileName)
+ * @oldcode (Java)
+ * List<String> includedFiles =
+ *          parseElements.get(fileName)
+ *                  .stream()
+ *                  .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
+ *                  .map(referenceBase -> (((XsdInclude) referenceBase.getElement()).getSchemaLocation()))
+ *                  .collect(Collectors.toList());
+ * @note VERIFIED
+ */
 auto getIncludedLocations(const std::list<std::shared_ptr<ReferenceBase>>& fileLocationElements)
 {
   std::set<SchemaLocation> includedLocations;
@@ -265,15 +275,16 @@ auto getIncludedLocations(const std::list<std::shared_ptr<ReferenceBase>>& fileL
 }
 
 
-/* VERIFIED
-  getTransitiveIncludes() replaces this code:
-  Argument 1: parseElements.get(fullIncludedFileName)
-
-  parseElements.get(fullIncludedFileName)
-          .stream()
-          .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
-          .map(referenceBase -> ( ((XsdInclude) referenceBase.getElement()) .getSchemaLocation())
-*/
+/**
+ * @fn getTransitiveIncludes
+ * @param locations Java: parseElements.get(fullIncludedFileName)
+ * @oldcode (Java)
+ *  parseElements.get(fullIncludedFileName)
+ *          .stream()
+ *          .filter(referenceBase -> referenceBase instanceof ConcreteElement && referenceBase.getElement() instanceof XsdInclude)
+ *          .map(referenceBase -> ( ((XsdInclude) referenceBase.getElement()) .getSchemaLocation())
+ * @note VERIFIED
+ */
 
 auto getTransitiveIncludes(const std::list<std::shared_ptr<ReferenceBase>>& locations)
 {
@@ -285,17 +296,18 @@ auto getTransitiveIncludes(const std::list<std::shared_ptr<ReferenceBase>>& loca
   return transitiveIncludes;
 }
 
-/* VERIFIED
-  findFirstTransitiveIncludedLocation() replaces this code:
-  Argument 1: includedFiles
-  Argument 2: parseElements
-
-  for(String includedFile : includedFiles){
-      parseElements.keySet()
-              .stream()
-              .filter(fileNameAux -> fileNameAux.endsWith(includedFile))
-              .findFirst()
-*/
+/**
+ * @fn findFirstTransitiveIncludedLocation
+ * @param includedLocations Java: includedFiles
+ * @param allLocations Java: parseElements
+ * @oldcode (Java)
+ *  for(String includedFile : includedFiles){
+ *      parseElements.keySet()
+ *              .stream()
+ *              .filter(fileNameAux -> fileNameAux.endsWith(includedFile))
+ *              .findFirst()
+ * @note VERIFIED
+ */
 auto findFirstTransitiveIncludedLocation(
     const std::set<SchemaLocation>& includedLocations,
     const std::map<SchemaLocation, std::list<std::shared_ptr<ReferenceBase>>>& allLocations)
@@ -405,12 +417,13 @@ void XsdParserCore::resolveInnerRefs(void)
 
 
 
-/** VERIFIED
+/**
  * Replaces a single {@link UnsolvedReference} object, with the respective {@link NamedConcreteElement} object. If
  * there isn't a {@link NamedConcreteElement} object to replace the {@link UnsolvedReference} object, information
  * is stored informing the user of this Project of the occurrence.
  * @param concreteElementsMap The map containing all named concreteElements.
  * @param unsolvedReference The unsolved reference to solve.
+ * @note VERIFIED
  */
 void XsdParserCore::replaceUnsolvedReference(
     std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
@@ -457,19 +470,20 @@ void XsdParserCore::replaceUnsolvedReference(
 }
 
 
-/* VERIFIED
-  getUnsolvedInnerElement() replaces this code:
-  Argument 1: unsolvedReference
-  Argument 2: parserUnsolvedElementsMap
-
-  Optional<UnsolvedReferenceItem> innerEntry =
-          parserUnsolvedElementsMap.stream()
-                  .filter(unsolvedReferenceObj ->
-                          unsolvedReferenceObj.getUnsolvedReference()
-                                  .getRef()
-                                  .equals(unsolvedReference.getRef()))
-                  .findFirst();
-*/
+/**
+ * @fn getUnsolvedInnerElement
+ * @param unsolvedReference Java: unsolvedReference
+ * @param unsolvedElements Java: parserUnsolvedElementsMap
+ * @oldcode (Java)
+ *  Optional<UnsolvedReferenceItem> innerEntry =
+ *          parserUnsolvedElementsMap.stream()
+ *                  .filter(unsolvedReferenceObj ->
+ *                          unsolvedReferenceObj.getUnsolvedReference()
+ *                                  .getRef()
+ *                                  .equals(unsolvedReference.getRef()))
+ *                  .findFirst();
+ * @note VERIFIED
+ */
 auto getUnsolvedInnerElement(
     std::shared_ptr<UnsolvedReference> unsolvedReference,
     const std::list<std::shared_ptr<UnsolvedReferenceItem>>& unsolvedElements)
@@ -481,11 +495,12 @@ auto getUnsolvedInnerElement(
   return std::shared_ptr<UnsolvedReferenceItem>();
 }
 
-/** VERIFIED
+/**
  * Saves an occurrence of an element which couldn't be resolved in the {@link XsdParser#replaceUnsolvedReference}
  * method, which can be accessed at the end of the parsing process in order to verify if were there were any
  * references that couldn't be solved.
  * @param unsolvedReference The unsolved reference which couldn't be resolved.
+ * @note VERIFIED
  */
 void XsdParserCore::storeUnsolvedItem(
     std::shared_ptr<UnsolvedReference> unsolvedReference)
@@ -503,10 +518,11 @@ void XsdParserCore::storeUnsolvedItem(
 
 
 
-/** VERIFIED
+/**
  * Adds an {@link UnsolvedReference} object to the {@link XsdParser#unsolvedElements} list which should be solved
  * at a later time in the parsing process.
  * @param unsolvedReference The unsolvedReference to add to the unsolvedElements list.
+ * @note VERIFIED
  */
 void XsdParserCore::addUnsolvedReference(
     std::shared_ptr<UnsolvedReference> unsolvedReference)
