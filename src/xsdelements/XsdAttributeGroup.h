@@ -18,18 +18,18 @@ class NamedConcreteElement;
 class XsdAttributeGroup : public XsdNamedElements
 {
 private:
-    /**
-     * A list of {@link XsdAttributeGroup} children instances.
-     */
-    //This list is populated by the replaceUnsolvedElements and never directly (such as a Visitor method like all else).
-    //The UnsolvedReference is placed in the XsdParser queue by the default implementation of the Visitor#visit(std::enable_shared_from_this<XsdAttributeGroup>::create element)
-    //The reference solving process then sends the XsdAttributeGroup to this class.
-    std::list<std::shared_ptr<ReferenceBase>> m_attributeGroups;
+  /**
+   * A list of {@link XsdAttributeGroup} children instances.
+   */
+  //This list is populated by the replaceUnsolvedElements and never directly (such as a Visitor method like all else).
+  //The UnsolvedReference is placed in the XsdParser queue by the default implementation of the Visitor#visit(std::enable_shared_from_this<XsdAttributeGroup>::create element)
+  //The reference solving process then sends the XsdAttributeGroup to this class.
+  std::list<std::shared_ptr<ReferenceBase>> m_attributeGroups;
 
-    /**
-     * A list of {@link XsdAttribute} children instances.
-     */
-    std::list<std::shared_ptr<ReferenceBase>> m_attributes;
+  /**
+   * A list of {@link XsdAttribute} children instances.
+   */
+  std::list<std::shared_ptr<ReferenceBase>> m_attributes;
 public:
   XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
                     StringMap attributesMap,
@@ -47,10 +47,10 @@ public:
 
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
-    }
+  {
+    XsdNamedElements::accept(visitorParam);
+    visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
+  }
 
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
   void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);

@@ -37,9 +37,9 @@ public:
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
   virtual void validateSchemaRules(void) const override
-    {
-        rule1();
-    }
+  {
+    rule1();
+  }
 
     /**
      * Asserts that the current element doesn't have both ref and name attributes at the same time. Throws an exception
@@ -48,12 +48,9 @@ public:
 private:
   void rule1(void) const
   {
-        if (m_name && haveAttribute(REF_TAG))
-        {
-          throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
-        }
-
-    }
+    if (m_name && haveAttribute(REF_TAG))
+      throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
+  }
 
 public:
     /**
@@ -79,7 +76,8 @@ public:
         return m_name;
   }
 
-  void setName(std::string name) {
-        m_name = name;
-    }
+  void setName(std::string name)
+  {
+    m_name = name;
+  }
 };

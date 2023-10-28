@@ -19,82 +19,80 @@ class NamedConcreteElement;
 class XsdAttribute : public XsdNamedElements
 {
 private:
-    /**
-     * A {@link XsdSimpleType} instance wrapped in a {@link ReferenceBase} object which indicate any restrictions
-     * that may be present in the current {@link XsdAttribute} instance.
-     */
-    std::shared_ptr<ReferenceBase> m_simpleType;
+  /**
+   * A {@link XsdSimpleType} instance wrapped in a {@link ReferenceBase} object which indicate any restrictions
+   * that may be present in the current {@link XsdAttribute} instance.
+   */
+  std::shared_ptr<ReferenceBase> m_simpleType;
 
-    /**
-     * A default value for the current {@link XsdAttribute} instance. This value and {@link XsdAttribute#fixed}
-     * shouldn't be present at the same time.
-     */
-    std::optional<std::string> m_defaultElement;
+  /**
+   * A default value for the current {@link XsdAttribute} instance. This value and {@link XsdAttribute#fixed}
+   * shouldn't be present at the same time.
+   */
+  std::optional<std::string> m_defaultElement;
 
-    /**
-     * Specifies a fixed value for the current {@link XsdAttribute} instance. This value and
-     * {@link XsdAttribute#defaultElement} shouldn't be present at the same time.
-     */
-    std::optional<std::string> m_fixed;
+  /**
+   * Specifies a fixed value for the current {@link XsdAttribute} instance. This value and
+   * {@link XsdAttribute#defaultElement} shouldn't be present at the same time.
+   */
+  std::optional<std::string> m_fixed;
 
-    /**
-     * Specifies either a built-in data type for the current {@link XsdAttribute} instance or serves as a reference to a
-     * {@link XsdSimpleType} instance. In the case of being used as a reference to a {@link XsdSimpleType} instance
-     * its value is used to create an {@link UnsolvedReference} using its value as ref to be resolved later in the
-     * parsing process.
-     */
-    std::optional<std::string> m_type;
+  /**
+   * Specifies either a built-in data type for the current {@link XsdAttribute} instance or serves as a reference to a
+   * {@link XsdSimpleType} instance. In the case of being used as a reference to a {@link XsdSimpleType} instance
+   * its value is used to create an {@link UnsolvedReference} using its value as ref to be resolved later in the
+   * parsing process.
+   */
+  std::optional<std::string> m_type;
 
-    /**
-     * Specifies if the current {@link XsdAttribute} attribute is "qualified" or "unqualified".
-     */
-    FormEnum m_form;
+  /**
+   * Specifies if the current {@link XsdAttribute} attribute is "qualified" or "unqualified".
+   */
+  FormEnum m_form;
 
-    /**
-     * Specifies how this {@link XsdAttribute} should be used. The possible values are: required, prohibited, optional.
-     */
-    UsageEnum m_use;
+  /**
+   * Specifies how this {@link XsdAttribute} should be used. The possible values are: required, prohibited, optional.
+   */
+  UsageEnum m_use;
 public: // ctors
-    XsdAttribute(std::shared_ptr<XsdParserCore> parser,
-                 StringMap attributesMap,
-                 VisitorFunctionType visitorFunction,
-                 std::shared_ptr<XsdAbstractElement> parent)
-      : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
+  XsdAttribute(std::shared_ptr<XsdParserCore> parser,
+               StringMap attributesMap,
+               VisitorFunctionType visitorFunction,
+               std::shared_ptr<XsdAbstractElement> parent)
+    : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
 
 public:
-    virtual void initialize(void) override;
-    /**
+  virtual void initialize(void) override;
+  /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
      */
   virtual void validateSchemaRules(void) const override
-    {
-        XsdNamedElements::validateSchemaRules();
-        rule2();
-        rule3();
-    }
+  {
+    XsdNamedElements::validateSchemaRules();
+    rule2();
+    rule3();
+  }
 private:
   static std::optional<std::string> getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
-    /**
+  /**
      * Asserts if the current object has a ref attribute at the same time as either a simpleType as children, a form attribute or a type attribute.
      * Throws an exception in that case.
      */
-    void rule3(void) const
-    {
-        if (haveAttribute(REF_TAG) && (m_simpleType || m_form || m_type)){
-            throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
-        }
-    }
+  void rule3(void) const
+  {
+    if (haveAttribute(REF_TAG) && (m_simpleType || m_form || m_type))
+      throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
+  }
 
-    /**
+  /**
      * Asserts if the current object has the fixed and default attributes at the same time, which isn't allowed, throwing
      * an exception in that case.
      */
-    void rule2(void) const
-    {
-        if (m_fixed && m_defaultElement){
-            throw ParsingException(TAG<XsdAttribute>::xsd  + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
-        }
-    }
+  void rule2(void) const
+  {
+    if (m_fixed && m_defaultElement)
+      throw ParsingException(TAG<XsdAttribute>::xsd  + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
+  }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
@@ -128,6 +126,4 @@ public:
   }
 
   std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void) const;
-
-  
 };

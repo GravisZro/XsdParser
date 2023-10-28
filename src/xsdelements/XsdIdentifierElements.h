@@ -29,7 +29,8 @@ public:
       m_id = getAttribute(XsdAbstractElement::ID_TAG);
   }
 
-  std::optional<std::string> getId(void) {
-        return m_id;
-    }
+  std::optional<std::string> getId(void) const
+  {
+    return m_id;
+  }
 };

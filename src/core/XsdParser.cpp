@@ -8,15 +8,19 @@
 
 void XsdParser::parse(std::string filePath)
 {
-  m_currentSchemaLocation.setParentPaths(std::filesystem::current_path().string());
-  m_currentSchemaLocation = filePath;
-  if(!m_schemaLocations.contains(filePath))
-    m_schemaLocations.insert(filePath);
-
-  for(auto& schemaLocation : m_schemaLocations)
+  m_currentSchemaLocation.reset();
   {
-    addLocationToParse(schemaLocation);
-    parseLocation(schemaLocation);
+    SchemaLocation location;
+    location.setParentPaths(std::filesystem::current_path().string());
+    location = filePath;
+    addLocationToParse(location);
+    m_currentSchemaLocation = location;
+  }
+
+  while(!m_unparsedSchemaLocations.empty())
+  {
+    parseLocation(m_unparsedSchemaLocations.front());
+    m_unparsedSchemaLocations.pop_front();
   }
   resolveRefs();
 }
@@ -29,6 +33,9 @@ void XsdParser::parse(std::string filePath)
  */
 void XsdParser::parseLocation(const SchemaLocation& schemaLocation)
 {
+  if(m_documents.contains(schemaLocation))
+    return;
+
   m_currentSchemaLocation = schemaLocation;
   ConfigEntryData xsdSchemaConfig;
 
@@ -69,14 +76,15 @@ pugi::xml_node XsdParser::getSchemaNode(SchemaLocation schemaLocation)
     }
   }
   assert(schemaPath);
+  assert(!m_documents.contains(schemaLocation));
 
   std::cout << "file path: " << *schemaPath << std::endl;
+  std::cout.flush();
 
-  pugi::xml_document& doc = m_documents[*schemaPath];
-  pugi::xml_parse_result result = m_documents[*schemaPath].load_file(schemaPath->c_str());
+  pugi::xml_parse_result result = m_documents[schemaLocation].load_file(schemaPath->c_str());
   assert(result);
 
-  for(auto& child : doc.children())
+  for(auto& child : m_documents.at(schemaLocation).children())
     if (isXsdSchema(child))
       return child;
 

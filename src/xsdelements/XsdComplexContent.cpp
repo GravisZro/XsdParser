@@ -11,30 +11,30 @@
  */
 std::shared_ptr<XsdAbstractElement> XsdComplexContent::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(getAttributesMap());
+  placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = create<XsdComplexContent>(getParser(),
-                                                 placeHolderAttributes,
-                                                 m_visitorFunction,
-                                                 nullptr);
+  auto elementCopy = create<XsdComplexContent>(getParser(),
+                                               placeHolderAttributes,
+                                               m_visitorFunction,
+                                               nullptr);
 
-    elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
-    elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
-    elementCopy->setCloneOf(shared_from_this());
+  elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
+  elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
+  elementCopy->setCloneOf(shared_from_this());
 
-    return elementCopy;
+  return elementCopy;
 }
 
 std::shared_ptr<XsdExtension> XsdComplexContent::getXsdExtension(void) const
 {
-if(auto e = std::dynamic_pointer_cast<ConcreteElement>(m_extension))
-  return std::static_pointer_cast<XsdExtension>(e->getElement());
-return nullptr;
+  if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_extension); x)
+    return std::static_pointer_cast<XsdExtension>(x->getElement());
+  return nullptr;
 }
 
 std::shared_ptr<XsdRestriction> XsdComplexContent::getXsdRestriction(void) const
 {
-if(auto r = std::dynamic_pointer_cast<ConcreteElement>(m_restriction))
-  return std::static_pointer_cast<XsdRestriction>(r->getElement());
-return nullptr;
+  if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_restriction); x)
+    return std::static_pointer_cast<XsdRestriction>(x->getElement());
+  return nullptr;
 }

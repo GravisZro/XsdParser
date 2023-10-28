@@ -1,4 +1,8 @@
 #include <xsdelements/XsdMultipleElements.h>
+#include <xsdelements/XsdComplexType.h>
+#include <xsdelements/XsdExtension.h>
+#include <xsdelements/XsdGroup.h>
+
 #include <core/XsdParser.h>
 #include <pugixml.hpp>
 #include <iostream>
@@ -16,7 +20,9 @@ void parse_children(pugi::xml_node node, const std::list<std::shared_ptr<XsdAbst
 {
   for(auto& child : children)
   {
-    assert(child);
+    if(!child)
+      continue;
+    //assert(child);
     auto child_node = node.append_child(child->getElementName().c_str());
     assign_attributes(child_node, child->getAttributesMap());
     std::list<std::shared_ptr<XsdAbstractElement>> child_list;
@@ -24,32 +30,27 @@ void parse_children(pugi::xml_node node, const std::list<std::shared_ptr<XsdAbst
       child_list = x->getXsdElements();
     else
       child_list = child->getXsdElements();
+    if(child_list.empty())
+    {
+      if(auto x = std::dynamic_pointer_cast<XsdComplexType>(child); x)
+        child_list.push_back(x->getXsdChildElement());
+      else if(auto x = std::dynamic_pointer_cast<XsdExtension>(child); x)
+        child_list.push_back(x->getChildAs<XsdAbstractElement>());
+      else if(auto x = std::dynamic_pointer_cast<XsdGroup>(child); x)
+        child_list.push_back(x->getChildElement());
+    }
+
     parse_children(child_node, child_list);
   }
 }
 
 int main(void)
 {
-  //std::filesystem::current_path("/home/gravis/project/XsdParser");
-
-  //std::filesystem::path location = "../../human/resources/../issues.xsd";
-  //std::cout << std::filesystem::relative(std::filesystem::weakly_canonical(location), "/home/gravis/project/XsdParser") << std::endl;
-/*
-  SchemaLocation location;
-  location.setParentPaths({"/home/gravis/project/XsdParser/"});
-  location.insert("test/resources/issues.xsd");
-
-
-  for(const std::string& filePath : location.data())
-    std::cout << filePath << std::endl;
-
-  return 0;
-*/
   pugi::xml_document output;
   auto core = create<XsdParser>();
 
-  core->parse("/home/gravis/project/XsdParser/test/resources/issues.xsd");
-  //core->parse("/home/gravis/project/exicodegen/schema/V2G_CI_MsgDef.xsd");
+  //core->parse("/home/gravis/project/XsdParser/test/resources/issues.xsd");
+  core->parse("/home/gravis/project/exicodegen/schema/V2G_CI_MsgDef.xsd");
 
   parse_children(output, core->getResultXsdElements());
 

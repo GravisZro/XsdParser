@@ -19,18 +19,18 @@
  */
 void XsdMultipleElements::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper)
 {
-    if (std::dynamic_pointer_cast<XsdElement>(elementWrapper->getElement()))
-        XsdAnnotatedElements::replaceUnsolvedElements(elementWrapper);
+  if (std::dynamic_pointer_cast<XsdElement>(elementWrapper->getElement()))
+    XsdAnnotatedElements::replaceUnsolvedElements(elementWrapper);
 
-    if (std::dynamic_pointer_cast<XsdGroup>(elementWrapper->getElement()))
+  if (std::dynamic_pointer_cast<XsdGroup>(elementWrapper->getElement()))
+  {
+    m_elements.push_back(elementWrapper);
+    m_elements.remove_if([elementWrapper](std::shared_ptr<ReferenceBase> e)
     {
-        m_elements.push_back(elementWrapper);
-        m_elements.remove_if([elementWrapper](std::shared_ptr<ReferenceBase> e)
-        {
-          auto x = std::dynamic_pointer_cast<UnsolvedReference>(e);
-          return x && compareReference(elementWrapper, x);
-        });
-    }
+      auto x = std::dynamic_pointer_cast<UnsolvedReference>(e);
+      return x && compareReference(elementWrapper, x);
+    });
+  }
 }
 
 /**
@@ -47,5 +47,5 @@ std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElemen
 
 void XsdMultipleElements::addElement(std::shared_ptr<XsdAbstractElement> element)
 {
-    m_elements.push_back(ReferenceBase::createFromXsd(element));
+  m_elements.push_back(ReferenceBase::createFromXsd(element));
 }

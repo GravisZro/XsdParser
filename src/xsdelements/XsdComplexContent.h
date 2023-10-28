@@ -18,20 +18,20 @@ class XsdRestriction;
 class XsdComplexContent : public XsdAnnotatedElements
 {
 private:
-    /**
+  /**
      * A {@link XsdRestriction} object wrapped in a {@link ReferenceBase} object.
      */
-    std::shared_ptr<ReferenceBase> m_restriction;
+  std::shared_ptr<ReferenceBase> m_restriction;
 
-    /**
+  /**
      * A {@link XsdExtension} object wrapped in a {@link ReferenceBase} object.
      */
-    std::shared_ptr<ReferenceBase> m_extension;
+  std::shared_ptr<ReferenceBase> m_extension;
 
-    /**
+  /**
      * Specifies whether character data is allowed to appear between the child elements of this element.
      */
-    bool m_mixed;
+  bool m_mixed;
 public: // ctors
   XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
                     StringMap attributesMap,
@@ -54,10 +54,10 @@ public:
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdComplexContent>(shared_from_this()));
-    }
+  {
+    XsdAnnotatedElements::accept(visitorParam);
+    visitorParam->visit(std::static_pointer_cast<XsdComplexContent>(shared_from_this()));
+  }
 
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 

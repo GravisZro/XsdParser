@@ -15,15 +15,15 @@ class XsdDocumentation;
 class XsdAnnotation : public XsdIdentifierElements
 {
 private:
-    /**
-     * The list of {@link XsdAppInfo} children.
-     */
-    std::list<std::shared_ptr<XsdAppInfo>> m_appInfoList;
+  /**
+   * The list of {@link XsdAppInfo} children.
+   */
+  std::list<std::shared_ptr<XsdAppInfo>> m_appInfoList;
 
-    /**
-     * The list of {@link XsdDocumentation} children.
-     */
-    std::list<std::shared_ptr<XsdDocumentation>> m_documentations;
+  /**
+   * The list of {@link XsdDocumentation} children.
+   */
+  std::list<std::shared_ptr<XsdDocumentation>> m_documentations;
 public: // ctors
   XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
                 StringMap attributesMap,
@@ -52,6 +52,5 @@ public:
     return m_documentations;
   }
 
-  void add(std::shared_ptr<XsdAnnotationChildren> element);
-  
+  void add(std::shared_ptr<XsdAnnotationChildren> element);  
 };

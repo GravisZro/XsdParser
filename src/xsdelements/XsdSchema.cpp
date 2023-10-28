@@ -88,7 +88,7 @@ void XsdSchema::resolveNameSpace(std::optional<std::string> Namespace, SchemaLoc
       m_namespaces.contains(*Namespace))
   {
     NamespaceInfo namespaceInfo = m_namespaces.at(*Namespace);
-    if(!namespaceInfo.getFile())
-      namespaceInfo.setFile(schemaLocation);
+    if(!namespaceInfo.getLocation())
+      namespaceInfo.setLocation(schemaLocation);
   }
 }

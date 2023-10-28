@@ -40,7 +40,7 @@ struct XsdComplexTypeVisitor : AttributesVisitor
       owner->setChildElement(ReferenceBase::createFromXsd(element));
     else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
       owner->setComplexContent(std::static_pointer_cast<XsdComplexContent>(element));
-    else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
+    else if(std::dynamic_pointer_cast<XsdSimpleContent>(element))
       owner->setSimpleContent(std::static_pointer_cast<XsdSimpleContent>(element));
   }
 

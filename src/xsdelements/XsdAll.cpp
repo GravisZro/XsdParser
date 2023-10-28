@@ -7,11 +7,9 @@
 
 void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
-    XsdMultipleElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdAll>(shared_from_this()));
+  XsdMultipleElements::accept(visitorParam);
+  visitorParam->visit(std::static_pointer_cast<XsdAll>(shared_from_this()));
 }
-
-
 
 /**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -21,16 +19,16 @@ void XsdAll::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
  */
 std::shared_ptr<XsdAbstractElement> XsdAll::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(getAttributesMap());
+  placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = create<XsdAll>(getParser(),
-                                      placeHolderAttributes,
-                                      m_visitorFunction,
-                                      nullptr);
+  auto elementCopy = create<XsdAll>(getParser(),
+                                    placeHolderAttributes,
+                                    m_visitorFunction,
+                                    nullptr);
 
-    for(auto& element : getElements())
-        elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
+  for(auto& element : getElements())
+    elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
-    elementCopy->setCloneOf(shared_from_this());
-    return elementCopy;
+  elementCopy->setCloneOf(shared_from_this());
+  return elementCopy;
 }

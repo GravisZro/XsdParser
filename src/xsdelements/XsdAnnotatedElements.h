@@ -10,9 +10,6 @@
  */
 class XsdAnnotatedElements : public XsdIdentifierElements
 {
-public:
-  using XsdIdentifierElements::clone;
-
 private:
     /**
      * The {@link XsdAnnotation} that is annotating the concrete instances of this class.
@@ -33,11 +30,13 @@ public:
     m_annotation.reset();
   }
 
-  void setAnnotation(std::shared_ptr<XsdAnnotation> annotation){
-        m_annotation = annotation;
-    }
+  void setAnnotation(std::shared_ptr<XsdAnnotation> annotation)
+  {
+    m_annotation = annotation;
+  }
 
-  std::shared_ptr<XsdAnnotation> getAnnotation(void) {
-        return m_annotation;
-    }
+  std::shared_ptr<XsdAnnotation> getAnnotation(void) const
+  {
+    return m_annotation;
+  }
 };

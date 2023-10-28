@@ -20,53 +20,53 @@
  */
 std::shared_ptr<XsdAbstractElement> XsdComplexType::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(getAttributesMap());
-    placeHolderAttributes.erase(*REF_TAG);
+  placeHolderAttributes.merge(getAttributesMap());
+  placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = create<XsdComplexType>(getParser(),
-                                              placeHolderAttributes,
-                                              m_visitorFunction,
-                                              nullptr);
+  auto elementCopy = create<XsdComplexType>(getParser(),
+                                            placeHolderAttributes,
+                                            m_visitorFunction,
+                                            nullptr);
 
-    elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
+  elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
 
-    if (m_complexContent)
-        elementCopy->m_complexContent = std::static_pointer_cast<XsdComplexContent>(m_complexContent->XsdAbstractElement::clone(m_complexContent->getAttributesMap(), elementCopy));
+  if (m_complexContent)
+    elementCopy->m_complexContent = std::static_pointer_cast<XsdComplexContent>(m_complexContent->XsdAbstractElement::clone(m_complexContent->getAttributesMap(), elementCopy));
 
-    if (m_simpleContent)
-        elementCopy->m_simpleContent = std::static_pointer_cast<XsdSimpleContent>(m_simpleContent->XsdAbstractElement::clone(m_simpleContent->getAttributesMap(), elementCopy));
+  if (m_simpleContent)
+    elementCopy->m_simpleContent = std::static_pointer_cast<XsdSimpleContent>(m_simpleContent->XsdAbstractElement::clone(m_simpleContent->getAttributesMap(), elementCopy));
 
-    std::list<std::shared_ptr<ReferenceBase>> clonedAttributes;
-    std::list<std::shared_ptr<ReferenceBase>> clonedAttributeGroups;
+  std::list<std::shared_ptr<ReferenceBase>> clonedAttributes;
+  std::list<std::shared_ptr<ReferenceBase>> clonedAttributeGroups;
 
-    for(auto& attribute : std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributes())
-      clonedAttributes.push_back(ReferenceBase::clone(getParser(), attribute, elementCopy));
+  for(auto& attribute : std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributes())
+    clonedAttributes.push_back(ReferenceBase::clone(getParser(), attribute, elementCopy));
 
-    for(auto& attributeGroup: std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributeGroups())
-      clonedAttributeGroups.push_back(ReferenceBase::clone(getParser(), attributeGroup, elementCopy));
+  for(auto& attributeGroup: std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->getAttributeGroups())
+    clonedAttributeGroups.push_back(ReferenceBase::clone(getParser(), attributeGroup, elementCopy));
 
-    std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributes(clonedAttributes);
-    std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributeGroups(clonedAttributeGroups);
+  std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributes(clonedAttributes);
+  std::static_pointer_cast<XsdComplexTypeVisitor>(elementCopy->getVisitor())->setAttributeGroups(clonedAttributeGroups);
 
-    elementCopy->setCloneOf(shared_from_this());
+  elementCopy->setCloneOf(shared_from_this());
 
-    return elementCopy;
+  return elementCopy;
 }
 
 void XsdComplexType::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
 {
-    XsdNamedElements::replaceUnsolvedElements(element);
-    std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->replaceUnsolvedAttributes(
-          getParser(),
-          element,
-          shared_from_this());
+  XsdNamedElements::replaceUnsolvedElements(element);
+  std::static_pointer_cast<XsdComplexTypeVisitor>(getVisitor())->replaceUnsolvedAttributes(
+        getParser(),
+        element,
+        shared_from_this());
 
-    if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_childElement);
-        x &&
-        std::dynamic_pointer_cast<XsdGroup>(m_childElement->getElement()) &&
-        std::dynamic_pointer_cast<XsdGroup>(element->getElement()) &&
-        compareReference(element, x))
-        m_childElement = element;
+  if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_childElement);
+      x &&
+      std::dynamic_pointer_cast<XsdGroup>(m_childElement->getElement()) &&
+      std::dynamic_pointer_cast<XsdGroup>(element->getElement()) &&
+      compareReference(element, x))
+    m_childElement = element;
 }
 
 std::shared_ptr<XsdAbstractElement> XsdComplexType::getXsdChildElement(void) const

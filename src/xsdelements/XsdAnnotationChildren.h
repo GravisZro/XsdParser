@@ -13,15 +13,15 @@
 class XsdAnnotationChildren : public XsdAbstractElement
 {
 private:
-    /**
-     * An URI that specifies a source for the application information.
-     */
-    std::optional<std::string> m_source;
+  /**
+   * An URI that specifies a source for the application information.
+   */
+  std::optional<std::string> m_source;
 
-    /**
-     * The textual content of the current element, either {@link XsdAppInfo} or {@link XsdDocumentation}.
-     */
-    std::optional<std::string> m_content;
+  /**
+   * The textual content of the current element, either {@link XsdAppInfo} or {@link XsdDocumentation}.
+   */
+  std::optional<std::string> m_content;
 public: // ctors
   XsdAnnotationChildren(std::shared_ptr<XsdParserCore> parser,
                         StringMap attributesMap,
@@ -39,36 +39,38 @@ public:
     if(haveAttribute(SOURCE_TAG))
       m_source = getAttribute(SOURCE_TAG);
   }
-    /**
-     * @return Always returns a {@link VisitorNotFoundException} since the descendants of this class shouldn't be
-     * visited since they aren't allowed to have children.
-     */
+
+  /**
+   * @return Always returns a {@link VisitorNotFoundException} since the descendants of this class shouldn't be
+   * visited since they aren't allowed to have children.
+   */
   std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void) const override
-    {
-        throw VisitorNotFoundException("AppInfo/Documentation can't have children.");
-    }
+  {
+    throw VisitorNotFoundException("AppInfo/Documentation can't have children.");
+  }
 
-  std::optional<std::string> getSource(void) const {
-        return m_source;
-    }
+  std::optional<std::string> getSource(void) const
+  {
+    return m_source;
+  }
 
-  std::optional<std::string> getContent(void) const {
-        return m_content;
-    }
+  std::optional<std::string> getContent(void) const
+  {
+    return m_content;
+  }
 
-    /**
-     * This method is used to parse {@link XsdAnnotationChildren} instances.
-     * @param node The node containing the information to parse.
-     * @param annotationChildren An instance of {@link XsdAnnotationChildren} (either {@link XsdAppInfo} or
-     *                           {@link XsdDocumentation}).
-     * @return The annotationChildren wrapped in the correct {@link ReferenceBase} wrapper.
-     */
-    static std::shared_ptr<ReferenceBase> xsdAnnotationChildrenParse(pugi::xml_node node,
-                                                                     std::shared_ptr<XsdAnnotationChildren> annotationChildren)
-    {
-        annotationChildren->m_content = xsdRawContentParse(node);
+  /**
+   * This method is used to parse {@link XsdAnnotationChildren} instances.
+   * @param node The node containing the information to parse.
+   * @param annotationChildren An instance of {@link XsdAnnotationChildren} (either {@link XsdAppInfo} or
+   *                           {@link XsdDocumentation}).
+   * @return The annotationChildren wrapped in the correct {@link ReferenceBase} wrapper.
+   */
+  static std::shared_ptr<ReferenceBase> xsdAnnotationChildrenParse(pugi::xml_node node,
+                                                                   std::shared_ptr<XsdAnnotationChildren> annotationChildren)
+  {
+    annotationChildren->m_content = xsdRawContentParse(node);
 
-        return ReferenceBase::createFromXsd(annotationChildren);
-    }
-
+    return ReferenceBase::createFromXsd(annotationChildren);
+  }
 };

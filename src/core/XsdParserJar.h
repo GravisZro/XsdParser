@@ -45,7 +45,7 @@ class XsdParserJar : public XsdParserCore
 
         int index = 0;
 
-        while (m_schemaLocations.size() > index){
+        while (m_unparsedSchemaLocations.size() > index){
             std::string schemaLocation = m_schemaLocations.get(index);
             parseJarFile(schemaLocation);
             ++index;

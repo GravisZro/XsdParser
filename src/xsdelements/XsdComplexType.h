@@ -33,46 +33,46 @@ class NamedConcreteElement;
 class XsdComplexType : public XsdNamedElements
 {
 private:
-    /**
-     * The child element of {@link XsdComplexType}. Can be either a {@link XsdGroup} or a {@link XsdMultipleElements}
-     * instance wrapped in a {@link ReferenceBase} object.
-     */
-    std::shared_ptr<ReferenceBase> m_childElement;
+  /**
+   * The child element of {@link XsdComplexType}. Can be either a {@link XsdGroup} or a {@link XsdMultipleElements}
+   * instance wrapped in a {@link ReferenceBase} object.
+   */
+  std::shared_ptr<ReferenceBase> m_childElement;
 
-    /**
-     * Specifies whether the complex type can be used in an instance document. True indicates that an element cannot
-     * use this complex type directly but must use a complex type derived from this complex type.
-     */
-    bool m_elementAbstract;
+  /**
+   * Specifies whether the complex type can be used in an instance document. True indicates that an element cannot
+   * use this complex type directly but must use a complex type derived from this complex type.
+   */
+  bool m_elementAbstract;
 
-    /**
-     * Specifies whether character data is allowed to appear between the child elements of this complexType element.
-     * This attribute is exclusive with {@link XsdComplexType#simpleContent}, only one can be present at any given time.
-     */
-    bool m_mixed;
+  /**
+   * Specifies whether character data is allowed to appear between the child elements of this complexType element.
+   * This attribute is exclusive with {@link XsdComplexType#simpleContent}, only one can be present at any given time.
+   */
+  bool m_mixed;
 
-    /**
-     * Prevents a complex type that has a specified type of derivation from being used in place of this complex type.
-     * Possible values are extension, restriction or #all.
-     */
-    ComplexTypeBlockEnum m_block;
+  /**
+   * Prevents a complex type that has a specified type of derivation from being used in place of this complex type.
+   * Possible values are extension, restriction or #all.
+   */
+  ComplexTypeBlockEnum m_block;
 
-    /**
-     * Prevents a specified type of derivation of this complex type element.
-     * Possible values are extension, restriction or #all.
-     */
-    FinalEnum m_elementFinal;
+  /**
+   * Prevents a specified type of derivation of this complex type element.
+   * Possible values are extension, restriction or #all.
+   */
+  FinalEnum m_elementFinal;
 
-    /**
-     * A {@link XsdComplexContent} child.
-     */
-    std::shared_ptr<XsdComplexContent> m_complexContent;
+  /**
+   * A {@link XsdComplexContent} child.
+   */
+  std::shared_ptr<XsdComplexContent> m_complexContent;
 
-    /**
-     * A {@link XsdSimpleContent} child. This element is exclusive with the {@link XsdComplexType#mixed} field, only one
-     * of them should be present in any {@link XsdComplexType} element.
-     */
-    std::shared_ptr<XsdSimpleContent> m_simpleContent;
+  /**
+   * A {@link XsdSimpleContent} child. This element is exclusive with the {@link XsdComplexType#mixed} field, only one
+   * of them should be present in any {@link XsdComplexType} element.
+   */
+  std::shared_ptr<XsdSimpleContent> m_simpleContent;
 
 public: // ctors
   XsdComplexType(std::shared_ptr<XsdParserCore> parser,
@@ -113,37 +113,38 @@ public:
       m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
   }
 
-    /**
-     * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
-     */
+  /**
+   * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
+   */
   virtual void validateSchemaRules(void) const override
-    {
-        XsdNamedElements::validateSchemaRules();
-        rule2();
-    }
+  {
+    XsdNamedElements::validateSchemaRules();
+    rule2();
+  }
 
 private:
-    /**
-     * Asserts if the current object has a simpleContent as children and contains a value for the mixed attribute, which isn't allowed throwing
-     * an exception in that case.
-     */
+  /**
+   * Asserts if the current object has a simpleContent as children and contains a value for the mixed attribute, which isn't allowed throwing
+   * an exception in that case.
+   */
   void rule2(void) const
   {
-        if (m_simpleContent && haveAttribute(MIXED_TAG)){
-            throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
-        }
-    }
+    if (m_simpleContent && haveAttribute(MIXED_TAG))
+      throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
+  }
 
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdNamedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdComplexType>(shared_from_this()));
-    }
+  {
+    static int counter = 0;
+    ++counter;
+    XsdNamedElements::accept(visitorParam);
+    visitorParam->visit(std::static_pointer_cast<XsdComplexType>(shared_from_this()));
+  }
 
-    /**
-     * @return The elements of his child as if they belong to the {@link XsdComplexType} instance.
-     */
+  /**
+    * @return The elements of his child as if they belong to the {@link XsdComplexType} instance.
+    */
   virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
   {
     if(m_childElement)

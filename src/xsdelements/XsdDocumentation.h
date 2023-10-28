@@ -13,28 +13,28 @@
 class XsdDocumentation : public XsdAnnotationChildren
 {
 private:
-    /**
-     * Specifies the language used in the {@link XsdAnnotationChildren#content}
-     */
-    std::string m_xmlLang;
+  /**
+    * Specifies the language used in the {@link XsdAnnotationChildren#content}
+    */
+  std::string m_xmlLang;
 public: // ctors
-    XsdDocumentation(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
-                     VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotationChildren(parser, attributesMap, visitorFunction, parent) { }
+  XsdDocumentation(std::shared_ptr<XsdParserCore> parser,
+                   StringMap attributesMap,
+                   VisitorFunctionType visitorFunction,
+                   std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotationChildren(parser, attributesMap, visitorFunction, parent) { }
 
-    virtual void initialize(void) override
-    {
-      XsdAnnotationChildren::initialize();
-      m_xmlLang.clear();
-      if(haveAttribute(XML_LANG_TAG))
-        m_xmlLang = getAttribute(XML_LANG_TAG);
-    }
+  virtual void initialize(void) override
+  {
+    XsdAnnotationChildren::initialize();
+    m_xmlLang.clear();
+    if(haveAttribute(XML_LANG_TAG))
+      m_xmlLang = getAttribute(XML_LANG_TAG);
+  }
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
-    {
-        XsdAnnotationChildren::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdDocumentation>(shared_from_this()));
-    }
+  {
+    XsdAnnotationChildren::accept(xsdAbstractElementVisitor);
+    xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdDocumentation>(shared_from_this()));
+  }
 };

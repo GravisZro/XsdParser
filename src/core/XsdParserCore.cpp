@@ -215,8 +215,8 @@ void XsdParserCore::resolveOtherNamespaceRefs(void)
           else
           {
             // Note: SchemaLocation results in a radical code reduction here
-            assert(m_parseElements.contains(ns.at(unsolvedElementNamespace).getFile()));
-            importedElements = m_parseElements.at(ns.at(unsolvedElementNamespace).getFile());
+            if(m_parseElements.contains(ns.at(unsolvedElementNamespace).getLocation()))
+              importedElements = m_parseElements.at(ns.at(unsolvedElementNamespace).getLocation());
           }
 
           auto concreteElementsMap = getConcreteElements(importedElements);
@@ -236,8 +236,11 @@ void XsdParserCore::replaceUnsolvedImportedReference(
     std::shared_ptr<UnsolvedReference> unsolvedReference,
     SchemaLocation schemaLocation)
 {
-    std::list<std::shared_ptr<NamedConcreteElement>> concreteElements =
-        concreteElementsMap.at(getSubStringAfter(unsolvedReference->getRef(), ':'));
+    std::list<std::shared_ptr<NamedConcreteElement>> concreteElements;
+
+    if(auto target = getSubStringAfter(unsolvedReference->getRef(), ':');
+       concreteElementsMap.contains(target))
+      concreteElements = concreteElementsMap.at(target);
 
     if(concreteElements.empty())
       storeUnsolvedItem(unsolvedReference);
@@ -460,9 +463,8 @@ void XsdParserCore::replaceUnsolvedReference(
     SchemaLocation schemaLocation)
 {
   assert(unsolvedReference->getRef());
-  assert(concreteElementsMap.contains(unsolvedReference->getRef().value()));
 
-  std::list<std::shared_ptr<NamedConcreteElement>> concreteElements = concreteElementsMap.at(unsolvedReference->getRef().value());
+  auto& concreteElements = concreteElementsMap[unsolvedReference->getRef().value()];
 
   if (concreteElements.empty())
     storeUnsolvedItem(unsolvedReference);
@@ -575,9 +577,14 @@ void XsdParserCore::addUnsolvedReference(
  */
 void XsdParserCore::addLocationToParse(SchemaLocation schemaLocation)
 {
-  schemaLocation.setParentPaths(m_currentSchemaLocation);
-  m_schemaLocations.insert(schemaLocation);
-  auto result = m_schemaLocationsMap.emplace(schemaLocation, m_currentSchemaLocation);
-  if(!result.second)
-    assert(m_schemaLocationsMap.at(schemaLocation) == m_currentSchemaLocation);
+  SchemaLocation newlocation;
+  newlocation.setParentPaths(m_currentSchemaLocation);
+  newlocation.insert(schemaLocation.data());
+  if(!m_schemaLocationsMap.contains(newlocation))
+  {
+    m_unparsedSchemaLocations.push_back(newlocation);
+    auto result = m_schemaLocationsMap.emplace(newlocation, m_currentSchemaLocation);
+    if(!result.second)
+      assert(m_schemaLocationsMap.at(newlocation) == m_currentSchemaLocation);
+  }
 }

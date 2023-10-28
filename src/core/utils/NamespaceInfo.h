@@ -7,14 +7,13 @@ class NamespaceInfo
 {
 private:
     std::optional<std::string> m_name;
-    SchemaLocation m_file;
+    SchemaLocation m_schemaLocation;
 public:
   NamespaceInfo(std::string name)
     : m_name(name) { }
 
   std::optional<std::string> getName(void) const { return m_name; }
-  SchemaLocation getFile(void) const { return m_file; }
+  SchemaLocation getLocation(void) const { return m_schemaLocation; }
 
-  void setFile(SchemaLocation file) { m_file = file; }
-  void setFile(std::string file) { m_file = file; }
+  void setLocation(SchemaLocation file) { m_schemaLocation = file; }
 };

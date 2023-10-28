@@ -38,15 +38,11 @@ std::shared_ptr<XsdAbstractElement> XsdAttributeGroup::clone(StringMap placeHold
                                                m_visitorFunction,
                                                nullptr);
 
-  std::transform(std::begin(m_attributes), std::end(m_attributes),
-                 std::end(elementCopy->m_attributes),
-                 [this, elementCopy](std::shared_ptr<ReferenceBase> attributeReference)
-  { return ReferenceBase::clone(getParser(), attributeReference, elementCopy); });
+  for(const auto& attribute : m_attributes)
+    elementCopy->m_attributes.push_back(ReferenceBase::clone(getParser(), attribute, elementCopy));
 
-  std::transform(std::begin(m_attributeGroups), std::end(m_attributeGroups),
-                 std::end(elementCopy->m_attributeGroups),
-                 [this, elementCopy](std::shared_ptr<ReferenceBase> attributeGroupReference)
-  { return ReferenceBase::clone(getParser(), attributeGroupReference, elementCopy); });
+  for(const auto& attributeGroup : m_attributeGroups)
+    elementCopy->m_attributeGroups.push_back(ReferenceBase::clone(getParser(), attributeGroup, elementCopy));
 
   elementCopy->setCloneOf(shared_from_this());
 

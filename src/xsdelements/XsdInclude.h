@@ -19,7 +19,7 @@ private:
      * In this project this attribute is used to specify another file location that contains more element definitions
      * that belong to the same XSD language definition.
      */
-    SchemaLocation m_schemaLocation;
+    std::string m_schemaLocation;
 public: // ctors
   XsdInclude(std::shared_ptr<XsdParserCore> parser,
              StringMap attributesMap,

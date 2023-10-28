@@ -5,8 +5,8 @@
 
 void XsdAnnotation::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
 {
-    XsdIdentifierElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdAnnotation>(shared_from_this()));
+  XsdIdentifierElements::accept(visitorParam);
+  visitorParam->visit(std::static_pointer_cast<XsdAnnotation>(shared_from_this()));
 }
 
 void XsdAnnotation::add(std::shared_ptr<XsdAnnotationChildren> element)

@@ -74,83 +74,83 @@ const std::map<std::string, std::string> ParserConfig::getXsdTypesToCpp(void) co
   std::map<std::string, std::string> xsdTypesToCpp;
 
   // string types
-  constexpr std::string_view stringType = "std::string";
-  constexpr std::string_view qNameType = "QName"; // specialized
+  constexpr std::string_view stringType   = "std::string";
+  constexpr std::string_view qNameType    = "QName"; // specialized
   // standard integer types
-  constexpr std::string_view booleanType = "bool";
-  constexpr std::string_view longType = "int64_t";
-  constexpr std::string_view uLongType = "uint64_t";
-  constexpr std::string_view integerType = "int32_t";
+  constexpr std::string_view booleanType  = "bool";
+  constexpr std::string_view longType     = "int64_t";
+  constexpr std::string_view uLongType    = "uint64_t";
+  constexpr std::string_view integerType  = "int32_t";
   constexpr std::string_view uIntegerType = "uint32_t";
-  constexpr std::string_view shortType = "int16_t";
-  constexpr std::string_view uShortType = "uint16_t";
-  constexpr std::string_view byteType = "int8_t";
-  constexpr std::string_view uByteType = "uint8_t";
+  constexpr std::string_view shortType    = "int16_t";
+  constexpr std::string_view uShortType   = "uint16_t";
+  constexpr std::string_view byteType     = "int8_t";
+  constexpr std::string_view uByteType    = "uint8_t";
   // floating point types
-  constexpr std::string_view floatType = "float";
-  constexpr std::string_view doubleType = "double";
+  constexpr std::string_view floatType    = "float";
+  constexpr std::string_view doubleType   = "double";
 
   // time/date oriented types (specialized)
-  xsdTypesToCpp.emplace("date", "xs::date");
-  xsdTypesToCpp.emplace("dateTime", "xs::dateTime");
-  xsdTypesToCpp.emplace("time", "xs::time");
-  xsdTypesToCpp.emplace("duration", "xs::duration");
-  xsdTypesToCpp.emplace("dayTimeDuration", "xs::dayTimeDuration");
-  xsdTypesToCpp.emplace("yearMonthDuration", "xs::yearMonthDuration");
+  xsdTypesToCpp.emplace("date",               "xs::date");
+  xsdTypesToCpp.emplace("dateTime",           "xs::dateTime");
+  xsdTypesToCpp.emplace("time",               "xs::time");
+  xsdTypesToCpp.emplace("duration",           "xs::duration");
+  xsdTypesToCpp.emplace("dayTimeDuration",    "xs::dayTimeDuration");
+  xsdTypesToCpp.emplace("yearMonthDuration",  "xs::yearMonthDuration");
 
   // calendar types
-  xsdTypesToCpp.emplace("gDay", "std::chrono::day");
-  xsdTypesToCpp.emplace("gMonth", "std::chrono::month");
-  xsdTypesToCpp.emplace("gMonthDay", "std::chrono::month_day");
-  xsdTypesToCpp.emplace("gYear", "std::chrono::year");
+  xsdTypesToCpp.emplace("gDay",       "std::chrono::day");
+  xsdTypesToCpp.emplace("gMonth",     "std::chrono::month");
+  xsdTypesToCpp.emplace("gMonthDay",  "std::chrono::month_day");
+  xsdTypesToCpp.emplace("gYear",      "std::chrono::year");
   xsdTypesToCpp.emplace("gYearMonth", "std::chrono::year_month");
 
   // weird integer types
-  xsdTypesToCpp.emplace("positiveInteger", uIntegerType);
+  xsdTypesToCpp.emplace("positiveInteger",    uIntegerType);
   xsdTypesToCpp.emplace("nonPositiveInteger", integerType);
-  xsdTypesToCpp.emplace("negativeInteger", integerType);
+  xsdTypesToCpp.emplace("negativeInteger",    integerType);
   xsdTypesToCpp.emplace("nonNegativeInteger", uIntegerType);
 
   // standard integer types
-  xsdTypesToCpp.emplace("bool", booleanType);
-  xsdTypesToCpp.emplace("long", longType);
-  xsdTypesToCpp.emplace("integer", integerType);
-  xsdTypesToCpp.emplace("int", integerType);
-  xsdTypesToCpp.emplace("short", shortType);
-  xsdTypesToCpp.emplace("byte", byteType);
-  xsdTypesToCpp.emplace("unsignedLong", uLongType);
-  xsdTypesToCpp.emplace("unsignedInt", uIntegerType);
+  xsdTypesToCpp.emplace("bool",          booleanType);
+  xsdTypesToCpp.emplace("long",          longType);
+  xsdTypesToCpp.emplace("integer",       integerType);
+  xsdTypesToCpp.emplace("int",           integerType);
+  xsdTypesToCpp.emplace("short",         shortType);
+  xsdTypesToCpp.emplace("byte",          byteType);
+  xsdTypesToCpp.emplace("unsignedLong",  uLongType);
+  xsdTypesToCpp.emplace("unsignedInt",   uIntegerType);
   xsdTypesToCpp.emplace("unsignedShort", uShortType);
-  xsdTypesToCpp.emplace("unsignedByte", uByteType);
+  xsdTypesToCpp.emplace("unsignedByte",  uByteType);
 
   // floating point types
   xsdTypesToCpp.emplace("decimal", floatType);
-  xsdTypesToCpp.emplace("double", doubleType);
-  xsdTypesToCpp.emplace("float", floatType);
+  xsdTypesToCpp.emplace("double",  doubleType);
+  xsdTypesToCpp.emplace("float",   floatType);
 
   // string types
-  xsdTypesToCpp.emplace("anyURI", stringType);
-  xsdTypesToCpp.emplace("string", stringType);
+  xsdTypesToCpp.emplace("anyURI",           stringType);
+  xsdTypesToCpp.emplace("string",           stringType);
   xsdTypesToCpp.emplace("normalizedString", stringType);
-  xsdTypesToCpp.emplace("token", stringType);
-  xsdTypesToCpp.emplace("language", stringType);
-  xsdTypesToCpp.emplace("NMTOKEN", stringType);
-  xsdTypesToCpp.emplace("Name", stringType);
-  xsdTypesToCpp.emplace("NCName", stringType);
-  xsdTypesToCpp.emplace("ID", stringType);
-  xsdTypesToCpp.emplace("IDREF", stringType);
-  xsdTypesToCpp.emplace("ENTITY", stringType);
-  xsdTypesToCpp.emplace("untypedAtomic", stringType);
+  xsdTypesToCpp.emplace("token",            stringType);
+  xsdTypesToCpp.emplace("language",         stringType);
+  xsdTypesToCpp.emplace("NMTOKEN",          stringType);
+  xsdTypesToCpp.emplace("Name",             stringType);
+  xsdTypesToCpp.emplace("NCName",           stringType);
+  xsdTypesToCpp.emplace("ID",               stringType);
+  xsdTypesToCpp.emplace("IDREF",            stringType);
+  xsdTypesToCpp.emplace("ENTITY",           stringType);
+  xsdTypesToCpp.emplace("untypedAtomic",    stringType);
 
   // qualified types
-  xsdTypesToCpp.emplace("QName", qNameType);
+  xsdTypesToCpp.emplace("QName",    qNameType);
   xsdTypesToCpp.emplace("NOTATION", qNameType);
 
   for(auto& entry : xsdTypesToCpp)
   {
     if(!entry.first.contains(':'))
     {
-      xsdTypesToCpp.emplace("xs:" + entry.first, entry.second);
+      xsdTypesToCpp.emplace("xs:"  + entry.first, entry.second);
       xsdTypesToCpp.emplace("xsd:" + entry.first, entry.second);
     }
   }
@@ -215,78 +215,141 @@ static std::shared_ptr<XsdAbstractElementVisitor> genericVisitor(std::shared_ptr
 template<typename T>
 static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper, ConfigEntryData entry)
 {
-  mapper.emplace(std::make_pair(TAG<T>::xsd, entry ));
-  mapper.emplace(std::make_pair(TAG<T>::xs, entry ));
-  mapper.emplace(std::make_pair(TAG<T>::id, entry ));
+  mapper.emplace(std::make_pair(TAG<T>::xsd, entry));
+  mapper.emplace(std::make_pair(TAG<T>::xs , entry));
+  mapper.emplace(std::make_pair(TAG<T>::id , entry));
 }
 
 #ifdef DEBUG
 template<typename T, typename V>
-static void addGenericEntry(std::map<std::string_view, ConfigEntryData>& mapper)
+static void addElementEntry(std::map<std::string_view, ConfigEntryData>& mapper)
 {
-  addGenericEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(T).name(), genericVisitor<T, V> });
+  addGenericEntry<T>(mapper,
+                     ConfigEntryData
+                     {
+                       typeid(T).name(),
+                       genericParser<T>,
+                       typeid(V).name(),
+                       genericVisitor<T, V>
+                     });
 }
-
+#if 0
 template<typename T>
 static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
 {
-  addGenericEntry<T>(mapper, ConfigEntryData { typeid(T).name(), genericParser<T>, typeid(XsdAnnotatedElements).name(), genericVisitor<T, XsdAnnotatedElementsVisitor> });
+  addGenericEntry<T>(mapper,
+                     ConfigEntryData
+                     {
+                       typeid(T).name(),
+                       genericParser<T>,
+                       typeid(XsdAnnotatedElements).name(),
+                       genericVisitor<T, XsdAnnotatedElementsVisitorWrapper<T>>
+                     });
 }
+#endif
 #else
 template<typename T, typename V>
 static void addElementEntry(std::map<std::string_view, ConfigEntryData>& mapper)
-  { addGenericEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, V> }); }
+{
+  addGenericEntry<T>(mapper,
+                     ConfigEntryData
+                     {
+                       genericParser<T>,
+                       genericVisitor<T, V>
+                     });
+}
+#endif
 
 template<typename T>
 static void addAnnotatedEntry(std::map<std::string_view, ConfigEntryData>& mapper)
-  { addGenericEntry<T>(mapper, ConfigEntryData { genericParser<T>, genericVisitor<T, XsdAnnotatedElementsVisitorWrapper<T>> }); }
-#endif
+{
+  addElementEntry<T, XsdAnnotatedElementsVisitorWrapper<T>>(mapper);
+}
+
 
 const std::map<std::string_view, ConfigEntryData> ParserConfig::getParseMappers(void) const
 {
   std::map<std::string_view, ConfigEntryData> mappers;
 
 #ifdef DEBUG
-  addGenericEntry<XsdSchema>(mappers, ConfigEntryData { typeid(XsdSchema).name(), schemaParser, typeid(XsdSchema).name(), genericVisitor<XsdSchema, XsdSchemaVisitor> });
+  addGenericEntry<XsdSchema>(mappers,
+                              ConfigEntryData
+                              {
+                                typeid(XsdSchema).name(),
+                                schemaParser,
+                                typeid(XsdSchema).name(),
+                                genericVisitor<XsdSchema, XsdSchemaVisitor>
+                              });
 
-  addGenericEntry<XsdAppInfo>(mappers, ConfigEntryData { typeid(XsdAppInfo).name(), genericParser<XsdAppInfo>, typeid(std::nullopt_t).name(), nullptr });
-  addGenericEntry<XsdDocumentation>(mappers, ConfigEntryData { typeid(XsdDocumentation).name(), genericParser<XsdDocumentation>, typeid(std::nullopt_t).name(), nullptr });
+  addGenericEntry<XsdAppInfo>(mappers,
+                              ConfigEntryData
+                              {
+                                typeid(XsdAppInfo).name(),
+                                genericParser<XsdAppInfo>,
+                                typeid(std::nullopt_t).name(),
+                                nullptr
+                              });
+
+  addGenericEntry<XsdDocumentation>(mappers,
+                              ConfigEntryData
+                              {
+                                typeid(XsdDocumentation).name(),
+                                genericParser<XsdDocumentation>,
+                                typeid(std::nullopt_t).name(),
+                                nullptr
+                              });
 #else
-  addGenericEntry<XsdSchema>(mappers, ConfigEntryData { schemaParser, genericVisitor<XsdSchema, XsdSchemaVisitor> });
+  addGenericEntry<XsdSchema>(mappers,
+                              ConfigEntryData
+                              {
+                                schemaParser,
+                                genericVisitor<XsdSchema, XsdSchemaVisitor>
+                              });
 
-  addGenericEntry<XsdAppInfo>(mappers, ConfigEntryData { genericParser<XsdAppInfo>, nullptr });
-  addGenericEntry<XsdDocumentation>(mappers, ConfigEntryData { genericParser<XsdDocumentation>, nullptr });
+  addGenericEntry<XsdAppInfo>(mappers,
+                              ConfigEntryData
+                              {
+                                genericParser<XsdAppInfo>,
+                                nullptr
+                              });
+
+  addGenericEntry<XsdDocumentation>(mappers,
+                              ConfigEntryData
+                              {
+                                genericParser<XsdDocumentation>,
+                                nullptr
+                              });
 #endif
 
-  addElementEntry<XsdAll, XsdAllVisitor>(mappers);
-  addElementEntry<XsdAttribute, XsdAttributeVisitor>(mappers);
+  addElementEntry<XsdAll           , XsdAllVisitor           >(mappers);
+  addElementEntry<XsdAttribute     , XsdAttributeVisitor     >(mappers);
   addElementEntry<XsdAttributeGroup, XsdAttributeGroupVisitor>(mappers);
-  addElementEntry<XsdChoice, XsdChoiceVisitor>(mappers);
-  addElementEntry<XsdComplexType, XsdComplexTypeVisitor>(mappers);
-  addElementEntry<XsdElement, XsdElementVisitor>(mappers);
-  addElementEntry<XsdGroup, XsdGroupVisitor>(mappers);
-  addElementEntry<XsdSequence, XsdSequenceVisitor>(mappers);
-  addElementEntry<XsdSimpleType, XsdSimpleTypeVisitor>(mappers);
-  addElementEntry<XsdList, XsdListVisitor>(mappers);
-  addElementEntry<XsdRestriction, XsdRestrictionVisitor>(mappers);
-  addElementEntry<XsdUnion, XsdUnionVisitor>(mappers);
-  addElementEntry<XsdAnnotation, XsdAnnotationVisitor>(mappers);
-  addElementEntry<XsdExtension, XsdExtensionVisitor>(mappers);
-  addElementEntry<XsdSimpleContent, XsdSimpleContentVisitor>(mappers);
+  addElementEntry<XsdChoice        , XsdChoiceVisitor        >(mappers);
+  addElementEntry<XsdComplexType   , XsdComplexTypeVisitor   >(mappers);
+  addElementEntry<XsdElement       , XsdElementVisitor       >(mappers);
+  addElementEntry<XsdGroup         , XsdGroupVisitor         >(mappers);
+  addElementEntry<XsdSequence      , XsdSequenceVisitor      >(mappers);
+  addElementEntry<XsdSimpleType    , XsdSimpleTypeVisitor    >(mappers);
+  addElementEntry<XsdList          , XsdListVisitor          >(mappers);
+  addElementEntry<XsdRestriction   , XsdRestrictionVisitor   >(mappers);
+  addElementEntry<XsdUnion         , XsdUnionVisitor         >(mappers);
+  addElementEntry<XsdAnnotation    , XsdAnnotationVisitor    >(mappers);
+  addElementEntry<XsdExtension     , XsdExtensionVisitor     >(mappers);
+  addElementEntry<XsdSimpleContent , XsdSimpleContentVisitor >(mappers);
 
-  addAnnotatedEntry<XsdInclude>(mappers);
-  addAnnotatedEntry<XsdImport>(mappers);
-  addAnnotatedEntry<XsdEnumeration>(mappers);
+  addAnnotatedEntry<XsdInclude       >(mappers);
+  addAnnotatedEntry<XsdImport        >(mappers);
+  addAnnotatedEntry<XsdEnumeration   >(mappers);
   addAnnotatedEntry<XsdFractionDigits>(mappers);
-  addAnnotatedEntry<XsdLength>(mappers);
-  addAnnotatedEntry<XsdMaxExclusive>(mappers);
-  addAnnotatedEntry<XsdMaxInclusive>(mappers);
-  addAnnotatedEntry<XsdMinExclusive>(mappers);
-  addAnnotatedEntry<XsdMinInclusive>(mappers);
-  addAnnotatedEntry<XsdMinLength>(mappers);
-  addAnnotatedEntry<XsdPattern>(mappers);
-  addAnnotatedEntry<XsdTotalDigits>(mappers);
-  addAnnotatedEntry<XsdWhiteSpace>(mappers);
+  addAnnotatedEntry<XsdLength        >(mappers);
+  addAnnotatedEntry<XsdMaxExclusive  >(mappers);
+  addAnnotatedEntry<XsdMaxInclusive  >(mappers);
+  addAnnotatedEntry<XsdMinExclusive  >(mappers);
+  addAnnotatedEntry<XsdMinInclusive  >(mappers);
+  addAnnotatedEntry<XsdMinLength     >(mappers);
+  addAnnotatedEntry<XsdPattern       >(mappers);
+  addAnnotatedEntry<XsdTotalDigits   >(mappers);
+  addAnnotatedEntry<XsdWhiteSpace    >(mappers);
 
   return mappers;
 }

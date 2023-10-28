@@ -50,7 +50,7 @@ public:
     /**
      * @return All the elements received in the parsing process.
      */
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
+  std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
   {
     return m_elements;
   }
@@ -58,7 +58,7 @@ public:
   /**
    * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
    */
-  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
+  std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
 
   /**
    * @tparam One of the following classes:

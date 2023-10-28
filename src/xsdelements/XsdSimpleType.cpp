@@ -64,52 +64,52 @@ static void updateExistingRestriction(
     std::shared_ptr<XsdRestriction> existing,
     std::shared_ptr<XsdRestriction> newRestriction)
 {
-    std::shared_ptr<XsdPattern> pattern = newRestriction->getPattern();
-    std::shared_ptr<XsdMaxExclusive> maxExclusive = newRestriction->getMaxExclusive();
-    std::shared_ptr<XsdMaxInclusive> maxInclusive = newRestriction->getMaxInclusive();
-    std::shared_ptr<XsdMaxLength> maxLength = newRestriction->getMaxLength();
-    std::shared_ptr<XsdMinExclusive> minExclusive = newRestriction->getMinExclusive();
-    std::shared_ptr<XsdMinInclusive> minInclusive = newRestriction->getMinInclusive();
-    std::shared_ptr<XsdMinLength> minLength = newRestriction->getMinLength();
-    std::shared_ptr<XsdLength> length = newRestriction->getLength();
-    std::shared_ptr<XsdFractionDigits> fractionDigits = newRestriction->getFractionDigits();
-    std::shared_ptr<XsdTotalDigits> totalDigits = newRestriction->getTotalDigits();
-    std::shared_ptr<XsdWhiteSpace> whiteSpace = newRestriction->getWhiteSpace();
+  std::shared_ptr<XsdPattern>         pattern         = newRestriction->getPattern();
+  std::shared_ptr<XsdMaxExclusive>    maxExclusive    = newRestriction->getMaxExclusive();
+  std::shared_ptr<XsdMaxInclusive>    maxInclusive    = newRestriction->getMaxInclusive();
+  std::shared_ptr<XsdMaxLength>       maxLength       = newRestriction->getMaxLength();
+  std::shared_ptr<XsdMinExclusive>    minExclusive    = newRestriction->getMinExclusive();
+  std::shared_ptr<XsdMinInclusive>    minInclusive    = newRestriction->getMinInclusive();
+  std::shared_ptr<XsdMinLength>       minLength       = newRestriction->getMinLength();
+  std::shared_ptr<XsdLength>          length          = newRestriction->getLength();
+  std::shared_ptr<XsdFractionDigits>  fractionDigits  = newRestriction->getFractionDigits();
+  std::shared_ptr<XsdTotalDigits>     totalDigits     = newRestriction->getTotalDigits();
+  std::shared_ptr<XsdWhiteSpace>      whiteSpace      = newRestriction->getWhiteSpace();
 
-    if (pattern)
-        existing->setPattern(pattern);
+  if (pattern)
+    existing->setPattern(pattern);
 
-    if (maxExclusive)
-        existing->setMaxExclusive(maxExclusive);
+  if (maxExclusive)
+    existing->setMaxExclusive(maxExclusive);
 
-    if (maxInclusive)
-        existing->setMaxInclusive(maxInclusive);
+  if (maxInclusive)
+    existing->setMaxInclusive(maxInclusive);
 
-    if (maxLength)
-        existing->setMaxLength(maxLength);
+  if (maxLength)
+    existing->setMaxLength(maxLength);
 
-    if (minExclusive)
-        existing->setMinExclusive(minExclusive);
+  if (minExclusive)
+    existing->setMinExclusive(minExclusive);
 
-    if (minInclusive)
-        existing->setMinInclusive(minInclusive);
+  if (minInclusive)
+    existing->setMinInclusive(minInclusive);
 
-    if (minLength)
-        existing->setMinLength(minLength);
+  if (minLength)
+    existing->setMinLength(minLength);
 
-    if (length)
-        existing->setLength(length);
+  if (length)
+    existing->setLength(length);
 
-    if (fractionDigits)
-        existing->setFractionDigits(fractionDigits);
+  if (fractionDigits)
+    existing->setFractionDigits(fractionDigits);
 
-    if (totalDigits)
-        existing->setTotalDigits(totalDigits);
+  if (totalDigits)
+    existing->setTotalDigits(totalDigits);
 
-    if (whiteSpace)
-        existing->setWhiteSpace(whiteSpace);
+  if (whiteSpace)
+    existing->setWhiteSpace(whiteSpace);
 
-    updateExistingRestrictionEnumerations(existing, newRestriction);
+  updateExistingRestrictionEnumerations(existing, newRestriction);
 }
 
 template<typename T>
@@ -131,57 +131,19 @@ static bool existsRestrictionOverlap(
     std::shared_ptr<XsdRestriction> existing,
     std::shared_ptr<XsdRestriction> newRestriction)
 {
-    return hasDifferentValue(existing->getPattern()       , newRestriction->getPattern()        ) ||
-           hasDifferentValue(existing->getWhiteSpace()    , newRestriction->getWhiteSpace()     ) ||
-           hasDifferentValue(existing->getTotalDigits()   , newRestriction->getTotalDigits()    ) ||
-           hasDifferentValue(existing->getFractionDigits(), newRestriction->getFractionDigits() ) ||
-           hasDifferentValue(existing->getMaxExclusive()  , newRestriction->getMaxExclusive()   ) ||
-           hasDifferentValue(existing->getMaxInclusive()  , newRestriction->getMaxInclusive()   ) ||
-           hasDifferentValue(existing->getMaxLength()     , newRestriction->getMaxLength()      ) ||
-           hasDifferentValue(existing->getMinExclusive()  , newRestriction->getMinExclusive()   ) ||
-           hasDifferentValue(existing->getMinInclusive()  , newRestriction->getMinInclusive()   ) ||
-           hasDifferentValue(existing->getMinLength()     , newRestriction->getMinLength()      ) ||
-           hasDifferentValue(existing->getLength()        , newRestriction->getLength()         );
+  return hasDifferentValue(existing->getPattern()       , newRestriction->getPattern()        ) ||
+      hasDifferentValue(existing->getWhiteSpace()    , newRestriction->getWhiteSpace()     ) ||
+      hasDifferentValue(existing->getTotalDigits()   , newRestriction->getTotalDigits()    ) ||
+      hasDifferentValue(existing->getFractionDigits(), newRestriction->getFractionDigits() ) ||
+      hasDifferentValue(existing->getMaxExclusive()  , newRestriction->getMaxExclusive()   ) ||
+      hasDifferentValue(existing->getMaxInclusive()  , newRestriction->getMaxInclusive()   ) ||
+      hasDifferentValue(existing->getMaxLength()     , newRestriction->getMaxLength()      ) ||
+      hasDifferentValue(existing->getMinExclusive()  , newRestriction->getMinExclusive()   ) ||
+      hasDifferentValue(existing->getMinInclusive()  , newRestriction->getMinInclusive()   ) ||
+      hasDifferentValue(existing->getMinLength()     , newRestriction->getMinLength()      ) ||
+      hasDifferentValue(existing->getLength()        , newRestriction->getLength()         );
 }
 
-
-
-/**
- * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
- */
-void XsdSimpleType::validateSchemaRules(void) const
-{
-    XsdNamedElements::validateSchemaRules();
-
-    rule2();
-    rule3();
-}
-
-/**
- * Asserts that the current object has the required name attribute when not being a direct child of the XsdSchema element.
- * Throws an exception if the required attribute is not present.
- */
-void XsdSimpleType::rule2(void) const
-{
-    if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
-        throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should only be used when the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
-}
-
-/**
- * Asserts if the current has no value for its name attribute while being a direct child of the top level XsdSchema element,
- * which is required. Throws an exception if no name is present.
- */
-void XsdSimpleType::rule3(void) const
-{
-    if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
-        throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should is required the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
-}
-
-void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
-{
-    XsdNamedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdSimpleType>(shared_from_this()));
-}
 
 /**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -191,33 +153,42 @@ void XsdSimpleType::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorPar
  */
 std::shared_ptr<XsdAbstractElement> XsdSimpleType::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(getAttributesMap());
-    placeHolderAttributes.erase(*REF_TAG);
+  placeHolderAttributes.merge(getAttributesMap());
+  placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = create<XsdSimpleType>(getParser(),
-                                             placeHolderAttributes,
-                                             m_visitorFunction,
-                                             getParent());
+  auto elementCopy = create<XsdSimpleType>(getParser(),
+                                           placeHolderAttributes,
+                                           m_visitorFunction,
+                                           getParent());
 
-    if (m_xsd_union)
-        elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(m_xsd_union->XsdAbstractElement::clone(m_xsd_union->getAttributesMap(), elementCopy));
+  if (m_xsd_union)
+    elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(
+                                 m_xsd_union->XsdAbstractElement::clone(
+                                   m_xsd_union->getAttributesMap(),
+                                   elementCopy));
 
-    if (m_xsd_list)
-        elementCopy->m_xsd_list = std::static_pointer_cast<XsdList>(m_xsd_list->XsdAbstractElement::clone(m_xsd_list->getAttributesMap(), elementCopy));
+  if (m_xsd_list)
+    elementCopy->m_xsd_list = std::static_pointer_cast<XsdList>(
+                                m_xsd_list->XsdAbstractElement::clone(
+                                  m_xsd_list->getAttributesMap(),
+                                  elementCopy));
 
-    if (m_restriction)
-        elementCopy->m_restriction = std::static_pointer_cast<XsdRestriction>(m_restriction->XsdAbstractElement::clone(m_restriction->getAttributesMap(), elementCopy));
+  if (m_restriction)
+    elementCopy->m_restriction = std::static_pointer_cast<XsdRestriction>(
+                                   m_restriction->XsdAbstractElement::clone(
+                                     m_restriction->getAttributesMap(),
+                                     elementCopy));
 
-    return elementCopy;
+  return elementCopy;
 }
 
 std::shared_ptr<XsdList> XsdSimpleType::getList(void) const
 {
-    if (!m_xsd_list && m_xsd_union)
-      for(auto& xsdSimpleType : m_xsd_union->getUnionElements())
-        if(xsdSimpleType->m_xsd_list)
-          return xsdSimpleType->m_xsd_list;
-    return m_xsd_list;
+  if (!m_xsd_list && m_xsd_union)
+    for(auto& xsdSimpleType : m_xsd_union->getUnionElements())
+      if(xsdSimpleType->m_xsd_list)
+        return xsdSimpleType->m_xsd_list;
+  return m_xsd_list;
 }
 
 /**
@@ -228,44 +199,42 @@ std::shared_ptr<XsdList> XsdSimpleType::getList(void) const
  */
 std::list<std::shared_ptr<XsdRestriction>> XsdSimpleType::getAllRestrictions(void) const
 {
-    std::map<std::string, std::shared_ptr<XsdRestriction>> restrictions;
-    StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToCpp();
+  std::map<std::string, std::shared_ptr<XsdRestriction>> restrictions;
+  StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToCpp();
 
-    if (m_restriction && m_restriction->getBase())
-    {
-        restrictions.emplace(xsdBuiltinTypes.at(m_restriction->getBase().value()), m_restriction);
-    }
+  if (m_restriction && m_restriction->getBase())
+    restrictions.emplace(xsdBuiltinTypes.at(m_restriction->getBase().value()), m_restriction);
 
-    if (m_xsd_union)
+  if (m_xsd_union)
+  {
+    for(auto& unionMember :  m_xsd_union->getUnionElements())
     {
-      for(auto& unionMember :  m_xsd_union->getUnionElements())
+      auto unionMemberRestriction = unionMember->getRestriction();
+      if (unionMemberRestriction)
       {
-        auto unionMemberRestriction = unionMember->getRestriction();
-        if (unionMemberRestriction)
+        assert(unionMemberRestriction->getBase());
+        assert(xsdBuiltinTypes.contains(unionMemberRestriction->getBase().value()));
+
+
+        std::shared_ptr<XsdRestriction> existingRestriction;
+        if(restrictions.contains(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value())))
+          existingRestriction = restrictions.at(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()));
+
+        if(existingRestriction)
         {
-          assert(unionMemberRestriction->getBase());
-          assert(xsdBuiltinTypes.contains(unionMemberRestriction->getBase().value()));
-
-
-          std::shared_ptr<XsdRestriction> existingRestriction;
-          if(restrictions.contains(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value())))
-             existingRestriction = restrictions.at(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()));
-
-          if(existingRestriction)
-          {
-            if (existsRestrictionOverlap(existingRestriction, unionMemberRestriction))
-              throw std::runtime_error("The xsd file is invalid because has contradictory restrictions.");
-            updateExistingRestriction(existingRestriction, unionMemberRestriction);
-          }
-          else
-            restrictions.emplace(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()), unionMemberRestriction);
+          if (existsRestrictionOverlap(existingRestriction, unionMemberRestriction))
+            throw std::runtime_error("The xsd file is invalid because has contradictory restrictions.");
+          updateExistingRestriction(existingRestriction, unionMemberRestriction);
         }
+        else
+          restrictions.emplace(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()), unionMemberRestriction);
       }
     }
+  }
 
-    std::list<std::shared_ptr<XsdRestriction>> rvals;
-    for(auto& pair : restrictions)
-      rvals.push_back(pair.second);
-    return rvals;
+  std::list<std::shared_ptr<XsdRestriction>> rvals;
+  for(auto& pair : restrictions)
+    rvals.push_back(pair.second);
+  return rvals;
 }
 

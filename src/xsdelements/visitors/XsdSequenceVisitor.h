@@ -23,6 +23,8 @@ struct XsdSequenceVisitor : XsdAnnotatedElementsVisitor
 
   void visit(std::shared_ptr<XsdAbstractElement> element) override
   {
+    static int counter = 0;
+    ++counter;
     assert(std::dynamic_pointer_cast<XsdElement>(element) ||
            std::dynamic_pointer_cast<XsdGroup>(element) ||
            std::dynamic_pointer_cast<XsdChoice>(element) ||

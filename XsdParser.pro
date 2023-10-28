@@ -3,6 +3,7 @@ CONFIG += console c++2b strict_c++
 CONFIG -= app_bundle
 CONFIG -= qt
 
+DEFINES += DEBUG
 CONFIG += link_pkgconfig
 PKGCONFIG += pugixml
 
@@ -124,7 +125,6 @@ SOURCES += \
   src/xsdelements/XsdImport.cpp \
   src/xsdelements/XsdInclude.cpp \
   src/xsdelements/XsdMultipleElements.cpp \
-  src/xsdelements/XsdNamedElements.cpp \
   src/xsdelements/XsdRestriction.cpp \
   src/xsdelements/XsdSchema.cpp \
   src/xsdelements/XsdSequence.cpp \

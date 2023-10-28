@@ -62,7 +62,7 @@ protected:
      * objects that are present in the original or subsequent files. These paths are stored to be parsed as well, the
      * parsing process only ends when all the files present in this {@link List} are parsed.
      */
-  std::set<SchemaLocation> m_schemaLocations;
+  std::list<SchemaLocation> m_unparsedSchemaLocations;
   std::map<SchemaLocation, SchemaLocation> m_schemaLocationsMap;
 
 public:

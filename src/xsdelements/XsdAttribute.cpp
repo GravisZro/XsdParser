@@ -45,30 +45,30 @@ void XsdAttribute::initialize(void)
 
   if (m_type && !XsdParserCore::getXsdTypesToCpp().contains(m_type.value()))
   {
-      m_simpleType = create<UnsolvedReference>(
-                       m_type.value(),
-                       std::static_pointer_cast<XsdNamedElements>(
-                         create<XsdSimpleType>(getParser(),
-                                               StringMap{},
-                                               XsdAttributeVisitorFunction,
-                                               nullptr)));
-      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_simpleType));
+    m_simpleType = create<UnsolvedReference>(
+                     m_type.value(),
+                     std::static_pointer_cast<XsdNamedElements>(
+                       create<XsdSimpleType>(getParser(),
+                                             StringMap{},
+                                             XsdAttributeVisitorFunction,
+                                             nullptr)));
+    getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_simpleType));
   }
 }
 
 
 std::optional<std::string> XsdAttribute::getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent)
 {
-    if (parent == nullptr)
-      return {};
+  if (parent == nullptr)
+    return {};
 
-    if(auto p = std::dynamic_pointer_cast<XsdElement>(parent); p)
-      return p->getForm();
+  if(auto p = std::dynamic_pointer_cast<XsdElement>(parent); p)
+    return p->getForm();
 
-    if(auto p = std::dynamic_pointer_cast<XsdSchema>(parent); p)
-      return p->getAttributeFormDefault();
+  if(auto p = std::dynamic_pointer_cast<XsdSchema>(parent); p)
+    return p->getAttributeFormDefault();
 
-    return getFormDefaultValue(parent->getParent());
+  return getFormDefaultValue(parent->getParent());
 }
 
 void XsdAttribute::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
@@ -88,20 +88,20 @@ void XsdAttribute::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorPara
 
 std::shared_ptr<XsdAbstractElement> XsdAttribute::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(getAttributesMap());
-    placeHolderAttributes.erase(*TYPE_TAG);
-    placeHolderAttributes.erase(*REF_TAG);
+  placeHolderAttributes.merge(getAttributesMap());
+  placeHolderAttributes.erase(*TYPE_TAG);
+  placeHolderAttributes.erase(*REF_TAG);
 
-    auto elementCopy = create<XsdAttribute>(getParser(),
-                                            placeHolderAttributes,
-                                            m_visitorFunction,
-                                            nullptr);
+  auto elementCopy = create<XsdAttribute>(getParser(),
+                                          placeHolderAttributes,
+                                          m_visitorFunction,
+                                          nullptr);
 
-    elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
-    elementCopy->m_type = m_type;
-    elementCopy->setCloneOf(shared_from_this());
+  elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
+  elementCopy->m_type = m_type;
+  elementCopy->setCloneOf(shared_from_this());
 
-    return elementCopy;
+  return elementCopy;
 }
 
 /**
@@ -115,23 +115,21 @@ std::shared_ptr<XsdAbstractElement> XsdAttribute::clone(StringMap placeHolderAtt
  */
 void XsdAttribute::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper)
 {
-    XsdNamedElements::replaceUnsolvedElements(elementWrapper);
+  XsdNamedElements::replaceUnsolvedElements(elementWrapper);
 
-    std::shared_ptr<XsdAbstractElement> element = elementWrapper->getElement();
+  std::shared_ptr<XsdAbstractElement> element = elementWrapper->getElement();
 
-    if (std::dynamic_pointer_cast<XsdSimpleType>(element) &&
-        m_simpleType &&
-        compareReference(elementWrapper, m_type))
-    {
-        m_simpleType = elementWrapper;
-    }
+  if (std::dynamic_pointer_cast<XsdSimpleType>(element) &&
+      m_simpleType &&
+      compareReference(elementWrapper, m_type))
+    m_simpleType = elementWrapper;
 }
 
 std::shared_ptr<XsdSimpleType> XsdAttribute::getXsdSimpleType(void) const
 {
-if (std::dynamic_pointer_cast<ConcreteElement>(m_simpleType))
-  return std::dynamic_pointer_cast<XsdSimpleType>(m_simpleType->getElement());
-return nullptr;
+  if (std::dynamic_pointer_cast<ConcreteElement>(m_simpleType))
+    return std::dynamic_pointer_cast<XsdSimpleType>(m_simpleType->getElement());
+  return nullptr;
 }
 
 std::list<std::shared_ptr<XsdRestriction>> XsdAttribute::getAllRestrictions(void) const

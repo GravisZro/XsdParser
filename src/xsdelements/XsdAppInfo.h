@@ -14,16 +14,16 @@
 class XsdAppInfo : public XsdAnnotationChildren
 {
 public: // ctors
-    XsdAppInfo(std::shared_ptr<XsdParserCore> parser,
-               StringMap attributesMap,
-               VisitorFunctionType visitorFunction,
-               std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotationChildren(parser, attributesMap, visitorFunction, parent) { }
+  XsdAppInfo(std::shared_ptr<XsdParserCore> parser,
+             StringMap attributesMap,
+             VisitorFunctionType visitorFunction,
+             std::shared_ptr<XsdAbstractElement> parent)
+    : XsdAnnotationChildren(parser, attributesMap, visitorFunction, parent) { }
 
 public:
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdAnnotationChildren::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdAppInfo>(shared_from_this()));
-    }
+  {
+    XsdAnnotationChildren::accept(visitorParam);
+    visitorParam->visit(std::static_pointer_cast<XsdAppInfo>(shared_from_this()));
+  }
 };

@@ -17,19 +17,19 @@ class XsdGroup;
 class XsdChoice : public XsdMultipleElements
 {
 private:
-    /**
+  /**
      * Specifies the minimum number of times this element can occur in the parent element. The value can be any
      * number bigger or equal to 0. Default value is 1. This attribute cannot be used if the parent element is the
      * std::shared_ptr<XsdSchema> element.
      */
-    int m_minOccurs;
+  int m_minOccurs;
 
-    /**
+  /**
      * Specifies the maximum number of times this element can occur in the parent element. The value can be any
      * number bigger or equal to 0, or if you want to set no limit on the maximum number, use the value "unbounded".
      * Default value is 1. This attribute cannot be used if the parent element is the std::shared_ptr<XsdSchema> element.
      */
-    std::string m_maxOccurs;
+  std::string m_maxOccurs;
 public: // ctors
   XsdChoice(std::shared_ptr<XsdParserCore> parser,
             StringMap attributesMap,
@@ -54,10 +54,10 @@ public:
   }
 
   void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdMultipleElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdChoice>(shared_from_this()));
-    }
+  {
+    XsdMultipleElements::accept(visitorParam);
+    visitorParam->visit(std::static_pointer_cast<XsdChoice>(shared_from_this()));
+  }
 
   virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 

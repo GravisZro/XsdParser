@@ -7,7 +7,7 @@ void XsdImport::initialize(void)
 {
   XsdAnnotatedElements::initialize();
   m_namespace.reset();
-  m_schemaLocation.reset();
+  m_schemaLocation.clear();
 
   if(haveAttribute(NAMESPACE))
     m_namespace = getAttribute(NAMESPACE);

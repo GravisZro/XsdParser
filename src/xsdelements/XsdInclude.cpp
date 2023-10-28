@@ -5,7 +5,7 @@
 void XsdInclude::initialize(void)
 {
   XsdAnnotatedElements::initialize();
-  m_schemaLocation.reset();
+  m_schemaLocation.clear();
   if(haveAttribute(SCHEMA_LOCATION))
   {
     m_schemaLocation = getAttribute(SCHEMA_LOCATION);

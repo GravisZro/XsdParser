@@ -33,7 +33,7 @@ struct XsdSimpleTypeVisitor : XsdNamedElementsVisitor
       owner->setList(std::static_pointer_cast<XsdList>(element));
     else if(std::dynamic_pointer_cast<XsdUnion>(element))
       owner->setUnion(std::static_pointer_cast<XsdUnion>(element));
-    else if(std::dynamic_pointer_cast<XsdList>(element))
+    else if(std::dynamic_pointer_cast<XsdRestriction>(element))
       owner->setRestriction(std::static_pointer_cast<XsdRestriction>(element));
   }
 };

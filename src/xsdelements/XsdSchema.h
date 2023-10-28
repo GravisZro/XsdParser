@@ -81,7 +81,7 @@ public: // ctors
 
 public:
   virtual void initialize(void) override;
-  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override
+   std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override
     {
         return m_elements;
     }
@@ -96,7 +96,7 @@ public:
     for(auto& pair : prefixLocations)
     {
       assert(m_namespaces.contains(pair.first));
-      m_namespaces.at(pair.first).setFile(pair.second);
+      m_namespaces.at(pair.first).setLocation(pair.second);
     }
   }
 public:

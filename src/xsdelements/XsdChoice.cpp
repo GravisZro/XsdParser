@@ -12,14 +12,14 @@
  */
 std::shared_ptr<XsdAbstractElement> XsdChoice::clone(StringMap placeHolderAttributes)
 {
-    placeHolderAttributes.merge(getAttributesMap());
+  placeHolderAttributes.merge(getAttributesMap());
 
-    auto elementCopy = create<XsdChoice>(getParser(),
-                                         placeHolderAttributes,
-                                         m_visitorFunction,
-                                         nullptr);
-    for(auto& element : getElements())
-        elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
+  auto elementCopy = create<XsdChoice>(getParser(),
+                                       placeHolderAttributes,
+                                       m_visitorFunction,
+                                       nullptr);
+  for(auto& element : getElements())
+    elementCopy->m_elements.push_back(ReferenceBase::clone(getParser(), element, elementCopy));
 
-    return elementCopy;
+  return elementCopy;
 }

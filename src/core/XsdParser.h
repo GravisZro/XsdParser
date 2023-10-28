@@ -66,5 +66,5 @@ private:
   pugi::xml_node getSchemaNode(SchemaLocation schemaLocation);
 
 private:
-  std::map<std::string, pugi::xml_document> m_documents;
+  std::map<SchemaLocation, pugi::xml_document> m_documents;
 };
