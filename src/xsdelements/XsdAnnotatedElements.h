@@ -19,6 +19,11 @@ public: // ctors
   {
   }
 
+  ~XsdAnnotatedElements(void)
+  {
+    if(m_annotation != nullptr)
+      delete m_annotation, m_annotation = nullptr;
+  }
 public:
 
   void setAnnotation(XsdAnnotation* annotation)

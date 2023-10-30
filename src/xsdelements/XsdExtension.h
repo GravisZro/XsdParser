@@ -35,6 +35,7 @@ public: // ctors
 
   XsdExtension(const XsdExtension& other);
 
+  ~XsdExtension(void);
 public:
   virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
 

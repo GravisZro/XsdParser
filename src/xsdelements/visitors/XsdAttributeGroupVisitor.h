@@ -15,6 +15,7 @@
 struct XsdAttributeGroupVisitor : XsdNamedElementsVisitor
 {
   XsdAttributeGroupVisitor(XsdAttributeGroup* _owner) : owner(_owner) { }
+  ~XsdAttributeGroupVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdAttributeGroup} instance which owns this {@link XsdAttributeGroupVisitor} instance. This way this

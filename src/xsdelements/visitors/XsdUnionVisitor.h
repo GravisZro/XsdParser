@@ -11,6 +11,7 @@
 struct XsdUnionVisitor : XsdAnnotatedElementsVisitor
 {
   XsdUnionVisitor(XsdUnion* _owner) : owner(_owner) { }
+  ~XsdUnionVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdUnion} instance which owns this {@link XsdUnionVisitor} instance. This way this visitor instance

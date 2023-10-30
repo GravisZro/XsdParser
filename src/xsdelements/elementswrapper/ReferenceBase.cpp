@@ -7,35 +7,21 @@
 #include <xsdelements/elementswrapper/UnsolvedReference.h>
 #include <xsdelements/XsdAbstractElement.h>
 
-/**
- * This method creates a ReferenceBase object that serves as a wrapper to {@link XsdAbstractElement} objects.
- * If a {@link XsdAbstractElement} has a ref attribute it results in a {@link UnsolvedReference} object. If it
- * doesn't have a ref attribute and has a name attribute it's a {@link NamedConcreteElement}. If it isn't a
- * {@link UnsolvedReference} or a {@link NamedConcreteElement} then it's a {@link ConcreteElement}.
- * @param element The element which will be "wrapped".
- * @return A wrapper object for the element received.
- */
-ReferenceBase* ReferenceBase::createFromXsd(XsdAbstractElement* element)
+ReferenceBase::~ReferenceBase(void)
 {
-  auto ref = getRef(element);
-  auto name = getName(element);
-
-  if(dynamic_cast<XsdNamedElements*>(element) == nullptr)
-    return new ConcreteElement(element);
-
-  if(!ref)
-  {
-    if (!name)
-      return new ConcreteElement(element);
-    else
-      return new NamedConcreteElement(static_cast<XsdNamedElements*>(element), name.value());
-  }
-  else
-    return new UnsolvedReference(static_cast<XsdNamedElements*>(element));
+  if(m_element != nullptr)
+    delete m_element, m_element = nullptr;
 }
 
-ReferenceBase::ReferenceBase(ReferenceBase* other, XsdAbstractElement* parent)
+
+void ReferenceBase::replace(ReferenceBase* other, XsdAbstractElement* parent)
 {
+  if(m_element != nullptr)
+  {
+    delete m_element;
+    m_element = nullptr;
+  }
+
   if (other != nullptr)
   {
     XsdAbstractElement* originalElement = other->getElement();
@@ -53,7 +39,7 @@ ReferenceBase::ReferenceBase(ReferenceBase* other, XsdAbstractElement* parent)
     }
     else
     {
-      other->getElement()->setParentAvailable(false);
+      //other->getElement()->setParentAvailable(false);
 
 //            XsdAbstractElement cloneElement = originalElement->clone(originalElement->getAttributesMap());
 //            cloneElement.setParent(parent);
@@ -63,24 +49,34 @@ ReferenceBase::ReferenceBase(ReferenceBase* other, XsdAbstractElement* parent)
   }
 }
 
-std::optional<std::string> ReferenceBase::getName(XsdAbstractElement* element)
-{
-    return getNodeValue(element, *XsdNamedElements::NAME_TAG);
-}
-
-std::optional<std::string> ReferenceBase::getRef(XsdAbstractElement* element)
-{
-    return getNodeValue(element, *XsdAbstractElement::REF_TAG);
-}
-
 /**
- * @param element The element that contains the attributes.
- * @param nodeName The attribute name that will be searched.
- * @return The value of the attribute contained in element with the name nodeName.
+ * This method creates a ReferenceBase object that serves as a wrapper to {@link XsdAbstractElement} objects.
+ * If a {@link XsdAbstractElement} has a ref attribute it results in a {@link UnsolvedReference} object. If it
+ * doesn't have a ref attribute and has a name attribute it's a {@link NamedConcreteElement}. If it isn't a
+ * {@link UnsolvedReference} or a {@link NamedConcreteElement} then it's a {@link ConcreteElement}.
+ * @param element The element which will be "wrapped".
+ * @return A wrapper object for the element received.
  */
-std::optional<std::string> ReferenceBase::getNodeValue(XsdAbstractElement* element, std::string nodeName)
+ReferenceBase* ReferenceBase::createFromXsd(XsdAbstractElement* element)
 {
-  if(element->getAttributesMap().contains(nodeName))
-    return element->getAttributesMap().at(nodeName);
-  return std::nullopt;
+  std::optional<std::string> ref, name;
+
+  if(element->hasAttribute(XsdNamedElements::REF_TAG))
+    ref = element->getAttribute(XsdNamedElements::REF_TAG);
+
+  if(element->hasAttribute(XsdNamedElements::NAME_TAG))
+    name = element->getAttribute(XsdNamedElements::NAME_TAG);
+
+  if(dynamic_cast<XsdNamedElements*>(element) == nullptr)
+    return new ConcreteElement(element);
+
+  if(!ref)
+  {
+    if (!name)
+      return new ConcreteElement(element);
+    else
+      return new NamedConcreteElement(static_cast<XsdNamedElements*>(element), name.value());
+  }
+  else
+    return new UnsolvedReference(static_cast<XsdNamedElements*>(element));
 }

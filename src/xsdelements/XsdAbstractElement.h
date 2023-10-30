@@ -88,12 +88,12 @@ public:
 
   bool removeAttribute(const std::string_view& attribute)
   {
-    if(haveAttribute(attribute))
+    if(hasAttribute(attribute))
       return m_attributesMap.erase(std::string(attribute));
     return false;
   }
 
-  bool haveAttribute(const std::string_view& attribute) const
+  bool hasAttribute(const std::string_view& attribute) const
   {
     return m_attributesMap.contains(std::string(attribute));
   }

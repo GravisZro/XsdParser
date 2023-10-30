@@ -46,21 +46,22 @@ public: // ctors
     m_block = AttributeValidations::getBlockDefaultValue(getParent());
     m_elementFinal = AttributeValidations::getFinalDefaultValue(getParent());
 
-    if(haveAttribute(ABSTRACT_TAG))
+    if(hasAttribute(ABSTRACT_TAG))
       m_elementAbstract = AttributeValidations::validateBoolean(getAttribute(ABSTRACT_TAG));
 
-    if(haveAttribute(MIXED_TAG))
+    if(hasAttribute(MIXED_TAG))
       m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
 
-    if(haveAttribute(BLOCK_TAG))
+    if(hasAttribute(BLOCK_TAG))
       m_block = AttributeValidations::belongsToEnum<ComplexTypeBlockEnum>(getAttribute(BLOCK_TAG));
 
-    if(haveAttribute(FINAL_TAG))
+    if(hasAttribute(FINAL_TAG))
       m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
   }
 
   XsdComplexType(const XsdComplexType& other, XsdAbstractElement* parent = nullptr);
 
+  ~XsdComplexType(void);
 public:
   /**
    * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
@@ -158,7 +159,7 @@ private:
    */
   void rule2(void) const
   {
-    if (m_simpleContent != nullptr && haveAttribute(MIXED_TAG))
+    if (m_simpleContent != nullptr && hasAttribute(MIXED_TAG))
       throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
   }
 

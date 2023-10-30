@@ -18,7 +18,7 @@ public: // ctors
                    XsdAbstractElement* parent)
     : XsdAnnotationChildren(attributesMap, visitorFunction, parent)
   {
-    if(haveAttribute(XML_LANG_TAG))
+    if(hasAttribute(XML_LANG_TAG))
       m_xmlLang = getAttribute(XML_LANG_TAG);
   }
 

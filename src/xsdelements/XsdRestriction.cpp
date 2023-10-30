@@ -52,12 +52,13 @@ XsdRestriction::XsdRestriction(StringMap attributesMap,
     m_choice(nullptr),
     m_sequence(nullptr)
 {
-  if(haveAttribute(BASE_TAG))
+  if(hasAttribute(BASE_TAG))
     m_baseString = getAttribute(BASE_TAG);
 
   if (m_baseString)
   {
-    if (XsdParserCore::getXsdTypesToCpp().contains(m_baseString.value()))
+    const auto& typeMap = XsdParserCore::getXsdTypesToCpp();
+    if (typeMap.contains(m_baseString.value()))
     {
       StringMap attributes;
       attributes.emplace(NAME_TAG, m_baseString.value());
@@ -71,18 +72,18 @@ XsdRestriction::XsdRestriction(StringMap attributesMap,
     {
       auto parseMappers = XsdParserCore::getParseMappers();
 
-      ConfigEntryData config;
+      ConfigEntryData configEntryData;
       if(parseMappers.contains(TAG<XsdElement>::xsd))
-        config = parseMappers.at(TAG<XsdElement>::xsd);
+        configEntryData = parseMappers.at(TAG<XsdElement>::xsd);
       else if(parseMappers.contains(TAG<XsdElement>::xs))
-        config = parseMappers.at(TAG<XsdElement>::xs);
+        configEntryData = parseMappers.at(TAG<XsdElement>::xs);
 
-      if (config.parserFunction == nullptr && config.visitorFunction == nullptr)
+      if (configEntryData.parserFunction == nullptr && configEntryData.visitorFunction == nullptr)
         throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
       m_base = new UnsolvedReference(m_baseString.value(),
                                      new XsdElement(StringMap{},
-                                                    config.visitorFunction,
+                                                    configEntryData.visitorFunction,
                                                     this));
       getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_base));
     }
@@ -151,6 +152,57 @@ XsdRestriction::XsdRestriction(const XsdRestriction& other, XsdAbstractElement* 
     m_group = new ReferenceBase(m_group, this);
 
   m_base = other.m_base;
+}
+
+XsdRestriction::~XsdRestriction(void)
+{
+  if(m_base != nullptr)
+    delete m_base, m_base = nullptr;
+
+  if(m_fractionDigits != nullptr)
+    delete m_fractionDigits, m_fractionDigits = nullptr;
+
+  if(m_length != nullptr)
+    delete m_length, m_length = nullptr;
+
+  if(m_maxExclusive != nullptr)
+    delete m_maxExclusive, m_maxExclusive = nullptr;
+
+  if(m_maxInclusive != nullptr)
+    delete m_maxInclusive, m_maxInclusive = nullptr;
+
+  if(m_maxLength != nullptr)
+    delete m_maxLength, m_maxLength = nullptr;
+
+  if(m_minExclusive != nullptr)
+    delete m_minExclusive, m_minExclusive = nullptr;
+
+  if(m_minInclusive != nullptr)
+    delete m_minInclusive, m_minInclusive = nullptr;
+
+  if(m_minLength != nullptr)
+    delete m_minLength, m_minLength = nullptr;
+
+  if(m_pattern != nullptr)
+    delete m_pattern, m_pattern = nullptr;
+
+  if(m_totalDigits != nullptr)
+    delete m_totalDigits, m_totalDigits = nullptr;
+
+  if(m_whiteSpace != nullptr)
+    delete m_whiteSpace, m_whiteSpace = nullptr;
+
+  if(m_group != nullptr)
+    delete m_group, m_group = nullptr;
+
+  if(m_all != nullptr)
+    delete m_all, m_all = nullptr;
+
+  if(m_choice != nullptr)
+    delete m_choice, m_choice = nullptr;
+
+  if(m_sequence != nullptr)
+    delete m_sequence, m_sequence = nullptr;
 }
 
 void XsdRestriction::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)

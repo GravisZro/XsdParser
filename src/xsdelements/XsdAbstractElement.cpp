@@ -33,7 +33,7 @@ void XsdAbstractElement::accept(XsdAbstractElementVisitor* xsdAbstractElementVis
 ReferenceBase* XsdAbstractElement::xsdParseSkeleton(pugi::xml_node node,
                                                     XsdAbstractElement* element)
 {
-  auto parse_mappers = XsdParserCore::getParseMappers();
+  const auto& parse_mappers = XsdParserCore::getParseMappers();
 
   for(pugi::xml_node child = node.first_child(); child; child = child.next_sibling())
   {
@@ -43,7 +43,9 @@ ReferenceBase* XsdAbstractElement::xsdParseSkeleton(pugi::xml_node node,
       if(parse_mappers.contains(nodeName))
         if(auto configEntryData = parse_mappers.at(nodeName); configEntryData.parserFunction)
         {
-          auto rval = configEntryData.parserFunction(child, configEntryData.visitorFunction, nullptr);
+          auto rval = configEntryData.parserFunction(child,
+                                                     configEntryData.visitorFunction,
+                                                     nullptr);
           auto childElement = rval->getElement();
           childElement->setElementName(nodeName);
           if(element->getVisitor())
@@ -71,7 +73,8 @@ void XsdAbstractElement::replaceUnsolvedElements(NamedConcreteElement* elementWr
   std::list<UnsolvedReference*> unsolved_refs;
   for(auto element : element_list)
     if(auto unsolved = dynamic_cast<UnsolvedReference*>(element);
-       unsolved && compareReference(elementWrapper, unsolved))
+       unsolved != nullptr &&
+       compareReference(elementWrapper, unsolved))
       unsolved_refs.push_back(unsolved);
 
   if(!unsolved_refs.empty())
@@ -81,7 +84,7 @@ void XsdAbstractElement::replaceUnsolvedElements(NamedConcreteElement* elementWr
                           std::end(element_list),
                           static_cast<ReferenceBase*>(oldElement));
     assert(iter != std::end(element_list));
-    **iter = *new ReferenceBase(static_cast<ReferenceBase*>(elementWrapper), oldElement->getParent());
+    (*iter)->replace(static_cast<ReferenceBase*>(elementWrapper), oldElement->getParent());
   }
 }
 

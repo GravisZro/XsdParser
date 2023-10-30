@@ -29,11 +29,13 @@ public: // ctors
       m_xsd_list(nullptr)
   {
     m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
-    if(haveAttribute(FINAL_TAG))
+    if(hasAttribute(FINAL_TAG))
       m_finalObj = AttributeValidations::belongsToEnum<SimpleTypeFinalEnum>(getAttribute(FINAL_TAG) );
   }
 
   XsdSimpleType(const XsdSimpleType& other, XsdAbstractElement* parent = nullptr);
+
+  ~XsdSimpleType(void);
 public:
 
   /**

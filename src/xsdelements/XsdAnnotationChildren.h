@@ -18,7 +18,7 @@ public: // ctors
                         XsdAbstractElement* parent)
     : XsdAbstractElement(attributesMap, visitorFunction, parent)
   {
-    if(haveAttribute(SOURCE_TAG))
+    if(hasAttribute(SOURCE_TAG))
       m_source = getAttribute(SOURCE_TAG);
   }
 

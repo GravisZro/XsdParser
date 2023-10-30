@@ -166,6 +166,18 @@ XsdSimpleType::XsdSimpleType(const XsdSimpleType& other, XsdAbstractElement* par
     m_restriction = new XsdRestriction(*other.m_restriction, this);
 }
 
+XsdSimpleType::~XsdSimpleType(void)
+{
+  if(m_restriction != nullptr)
+    delete m_restriction, m_restriction = nullptr;
+
+  if(m_xsd_union != nullptr)
+    delete m_xsd_union, m_xsd_union = nullptr;
+
+  if(m_xsd_list != nullptr)
+    delete m_xsd_list, m_xsd_list = nullptr;
+}
+
 XsdList* XsdSimpleType::getList(void) const
 {
   if (!m_xsd_list && m_xsd_union)
@@ -184,10 +196,10 @@ XsdList* XsdSimpleType::getList(void) const
 std::list<XsdRestriction*> XsdSimpleType::getAllRestrictions(void) const
 {
   std::map<std::string, XsdRestriction*> restrictions;
-  StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToCpp();
+  const auto& typeMap = XsdParserCore::getXsdTypesToCpp();
 
   if (m_restriction != nullptr && m_restriction->getBaseType())
-    restrictions.emplace(xsdBuiltinTypes.at(m_restriction->getBaseType().value()), m_restriction);
+    restrictions.emplace(typeMap.at(m_restriction->getBaseType().value()), m_restriction);
 
   if (m_xsd_union != nullptr)
   {
@@ -197,12 +209,12 @@ std::list<XsdRestriction*> XsdSimpleType::getAllRestrictions(void) const
       if (unionMemberRestriction != nullptr)
       {
         assert(unionMemberRestriction->getBaseType());
-        assert(xsdBuiltinTypes.contains(unionMemberRestriction->getBaseType().value()));
+        assert(typeMap.contains(unionMemberRestriction->getBaseType().value()));
 
 
         XsdRestriction* existingRestriction = nullptr;
-        if(restrictions.contains(xsdBuiltinTypes.at(unionMemberRestriction->getBaseType().value())))
-          existingRestriction = restrictions.at(xsdBuiltinTypes.at(unionMemberRestriction->getBaseType().value()));
+        if(restrictions.contains(typeMap.at(unionMemberRestriction->getBaseType().value())))
+          existingRestriction = restrictions.at(typeMap.at(unionMemberRestriction->getBaseType().value()));
 
         if(existingRestriction != nullptr)
         {
@@ -211,7 +223,7 @@ std::list<XsdRestriction*> XsdSimpleType::getAllRestrictions(void) const
           updateExistingRestriction(existingRestriction, unionMemberRestriction);
         }
         else
-          restrictions.emplace(xsdBuiltinTypes.at(unionMemberRestriction->getBaseType().value()), unionMemberRestriction);
+          restrictions.emplace(typeMap.at(unionMemberRestriction->getBaseType().value()), unionMemberRestriction);
       }
     }
   }

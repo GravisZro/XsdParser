@@ -14,6 +14,7 @@
 struct XsdSequenceVisitor : XsdAnnotatedElementsVisitor
 {
   XsdSequenceVisitor(XsdSequence* _owner) : owner(_owner) { }
+  ~XsdSequenceVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdSequence} instance which owns this {@link XsdSequenceVisitor} instance. This way this visitor instance

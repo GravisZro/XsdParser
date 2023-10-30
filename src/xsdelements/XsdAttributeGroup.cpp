@@ -29,6 +29,15 @@ XsdAttributeGroup::XsdAttributeGroup(const XsdAttributeGroup& other, XsdAbstract
   setCloneOf(&other);
 }
 
+XsdAttributeGroup::~XsdAttributeGroup(void)
+{
+  for(auto& attribute : m_attributes)
+    delete attribute, attribute = nullptr;
+
+  for(auto& attributeGroup : m_attributeGroups)
+    delete attributeGroup, attributeGroup = nullptr;
+}
+
 /**
  * @return A list of all {@link XsdAttribute} objects contained in the current {@link XsdAttributeGroup} instance,
  * either directly or present in its children {@link XsdAttributeGroup} in the
@@ -42,25 +51,26 @@ std::list<ReferenceBase*> XsdAttributeGroup::getElements(void) const
   return allAttributes;
 }
 
+ReferenceBase* findRefWithName(std::list<ReferenceBase*>& attributeGroups, const std::string& refName)
+{
+  for(auto& attributeGroup : attributeGroups)
+    if(auto x = dynamic_cast<UnsolvedReference*>(attributeGroup);
+       x != nullptr &&
+       x->getRef() &&
+       x->getRef() == refName)
+      return attributeGroup;
+  return nullptr;
+}
+
 void XsdAttributeGroup::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
 {
   if (dynamic_cast<XsdAttributeGroup*>(elementWrapper->getElement()) != nullptr)
-  {
-    ReferenceBase* attributeGroupUnsolvedReference = nullptr;
-    for(auto& attributeGroup : m_attributeGroups)
-      if(auto x = dynamic_cast<UnsolvedReference*>(attributeGroup);
-         x != nullptr && x->getRef() && x->getRef() == elementWrapper->getName())
-      {
-        attributeGroupUnsolvedReference = attributeGroup;
-        break;
-      }
-
-    if (attributeGroupUnsolvedReference != nullptr)
+    if (ReferenceBase* unsolvedRef = findRefWithName(m_attributeGroups, elementWrapper->getName());
+        unsolvedRef != nullptr)
     {
-      m_attributeGroups.remove(attributeGroupUnsolvedReference);
+      m_attributeGroups.remove(unsolvedRef);
       m_attributeGroups.push_back(elementWrapper);
     }
-  }
 }
 
 std::list<XsdAttributeGroup*> XsdAttributeGroup::getXsdAttributeGroups(void) const

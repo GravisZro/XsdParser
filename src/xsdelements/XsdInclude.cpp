@@ -7,7 +7,7 @@ XsdInclude::XsdInclude(StringMap attributesMap,
                        XsdAbstractElement* parent)
   : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
 {
-  if(haveAttribute(SCHEMA_LOCATION))
+  if(hasAttribute(SCHEMA_LOCATION))
   {
     m_schemaLocation = getAttribute(SCHEMA_LOCATION);
     getParser()->addLocationToParse(m_schemaLocation);

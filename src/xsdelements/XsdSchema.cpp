@@ -26,25 +26,25 @@ XsdSchema::XsdSchema(StringMap attributesMap,
     m_blockDefault(BlockDefaultEnum::DEFAULT),
     m_finalDefault(FinalDefaultEnum::DEFAULT)
 {
-  if(haveAttribute(ATTRIBUTE_FORM_DEFAULT))
+  if(hasAttribute(ATTRIBUTE_FORM_DEFAULT))
     m_attributeFormDefault = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(ATTRIBUTE_FORM_DEFAULT));
 
-  if(haveAttribute(ELEMENT_FORM_DEFAULT))
+  if(hasAttribute(ELEMENT_FORM_DEFAULT))
     m_elementFormDefault = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(ELEMENT_FORM_DEFAULT));
 
-  if(haveAttribute(BLOCK_DEFAULT))
+  if(hasAttribute(BLOCK_DEFAULT))
     m_blockDefault = AttributeValidations::belongsToEnum<BlockDefaultEnum>(getAttribute(BLOCK_DEFAULT));
 
-  if(haveAttribute(FINAL_DEFAULT))
+  if(hasAttribute(FINAL_DEFAULT))
     m_finalDefault = AttributeValidations::belongsToEnum<FinalDefaultEnum>(getAttribute(FINAL_DEFAULT));
 
-  if(haveAttribute(TARGET_NAMESPACE))
+  if(hasAttribute(TARGET_NAMESPACE))
     m_targetNamespace = getAttribute(TARGET_NAMESPACE);
 
-  if(haveAttribute(VERSION))
+  if(hasAttribute(VERSION))
     m_version = getAttribute(VERSION);
 
-  if(haveAttribute(XMLNS))
+  if(hasAttribute(XMLNS))
     m_xmlns = getAttribute(XMLNS);
 
   for (auto& pair : getAttributesMap())

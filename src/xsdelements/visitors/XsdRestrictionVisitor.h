@@ -24,6 +24,7 @@
 struct XsdRestrictionVisitor : AttributesVisitor
 {
   XsdRestrictionVisitor(XsdRestriction* _owner) : owner(_owner) { }
+  ~XsdRestrictionVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdRestriction} instance which owns this {@link XsdRestrictionVisitor} instance. This way this

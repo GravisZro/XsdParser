@@ -28,10 +28,10 @@ public: // ctors
       m_minOccurs(1),
       m_maxOccurs("1")
   {
-    if(haveAttribute(MIN_OCCURS_TAG))
+    if(hasAttribute(MIN_OCCURS_TAG))
       m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdGroup>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
-    if(haveAttribute(MAX_OCCURS_TAG))
+    if(hasAttribute(MAX_OCCURS_TAG))
       m_maxOccurs = AttributeValidations::maxOccursValidation(*TAG<XsdGroup>::xsd, getAttribute(MAX_OCCURS_TAG));
   }
 
@@ -48,6 +48,12 @@ public: // ctors
 
     if (other->m_childElement != nullptr)
       m_childElement = new XsdMultipleElements(other->m_childElement->getAttributesMap(), nullptr, this);
+  }
+
+  ~XsdGroup(void)
+  {
+    if(m_childElement != nullptr)
+      delete m_childElement, m_childElement = nullptr;
   }
 
 public:

@@ -12,6 +12,7 @@
 struct XsdAnnotationVisitor : XsdAbstractElementVisitor
 {
   XsdAnnotationVisitor(XsdAnnotation* _owner) : owner(_owner) { }
+  ~XsdAnnotationVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdAnnotation} instance which owns this {@link XsdAnnotationVisitor} instance. This way this visitor

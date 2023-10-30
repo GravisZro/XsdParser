@@ -23,7 +23,7 @@ public: // ctors
       m_fixed(false),
       m_value(INT_MIN)
   {
-    if(haveAttribute(FIXED_TAG))
+    if(hasAttribute(FIXED_TAG))
       m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
   }
 

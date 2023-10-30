@@ -28,6 +28,7 @@ public: // ctors
              XsdAbstractElement* parent);
 
   XsdElement(const XsdElement& other);
+  ~XsdElement(void);
 public:
   /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.

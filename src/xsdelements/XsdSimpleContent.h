@@ -39,6 +39,16 @@ public:
     m_extension = new ReferenceBase(other.m_extension, this);
     setCloneOf(&other);
   }
+
+  ~XsdSimpleContent(void)
+  {
+    if(m_restriction != nullptr)
+      delete m_restriction, m_restriction = nullptr;
+
+    if(m_extension != nullptr)
+      delete m_extension, m_extension = nullptr;
+  }
+
 public:
   void accept(XsdAbstractElementVisitor* visitorParam) override
   {

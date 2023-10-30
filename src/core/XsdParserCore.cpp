@@ -25,6 +25,26 @@ XsdParserCore::XsdParserCore(void)
   g_parser = this;
 }
 
+XsdParserCore::~XsdParserCore(void)
+{
+  assert(g_parser == this);
+  g_parser = nullptr;
+
+  for(auto& entry : m_parseElements)
+    for(auto& element : entry.second)
+      if(element != nullptr)
+        delete element, element = nullptr;
+
+  for(auto& entry : m_unsolvedElements)
+    for(auto& element : entry.second)
+      if(element != nullptr)
+        delete element, element = nullptr;
+
+  for(auto& element : m_parserUnsolvedElements)
+    if(element != nullptr)
+      delete element, element = nullptr;
+}
+
 
 /**
  * Verifies if a given {@link DOMNode} object, i.e. {@code node} is a xsd:schema node.
@@ -270,7 +290,8 @@ void XsdParserCore::replaceUnsolvedImportedReference(
             if (!unsolvedReference->isTypeRef())
             {
                 XsdNamedElements* substitutionElement = new XsdNamedElements(oldElementAttributes, nullptr, concreteElement->getElement()->getParent());
-                substitutionElementWrapper = static_cast<NamedConcreteElement*>(ReferenceBase::createFromXsd(substitutionElement));
+                substitutionElementWrapper = dynamic_cast<NamedConcreteElement*>(ReferenceBase::createFromXsd(substitutionElement));
+                assert(substitutionElementWrapper != nullptr);
             }
 
             unsolvedReference->getParent()->replaceUnsolvedElements(substitutionElementWrapper);

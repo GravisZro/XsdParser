@@ -12,6 +12,7 @@
 struct XsdAllVisitor : XsdNamedElementsVisitor
 {
   XsdAllVisitor(XsdAll* _owner) : owner(_owner) { }
+  ~XsdAllVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdAll} instance which owns this {@link XsdAllVisitor} instance. This way this visitor instance can

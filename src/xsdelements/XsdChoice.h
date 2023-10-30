@@ -25,10 +25,10 @@ public: // ctors
       m_minOccurs(1),
       m_maxOccurs("1")
   {
-    if(haveAttribute(MIN_OCCURS_TAG))
+    if(hasAttribute(MIN_OCCURS_TAG))
       m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdChoice>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
-    if(haveAttribute(MAX_OCCURS_TAG))
+    if(hasAttribute(MAX_OCCURS_TAG))
       m_maxOccurs = AttributeValidations::maxOccursValidation(*TAG<XsdChoice>::xsd, getAttribute(MAX_OCCURS_TAG));
   }
 

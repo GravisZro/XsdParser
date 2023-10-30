@@ -25,29 +25,34 @@ XsdAttribute::XsdAttribute(StringMap attributesMap,
     m_form(getFormDefaultValue(parent)),
     m_use(UsageEnum::OPTIONAL)
 {
-  if(haveAttribute(DEFAULT_ELEMENT_TAG))
+  if(hasAttribute(DEFAULT_ELEMENT_TAG))
     m_defaultElement = getAttribute(DEFAULT_ELEMENT_TAG);
 
-  if(haveAttribute(FIXED_TAG))
+  if(hasAttribute(FIXED_TAG))
     m_fixed = getAttribute(FIXED_TAG);
 
-  if(haveAttribute(TYPE_TAG))
+  if(hasAttribute(TYPE_TAG))
     m_type = getAttribute(TYPE_TAG);
 
-  if(haveAttribute(FORM_TAG))
+  if(hasAttribute(FORM_TAG))
     m_form = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(FORM_TAG));
 
-  if(haveAttribute(USE_TAG))
+  if(hasAttribute(USE_TAG))
     m_use = AttributeValidations::belongsToEnum<UsageEnum>(getAttribute(USE_TAG));
 
-  if (m_type && !XsdParserCore::getXsdTypesToCpp().contains(m_type.value()))
+  const auto& typeMap = XsdParserCore::getXsdTypesToCpp();
+  if (m_type &&
+      !typeMap.contains(m_type.value()))
   {
+    const auto& parseMappers = XsdParserCore::getParseMappers();
+    ConfigEntryData configEntryData;
+    assert(parseMappers.contains(m_type.value()));
+    configEntryData = parseMappers.at(m_type.value());
     m_simpleType = new UnsolvedReference(
                      m_type.value(),
-                     static_cast<XsdNamedElements*>(
-                       new XsdSimpleType(StringMap{},
-                                         XsdAttributeVisitorFunction,
-                                         nullptr)));
+                     new XsdSimpleType(StringMap{},
+                                       configEntryData.visitorFunction,
+                                       nullptr));
     getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_simpleType));
   }
 }
@@ -89,6 +94,12 @@ XsdAttribute::XsdAttribute(const XsdAttribute& other)
   m_simpleType = new ReferenceBase(other.m_simpleType, this);
   m_type = other.m_type;
   setCloneOf(&other);
+}
+
+XsdAttribute::~XsdAttribute(void)
+{
+  if(m_simpleType != nullptr)
+    delete m_simpleType, m_simpleType = nullptr;
 }
 
 /**

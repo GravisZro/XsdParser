@@ -8,10 +8,10 @@ XsdImport::XsdImport(StringMap attributesMap,
                      XsdAbstractElement* parent)
   : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
 {
-  if(haveAttribute(NAMESPACE))
+  if(hasAttribute(NAMESPACE))
     m_namespace = getAttribute(NAMESPACE);
 
-  if(haveAttribute(SCHEMA_LOCATION))
+  if(hasAttribute(SCHEMA_LOCATION))
   {
     m_schemaLocation = getAttribute(SCHEMA_LOCATION);
     getParser()->addLocationToParse(m_schemaLocation);

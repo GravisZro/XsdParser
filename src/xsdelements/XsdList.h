@@ -20,7 +20,7 @@ public: // ctors
     : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
       m_simpleType(nullptr)
   {
-    if(haveAttribute(ITEM_TYPE_TAG))
+    if(hasAttribute(ITEM_TYPE_TAG))
       m_itemType = getAttribute(ITEM_TYPE_TAG);
   }
 
@@ -35,6 +35,12 @@ public: // ctors
   {
     if (other.m_simpleType != nullptr)
       m_simpleType = new XsdSimpleType(*other.m_simpleType, this);
+  }
+
+  ~XsdList(void)
+  {
+    if(m_simpleType != nullptr)
+      delete m_simpleType, m_simpleType = nullptr;
   }
 
 public:

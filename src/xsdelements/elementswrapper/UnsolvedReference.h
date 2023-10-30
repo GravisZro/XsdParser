@@ -15,9 +15,10 @@ private:
 public:
   UnsolvedReference(XsdNamedElements* element)
     : ReferenceBase(static_cast<XsdAbstractElement*>(element)),
-      m_ref(ReferenceBase::getRef(static_cast<XsdAbstractElement*>(element))),
       m_isTypeRef(false)
   {
+    if(element->hasAttribute(XsdNamedElements::REF_TAG))
+      m_ref = element->getAttribute(XsdNamedElements::REF_TAG);
   }
 
   UnsolvedReference(std::optional<std::string> refType, XsdNamedElements* element)

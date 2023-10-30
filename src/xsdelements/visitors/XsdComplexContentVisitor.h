@@ -15,6 +15,7 @@
 struct XsdComplexContentVisitor : XsdAnnotatedElementsVisitor
 {
   XsdComplexContentVisitor(XsdComplexContent* _owner) : owner(_owner) { }
+  ~XsdComplexContentVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdComplexContent} instance which owns this {@link XsdComplexContentVisitor} instance. This way this

@@ -20,9 +20,9 @@ public: // ctors
         : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
           m_fixed(false)
   {
-    if(haveAttribute(FIXED_TAG))
+    if(hasAttribute(FIXED_TAG))
       m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
-    if(haveAttribute(VALUE_TAG))
+    if(hasAttribute(VALUE_TAG))
       m_value = AttributeValidations::belongsToEnum<WhiteSpaceEnum>(getAttribute(VALUE_TAG));
   }
 

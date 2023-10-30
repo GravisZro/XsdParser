@@ -21,6 +21,7 @@
 struct XsdComplexTypeVisitor : AttributesVisitor
 {
   XsdComplexTypeVisitor(XsdComplexType* _owner) : owner(_owner) { }
+  ~XsdComplexTypeVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdComplexType} instance which owns this {@link XsdComplexTypeVisitor} instance. This way this visitor

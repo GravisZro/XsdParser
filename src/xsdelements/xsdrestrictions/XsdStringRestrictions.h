@@ -17,7 +17,7 @@ public: // ctors
                         XsdAbstractElement* parent)
       : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
   {
-    if(haveAttribute(VALUE_TAG))
+    if(hasAttribute(VALUE_TAG))
       m_value = getAttribute(VALUE_TAG);
   }
 public:

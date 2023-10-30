@@ -43,6 +43,8 @@ public: // ctors
                  XsdAbstractElement* parent);
 
   XsdRestriction(const XsdRestriction& other, XsdAbstractElement* parent = nullptr);
+
+  ~XsdRestriction(void);
 public:
 
   void accept(XsdAbstractElementVisitor* visitorParam) override

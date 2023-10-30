@@ -12,6 +12,7 @@
 struct XsdListVisitor : XsdAnnotatedElementsVisitor
 {
   XsdListVisitor(XsdList* _owner) : owner(_owner) { }
+  ~XsdListVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdList} instance which owns this {@link XsdListVisitor} instance. This way this visitor instance can

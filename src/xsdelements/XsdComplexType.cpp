@@ -47,6 +47,18 @@ XsdComplexType::XsdComplexType(const XsdComplexType& other, XsdAbstractElement* 
 
 }
 
+XsdComplexType::~XsdComplexType(void)
+{
+  if(m_childElement != nullptr)
+    delete m_childElement, m_childElement = nullptr;
+
+  if(m_complexContent != nullptr)
+    delete m_complexContent, m_complexContent = nullptr;
+
+  if(m_simpleContent != nullptr)
+    delete m_simpleContent, m_simpleContent = nullptr;
+}
+
 void XsdComplexType::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
 {
   XsdNamedElements::replaceUnsolvedElements(elementWrapper);

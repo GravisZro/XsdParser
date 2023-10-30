@@ -16,7 +16,7 @@ public: // ctors
                    XsdAbstractElement* parent)
     : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
   {    
-    if(haveAttribute(XsdAbstractElement::NAME_TAG))
+    if(hasAttribute(XsdAbstractElement::NAME_TAG))
       m_name = getAttribute(XsdAbstractElement::NAME_TAG);
   }
 
@@ -64,7 +64,7 @@ private:
    */
   void rule1(void) const
   {
-    if (m_name && haveAttribute(REF_TAG))
+    if (m_name && hasAttribute(REF_TAG))
       throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
   }
 

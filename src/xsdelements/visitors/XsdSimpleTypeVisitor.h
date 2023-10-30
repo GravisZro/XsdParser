@@ -16,6 +16,7 @@
 struct XsdSimpleTypeVisitor : XsdNamedElementsVisitor
 {
   XsdSimpleTypeVisitor(XsdSimpleType* _owner) : owner(_owner) { }
+  ~XsdSimpleTypeVisitor(void) { delete owner; owner = nullptr; }
 
   /**
    * The {@link XsdSimpleType} instance which owns this {@link XsdSimpleTypeVisitor} instance. This way this visitor

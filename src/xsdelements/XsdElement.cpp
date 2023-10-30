@@ -31,10 +31,11 @@ XsdElement::XsdElement(StringMap attributesMap,
   m_block = AttributeValidations::getBlockDefaultValue(getParent());
   m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
 
-  if (haveAttribute(TYPE_TAG))
+  if (hasAttribute(TYPE_TAG))
   {
     std::string typeString = getAttribute(TYPE_TAG);
-    if (XsdParserCore::getXsdTypesToCpp().contains(typeString))
+    const auto& typeMap = XsdParserCore::getXsdTypesToCpp();
+    if (typeMap.contains(typeString))
     {
       StringMap attributes;
       attributes.emplace(*NAME_TAG, typeString);
@@ -54,7 +55,7 @@ XsdElement::XsdElement(StringMap attributesMap,
   }
 
   std::optional<std::string> localSubstitutionGroup;
-  if(haveAttribute(SUBSTITUTION_GROUP_TAG))
+  if(hasAttribute(SUBSTITUTION_GROUP_TAG))
     localSubstitutionGroup = getAttribute(SUBSTITUTION_GROUP_TAG);
 
   if (localSubstitutionGroup)
@@ -68,32 +69,32 @@ XsdElement::XsdElement(StringMap attributesMap,
     getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_substitutionGroup));
   }
 
-  if(haveAttribute(DEFAULT_TAG))
+  if(hasAttribute(DEFAULT_TAG))
     m_defaultObj = getAttribute(DEFAULT_TAG);
 
 
-  if(haveAttribute(FIXED_TAG))
+  if(hasAttribute(FIXED_TAG))
     m_fixed = getAttribute(FIXED_TAG);
 
-  if(haveAttribute(FORM_TAG))
+  if(hasAttribute(FORM_TAG))
     m_form = AttributeValidations::belongsToEnum<FormEnum>(getAttribute(FORM_TAG));
 
-  if(haveAttribute(NILLABLE_TAG))
+  if(hasAttribute(NILLABLE_TAG))
     m_nillable = AttributeValidations::validateBoolean(getAttribute(NILLABLE_TAG));
 
-  if(haveAttribute(ABSTRACT_TAG))
+  if(hasAttribute(ABSTRACT_TAG))
     m_abstractObj = AttributeValidations::validateBoolean(getAttribute(ABSTRACT_TAG));
 
-  if(haveAttribute(BLOCK_TAG))
+  if(hasAttribute(BLOCK_TAG))
     m_block = AttributeValidations::belongsToEnum<BlockEnum>(getAttribute(BLOCK_TAG));
 
-  if(haveAttribute(FINAL_TAG))
+  if(hasAttribute(FINAL_TAG))
     m_finalObj = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
 
-  if(haveAttribute(MIN_OCCURS_TAG))
+  if(hasAttribute(MIN_OCCURS_TAG))
     m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdElement>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
 
-  if(haveAttribute(MAX_OCCURS_TAG))
+  if(hasAttribute(MAX_OCCURS_TAG))
     m_maxOccurs = AttributeValidations::maxOccursValidation(*TAG<XsdElement>::xsd, getAttribute(MAX_OCCURS_TAG));
 }
 
@@ -134,13 +135,28 @@ XsdElement::XsdElement(const XsdElement& other)
   setCloneOf(&other);
 }
 
+XsdElement::~XsdElement(void)
+{
+  if(m_complexType != nullptr)
+    delete m_complexType, m_complexType = nullptr;
+
+  if(m_simpleType != nullptr)
+    delete m_simpleType, m_simpleType = nullptr;
+
+  if(m_type != nullptr)
+    delete m_type, m_type = nullptr;
+
+  if(m_substitutionGroup != nullptr)
+    delete m_substitutionGroup, m_substitutionGroup = nullptr;
+}
+
 /**
  * Asserts if the current object has a form attribute while being a direct child of the top level XsdSchema element,
  * which isn't allowed, throwing an exception in that case.
  */
 void XsdElement::rule7(void) const
 {
-  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && haveAttribute(FORM_TAG))
+  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && hasAttribute(FORM_TAG))
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
@@ -170,7 +186,7 @@ void XsdElement::rule4(void) const
  */
 void XsdElement::rule3(void) const
 {
-  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && haveAttribute(REF_TAG))
+  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && hasAttribute(REF_TAG))
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
@@ -276,7 +292,7 @@ std::optional<std::string> XsdElement::getType(void) const
 {
   if (auto x = dynamic_cast<NamedConcreteElement*>(m_type); x != nullptr)
     return x->getName();
-  if(haveAttribute(TYPE_TAG))
+  if(hasAttribute(TYPE_TAG))
     return getAttribute(TYPE_TAG);
   return std::nullopt;
 }

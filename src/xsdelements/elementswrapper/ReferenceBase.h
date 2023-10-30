@@ -8,15 +8,20 @@
  */
 class ReferenceBase
 {
-public:
-  XsdAbstractElement* m_element;
 public: // ctors
     ReferenceBase(XsdAbstractElement* element)
       : m_element(element) { }
 
-    ReferenceBase(ReferenceBase* other, XsdAbstractElement* parent);
+    ReferenceBase(ReferenceBase* other, XsdAbstractElement* parent)
+      : m_element(nullptr)
+    {
+      replace(other, parent);
+    }
 
-    virtual ~ReferenceBase(void) = default;
+    virtual ~ReferenceBase(void);
+
+    void replace(ReferenceBase* other, XsdAbstractElement* parent);
+
 
   XsdAbstractElement* getElement(void) const { return m_element; }
 
@@ -30,9 +35,7 @@ public: // ctors
      */
   static ReferenceBase* createFromXsd(XsdAbstractElement* element);
 
-  static std::optional<std::string> getRef(XsdAbstractElement* element);
 
-private:
-  static std::optional<std::string> getName(XsdAbstractElement* element);
-  static std::optional<std::string> getNodeValue(XsdAbstractElement* element, std::string nodeName);
+protected:
+  XsdAbstractElement* m_element;
 };

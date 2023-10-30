@@ -23,6 +23,16 @@ class AttributesVisitor : public XsdNamedElementsVisitor
 {
 public:
   AttributesVisitor(void) = default;
+  ~AttributesVisitor(void)
+  {
+    for(auto& attributeGroup : m_attributeGroups)
+      if(attributeGroup != nullptr)
+        delete attributeGroup, attributeGroup = nullptr;
+
+    for(auto& attribute : m_attributes)
+      if(attribute != nullptr)
+        delete attribute, attribute = nullptr;
+  }
 
 
   virtual void visit(XsdAbstractElement* attribute) override

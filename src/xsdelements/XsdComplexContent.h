@@ -26,11 +26,13 @@ public: // ctors
       m_extension(nullptr),
       m_mixed(false)
   {
-    if(haveAttribute(MIXED_TAG))
+    if(hasAttribute(MIXED_TAG))
       m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
   }
 
   XsdComplexContent(const XsdComplexContent& other, XsdAbstractElement* parent = nullptr);
+
+  ~XsdComplexContent(void);
 
 public:
   void accept(XsdAbstractElementVisitor* visitorParam) override

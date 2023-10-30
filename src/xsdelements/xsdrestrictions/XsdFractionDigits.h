@@ -17,7 +17,7 @@ public: // ctors
                     XsdAbstractElement* parent)
         : XsdIntegerRestrictions(attributesMap, visitorFunction, parent)
   {
-    assert(haveAttribute(VALUE_TAG));
+    assert(hasAttribute(VALUE_TAG));
     m_value = AttributeValidations::validateRequiredNonNegativeInteger(*TAG<XsdFractionDigits>::xsd, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
 

@@ -17,6 +17,15 @@ XsdComplexContent::XsdComplexContent(const XsdComplexContent& other, XsdAbstract
   setCloneOf(&other);
 }
 
+XsdComplexContent::~XsdComplexContent(void)
+{
+  if(m_restriction != nullptr)
+    delete m_restriction, m_restriction = nullptr;
+
+  if(m_extension != nullptr)
+    delete m_extension, m_extension = nullptr;
+}
+
 XsdExtension* XsdComplexContent::getXsdExtension(void) const
 {
   if(auto x = dynamic_cast<ConcreteElement*>(m_extension); x != nullptr)

@@ -17,6 +17,7 @@
 struct XsdExtensionVisitor : AttributesVisitor
 {
   XsdExtensionVisitor(XsdExtension* _owner) : owner(_owner) { }
+  ~XsdExtensionVisitor(void) { delete owner; owner = nullptr; }
 
     /**
      * The {@link XsdExtension} instance which owns this {@link XsdExtensionVisitor} instance. This way this visitor

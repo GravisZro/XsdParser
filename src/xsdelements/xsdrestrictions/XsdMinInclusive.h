@@ -20,7 +20,7 @@ public: // ctors
       : XsdStringRestrictions(attributesMap, visitorFunction, parent),
         m_fixed(false)
   {
-    if(haveAttribute(FIXED_TAG))
+    if(hasAttribute(FIXED_TAG))
       m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
   }
 

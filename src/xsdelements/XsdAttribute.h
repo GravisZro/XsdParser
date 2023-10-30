@@ -24,6 +24,8 @@ public: // ctors
                XsdAbstractElement* parent);
 
   XsdAttribute(const XsdAttribute& other);
+
+  ~XsdAttribute(void);
 public:
   /**
      * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
@@ -76,7 +78,7 @@ private:
      */
   void rule3(void) const
   {
-    if (haveAttribute(REF_TAG) && (m_simpleType != nullptr || m_form || m_type))
+    if (hasAttribute(REF_TAG) && (m_simpleType != nullptr || m_form || m_type))
       throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
   }
 

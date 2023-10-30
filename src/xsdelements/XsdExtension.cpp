@@ -29,11 +29,12 @@ XsdExtension::XsdExtension(StringMap attributesMap,
     m_childElement(nullptr),
     m_base(nullptr)
 {
-  if (haveAttribute(BASE_TAG))
+  if (hasAttribute(BASE_TAG))
   {
     std::string baseValue = getAttribute(BASE_TAG);
+    const auto& typeMap = XsdParserCore::getXsdTypesToCpp();
 
-    if (XsdParserCore::getXsdTypesToCpp().contains(baseValue))
+    if (typeMap.contains(baseValue))
     {
       StringMap attributes;
       attributes.emplace(NAME_TAG, baseValue);
@@ -44,24 +45,33 @@ XsdExtension::XsdExtension(StringMap attributesMap,
     }
     else
     {
-      auto parseMappers = XsdParserCore::getParseMappers();
-      ConfigEntryData config;
+      const auto& parseMappers = XsdParserCore::getParseMappers();
+      ConfigEntryData configEntryData;
 
       if(parseMappers.contains(TAG<XsdElement>::xsd))
-        config = parseMappers.at(TAG<XsdElement>::xsd);
+        configEntryData = parseMappers.at(TAG<XsdElement>::xsd);
       else if(parseMappers.contains(TAG<XsdElement>::xs))
-        config = parseMappers.at(TAG<XsdElement>::xs);
+        configEntryData = parseMappers.at(TAG<XsdElement>::xs);
 
-      if (config.parserFunction == nullptr || config.visitorFunction == nullptr)
+      if (configEntryData.parserFunction == nullptr || configEntryData.visitorFunction == nullptr)
         throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
       m_base = new UnsolvedReference(baseValue,
-                                         new XsdElement(StringMap{},
-                                                            config.visitorFunction,
-                                                            this));
+                                     new XsdElement(StringMap{},
+                                                    configEntryData.visitorFunction,
+                                                    this));
       getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_base));
     }
   }
+}
+
+XsdExtension::~XsdExtension(void)
+{
+  if(m_childElement != nullptr)
+    delete m_childElement, m_childElement = nullptr;
+
+  if(m_base != nullptr)
+    delete m_base, m_base = nullptr;
 }
 
 /**

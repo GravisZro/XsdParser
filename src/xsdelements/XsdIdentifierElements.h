@@ -13,7 +13,7 @@ public: // ctors
                         XsdAbstractElement* parent)
     : XsdAbstractElement(attributesMap, visitorFunction, parent)
   {
-    if(haveAttribute(XsdAbstractElement::ID_TAG))
+    if(hasAttribute(XsdAbstractElement::ID_TAG))
       m_id = getAttribute(XsdAbstractElement::ID_TAG);
   }
 

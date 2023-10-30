@@ -27,6 +27,7 @@ public:
 
   XsdAttributeGroup(const XsdAttributeGroup& other, XsdAbstractElement* parent = nullptr);
 
+  ~XsdAttributeGroup(void);
 public:
   void accept(XsdAbstractElementVisitor* visitorParam) override
   {

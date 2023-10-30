@@ -29,7 +29,11 @@ public:
     m_parents.push_back(unsolvedReference->getParent());
   }
 
-  virtual ~UnsolvedReferenceItem(void) = default;
+  virtual ~UnsolvedReferenceItem(void)
+  {
+    if(m_unsolvedReference != nullptr)
+      delete m_unsolvedReference, m_unsolvedReference = nullptr;
+  }
 
   UnsolvedReference* getUnsolvedReference(void)
   {
