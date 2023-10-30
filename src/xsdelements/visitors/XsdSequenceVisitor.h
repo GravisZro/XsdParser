@@ -1,6 +1,9 @@
 #pragma once
 
 #include <xsdelements/visitors/XsdAnnotatedElementsVisitor.h>
+#include <xsdelements/XsdElement.h>
+#include <xsdelements/XsdGroup.h>
+#include <xsdelements/XsdChoice.h>
 #include <xsdelements/XsdSequence.h>
 
 /**
@@ -10,25 +13,23 @@
  */
 struct XsdSequenceVisitor : XsdAnnotatedElementsVisitor
 {
-  XsdSequenceVisitor(std::shared_ptr<XsdSequence> _owner) : owner(_owner) { }
+  XsdSequenceVisitor(XsdSequence* _owner) : owner(_owner) { }
 
   /**
    * The {@link XsdSequence} instance which owns this {@link XsdSequenceVisitor} instance. This way this visitor instance
    * can perform changes in the {@link XsdSequence} object.
    */
-  std::shared_ptr<XsdSequence> owner;
+  XsdSequence* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  void visit(std::shared_ptr<XsdAbstractElement> element) override
+  void visit(XsdAbstractElement* element) override
   {
-    static int counter = 0;
-    ++counter;
-    assert(std::dynamic_pointer_cast<XsdElement>(element) ||
-           std::dynamic_pointer_cast<XsdGroup>(element) ||
-           std::dynamic_pointer_cast<XsdChoice>(element) ||
-           std::dynamic_pointer_cast<XsdSequence>(element));
+    assert(dynamic_cast<XsdElement* >(element) != nullptr ||
+           dynamic_cast<XsdGroup*   >(element) != nullptr ||
+           dynamic_cast<XsdChoice*  >(element) != nullptr ||
+           dynamic_cast<XsdSequence*>(element) != nullptr);
 
     XsdAnnotatedElementsVisitor::visit(element);
     owner->addElement(element);

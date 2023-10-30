@@ -32,12 +32,142 @@ class NamedConcreteElement;
  */
 class XsdComplexType : public XsdNamedElements
 {
+public: // ctors
+  XsdComplexType(StringMap attributesMap,
+                 VisitorFunctionType visitorFunction,
+                 XsdAbstractElement* parent)
+    : XsdNamedElements(attributesMap, visitorFunction, parent),
+      m_childElement(nullptr),
+      m_elementAbstract(false),
+      m_mixed(false),
+      m_complexContent(nullptr),
+      m_simpleContent(nullptr)
+  {
+    m_block = AttributeValidations::getBlockDefaultValue(getParent());
+    m_elementFinal = AttributeValidations::getFinalDefaultValue(getParent());
+
+    if(haveAttribute(ABSTRACT_TAG))
+      m_elementAbstract = AttributeValidations::validateBoolean(getAttribute(ABSTRACT_TAG));
+
+    if(haveAttribute(MIXED_TAG))
+      m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
+
+    if(haveAttribute(BLOCK_TAG))
+      m_block = AttributeValidations::belongsToEnum<ComplexTypeBlockEnum>(getAttribute(BLOCK_TAG));
+
+    if(haveAttribute(FINAL_TAG))
+      m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
+  }
+
+  XsdComplexType(const XsdComplexType& other, XsdAbstractElement* parent = nullptr);
+
+public:
+  /**
+   * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
+   */
+  virtual void validateSchemaRules(void) const override
+  {
+    XsdNamedElements::validateSchemaRules();
+    rule2();
+  }
+
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdNamedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdComplexType*>(this));
+  }
+
+  /**
+    * @return The elements of his child as if they belong to the {@link XsdComplexType} instance.
+    */
+  virtual std::list<ReferenceBase*> getElements(void) const override
+  {
+    if(m_childElement != nullptr)
+      return m_childElement->getElement()->getElements();
+    return {};
+  }
+
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
+
+  std::optional<std::string> getFinal(void) const;
+
+  std::list<ReferenceBase*> getAttributes(void) const;
+  std::list<XsdAttribute*> getXsdAttributes(void) const;
+  std::list<XsdAttributeGroup*> getXsdAttributeGroup(void) const;
+  std::list<XsdAttributeGroup*> getAllXsdAttributeGroups(void) const;
+  std::list<XsdAttribute*> getAllXsdAttributes(void) const;
+
+  XsdSimpleContent* getSimpleContent(void) const
+  {
+    return m_simpleContent;
+  }
+
+  XsdComplexContent* getComplexContent(void) const
+  {
+    return m_complexContent;
+  }
+
+  bool isMixed(void) const
+  {
+    return m_mixed;
+  }
+
+  bool isElementAbstract(void) const
+  {
+    return m_elementAbstract;
+  }
+
+  void setChildElement(ReferenceBase* childElement)
+  {
+    m_childElement = childElement;
+  }
+
+  void setComplexContent(XsdComplexContent* complexContent)
+  {
+    m_complexContent = complexContent;
+  }
+
+  void setSimpleContent(XsdSimpleContent* simpleContent)
+  {
+    m_simpleContent = simpleContent;
+  }
+
+  std::optional<std::string> getBlock(void) const
+  {
+    return m_block;
+  }
+
+  template<typename T, std::enable_if_t<std::is_same_v<XsdAbstractElement , T> ||
+                                        std::is_same_v<XsdMultipleElements, T> ||
+                                        std::is_same_v<XsdGroup           , T> ||
+                                        std::is_same_v<XsdAll             , T> ||
+                                        std::is_same_v<XsdChoice          , T> ||
+                                        std::is_same_v<XsdSequence        , T> ||
+                                        std::is_same_v<XsdElement         , T>, bool> = true>
+  T* getChildAs(void) const
+  {
+    if (m_childElement != nullptr)
+      return dynamic_cast<T*>(m_childElement->getElement());
+    return nullptr;
+  }
+
+private:
+  /**
+   * Asserts if the current object has a simpleContent as children and contains a value for the mixed attribute, which isn't allowed throwing
+   * an exception in that case.
+   */
+  void rule2(void) const
+  {
+    if (m_simpleContent != nullptr && haveAttribute(MIXED_TAG))
+      throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
+  }
+
 private:
   /**
    * The child element of {@link XsdComplexType}. Can be either a {@link XsdGroup} or a {@link XsdMultipleElements}
    * instance wrapped in a {@link ReferenceBase} object.
    */
-  std::shared_ptr<ReferenceBase> m_childElement;
+  ReferenceBase* m_childElement;
 
   /**
    * Specifies whether the complex type can be used in an instance document. True indicates that an element cannot
@@ -66,147 +196,11 @@ private:
   /**
    * A {@link XsdComplexContent} child.
    */
-  std::shared_ptr<XsdComplexContent> m_complexContent;
+  XsdComplexContent* m_complexContent;
 
   /**
    * A {@link XsdSimpleContent} child. This element is exclusive with the {@link XsdComplexType#mixed} field, only one
    * of them should be present in any {@link XsdComplexType} element.
    */
-  std::shared_ptr<XsdSimpleContent> m_simpleContent;
-
-public: // ctors
-  XsdComplexType(std::shared_ptr<XsdParserCore> parser,
-                 StringMap attributesMap,
-                 VisitorFunctionType visitorFunction,
-                 std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
-      m_elementAbstract(false),
-      m_mixed(false)
-  {
-  }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdNamedElements::initialize();
-    m_childElement.reset();
-    m_elementAbstract = false;
-    m_mixed = false;
-    m_block.reset();
-    m_elementFinal.reset();
-    m_complexContent.reset();
-    m_simpleContent.reset();
-
-    m_block = AttributeValidations::getBlockDefaultValue(getParent());
-    m_elementFinal = AttributeValidations::getFinalDefaultValue(getParent());
-
-    if(haveAttribute(ABSTRACT_TAG))
-      m_elementAbstract = AttributeValidations::validateBoolean(getAttribute(ABSTRACT_TAG));
-
-    if(haveAttribute(MIXED_TAG))
-      m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
-
-    if(haveAttribute(BLOCK_TAG))
-      m_block = AttributeValidations::belongsToEnum<ComplexTypeBlockEnum>(getAttribute(BLOCK_TAG));
-
-    if(haveAttribute(FINAL_TAG))
-      m_elementFinal = AttributeValidations::belongsToEnum<FinalEnum>(getAttribute(FINAL_TAG));
-  }
-
-  /**
-   * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
-   */
-  virtual void validateSchemaRules(void) const override
-  {
-    XsdNamedElements::validateSchemaRules();
-    rule2();
-  }
-
-private:
-  /**
-   * Asserts if the current object has a simpleContent as children and contains a value for the mixed attribute, which isn't allowed throwing
-   * an exception in that case.
-   */
-  void rule2(void) const
-  {
-    if (m_simpleContent && haveAttribute(MIXED_TAG))
-      throw ParsingException(TAG<XsdComplexType>::xsd + " element: The simpleContent element and the " + MIXED_TAG + " attribute are not allowed at the same time.");
-  }
-
-public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-  {
-    static int counter = 0;
-    ++counter;
-    XsdNamedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdComplexType>(shared_from_this()));
-  }
-
-  /**
-    * @return The elements of his child as if they belong to the {@link XsdComplexType} instance.
-    */
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
-  {
-    if(m_childElement)
-      return m_childElement->getElement()->getElements();
-    return {};
-  }
-
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
-  std::shared_ptr<XsdAbstractElement> getXsdChildElement(void) const;
-
-  std::optional<std::string> getFinal(void) const;
-
-  std::list<std::shared_ptr<ReferenceBase>> getAttributes(void) const;
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void) const;
-  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void) const;
-  std::list<std::shared_ptr<XsdAttribute>> getAllXsdAttributes(void) const;
-
-  std::shared_ptr<XsdSimpleContent> getSimpleContent(void) const
-  {
-    return m_simpleContent;
-  }
-
-  std::shared_ptr<XsdComplexContent> getComplexContent(void) const
-  {
-    return m_complexContent;
-  }
-
-  bool isMixed(void) const
-  {
-    return m_mixed;
-  }
-
-  bool isElementAbstract(void) const
-  {
-    return m_elementAbstract;
-  }
-
-  void setChildElement(std::shared_ptr<ReferenceBase> childElement)
-  {
-    m_childElement = childElement;
-  }
-
-  void setComplexContent(std::shared_ptr<XsdComplexContent> complexContent)
-  {
-    m_complexContent = complexContent;
-  }
-
-  void setSimpleContent(std::shared_ptr<XsdSimpleContent> simpleContent)
-  {
-    m_simpleContent = simpleContent;
-  }
-
-  std::optional<std::string> getBlock(void) const
-  {
-    return m_block;
-  }
-
-  std::shared_ptr<XsdMultipleElements> getChildElement(void) const;
-  std::shared_ptr<XsdAll> getChildAsAll(void) const;
-  std::shared_ptr<XsdChoice> getChildAsChoice(void) const;
-  std::shared_ptr<XsdGroup> getChildAsGroup(void) const;
-  std::shared_ptr<XsdSequence> getChildAsSequence(void) const;
+  XsdSimpleContent* m_simpleContent;
 };

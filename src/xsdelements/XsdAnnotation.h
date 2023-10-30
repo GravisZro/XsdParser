@@ -14,43 +14,37 @@ class XsdDocumentation;
  */
 class XsdAnnotation : public XsdIdentifierElements
 {
-private:
-  /**
-   * The list of {@link XsdAppInfo} children.
-   */
-  std::list<std::shared_ptr<XsdAppInfo>> m_appInfoList;
-
-  /**
-   * The list of {@link XsdDocumentation} children.
-   */
-  std::list<std::shared_ptr<XsdDocumentation>> m_documentations;
 public: // ctors
-  XsdAnnotation(std::shared_ptr<XsdParserCore> parser,
-                StringMap attributesMap,
+  XsdAnnotation(StringMap attributesMap,
                 VisitorFunctionType visitorFunction,
-                std::shared_ptr<XsdAbstractElement> parent)
-    : XsdIdentifierElements(parser, attributesMap, visitorFunction, parent)
-  { }
-
-public:
-  virtual void initialize(void) override
+                XsdAbstractElement* parent)
+    : XsdIdentifierElements(attributesMap, visitorFunction, parent)
   {
-    XsdIdentifierElements::initialize();
-    m_appInfoList.clear();
-    m_documentations.clear();
   }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
+public:
+  void accept(XsdAbstractElementVisitor* visitorParam) override;
 
-  const std::list<std::shared_ptr<XsdAppInfo>>& getAppInfoList(void) const
+  const std::list<XsdAppInfo*>& getAppInfoList(void) const
   {
     return m_appInfoList;
   }
 
-  const std::list<std::shared_ptr<XsdDocumentation>>& getDocumentations(void) const
+  const std::list<XsdDocumentation*>& getDocumentations(void) const
   {
     return m_documentations;
   }
 
-  void add(std::shared_ptr<XsdAnnotationChildren> element);  
+  void add(XsdAnnotationChildren* element);  
+
+private:
+  /**
+   * The list of {@link XsdAppInfo} children.
+   */
+  std::list<XsdAppInfo*> m_appInfoList;
+
+  /**
+   * The list of {@link XsdDocumentation} children.
+   */
+  std::list<XsdDocumentation*> m_documentations;
 };

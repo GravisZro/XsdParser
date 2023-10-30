@@ -12,40 +12,30 @@
 class XsdFractionDigits : public XsdIntegerRestrictions
 {
 public: // ctors
-  XsdFractionDigits(std::shared_ptr<XsdParserCore> parser,
-                    StringMap attributesMap,
+  XsdFractionDigits(StringMap attributesMap,
                     VisitorFunctionType visitorFunction,
-                    std::shared_ptr<XsdAbstractElement> parent)
-        : XsdIntegerRestrictions(parser, attributesMap, visitorFunction, parent)
+                    XsdAbstractElement* parent)
+        : XsdIntegerRestrictions(attributesMap, visitorFunction, parent)
   {
-  }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdIntegerRestrictions::initialize();
     assert(haveAttribute(VALUE_TAG));
     m_value = AttributeValidations::validateRequiredNonNegativeInteger(*TAG<XsdFractionDigits>::xsd, *VALUE_TAG, getAttribute(VALUE_TAG));
   }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
-    {
-        XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdFractionDigits>(shared_from_this()));
-    }
-
-    /**
-     * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-     * {@link UnsolvedReference} objects in the reference solving process.
-     * @param placeHolderAttributes The additional attributes to add to the clone.
-     * @return A copy of the object from which is called upon.
-     */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
+  /**
+   * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
+   * {@link UnsolvedReference} objects in the reference solving process.
+   * @param placeHolderAttributes The additional attributes to add to the clone.
+   * @return A copy of the object from which is called upon.
+   */
+  XsdFractionDigits(const XsdFractionDigits& other, XsdAbstractElement* parent = nullptr)
+    : XsdFractionDigits(other.getAttributesMap(), other.m_visitorFunction, parent)
   {
-    placeHolderAttributes.merge(getAttributesMap());
-    return create<XsdFractionDigits>(getParser(),
-                                     placeHolderAttributes,
-                                     m_visitorFunction,
-                                     nullptr);
+  }
+
+public:
+  void accept(XsdAbstractElementVisitor* xsdAbstractElementVisitor) override
+  {
+    XsdIntegerRestrictions::accept(xsdAbstractElementVisitor);
+    xsdAbstractElementVisitor->visit(static_cast<XsdFractionDigits*>(this));
   }
 };

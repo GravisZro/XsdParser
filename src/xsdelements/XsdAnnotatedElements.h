@@ -10,33 +10,30 @@
  */
 class XsdAnnotatedElements : public XsdIdentifierElements
 {
-private:
-    /**
-     * The {@link XsdAnnotation} that is annotating the concrete instances of this class.
-     */
-  std::shared_ptr<XsdAnnotation> m_annotation;
-
 public: // ctors
-  XsdAnnotatedElements(std::shared_ptr<XsdParserCore> parser,
-                       StringMap attributesMap,
+  XsdAnnotatedElements(StringMap attributesMap,
                        VisitorFunctionType visitorFunction,
-                       std::shared_ptr<XsdAbstractElement> parent)
-    : XsdIdentifierElements(parser, attributesMap, visitorFunction, parent) { }
-
-public:
-  virtual void initialize(void) override
+                       XsdAbstractElement* parent)
+    : XsdIdentifierElements(attributesMap, visitorFunction, parent),
+      m_annotation(nullptr)
   {
-    XsdIdentifierElements::initialize();
-    m_annotation.reset();
   }
 
-  void setAnnotation(std::shared_ptr<XsdAnnotation> annotation)
+public:
+
+  void setAnnotation(XsdAnnotation* annotation)
   {
     m_annotation = annotation;
   }
 
-  std::shared_ptr<XsdAnnotation> getAnnotation(void) const
+  XsdAnnotation* getAnnotation(void) const
   {
     return m_annotation;
   }
+
+private:
+    /**
+     * The {@link XsdAnnotation} that is annotating the concrete instances of this class.
+     */
+  XsdAnnotation* m_annotation;
 };

@@ -167,29 +167,26 @@ static StringMap generateAttributeMap(pugi::xml_node node)
 }
 
 template<typename T>
-static std::shared_ptr<ReferenceBase> genericParser(std::shared_ptr<XsdParserCore> parserInstance,
-                                                    pugi::xml_node node,
+static ReferenceBase* genericParser(pugi::xml_node node,
                                                     VisitorFunctionType visitorFunction,
-                                                    std::shared_ptr<XsdAbstractElement> parent)
+                                                    XsdAbstractElement* parent)
 {
   return XsdAbstractElement::xsdParseSkeleton(
         node,
-        std::static_pointer_cast<XsdAbstractElement>(
-          create<T>(parserInstance,
-                    generateAttributeMap(node),
+        static_cast<XsdAbstractElement*>(
+          new T(generateAttributeMap(node),
                     visitorFunction,
                     parent)));
 }
 
-static std::shared_ptr<ReferenceBase> schemaParser(std::shared_ptr<XsdParserCore> parserInstance,
-                                                   pugi::xml_node node,
+static ReferenceBase* schemaParser(pugi::xml_node node,
                                                    VisitorFunctionType visitorFunction,
-                                                   std::shared_ptr<XsdAbstractElement> parent)
+                                                   XsdAbstractElement* parent)
 {
-  auto xsdSchemaRef = genericParser<XsdSchema>(parserInstance, node, visitorFunction, parent);
-  auto xsdSchema = std::static_pointer_cast<XsdSchema>(xsdSchemaRef->getElement());
+  auto xsdSchemaRef = genericParser<XsdSchema>(node, visitorFunction, parent);
+  auto xsdSchema = static_cast<XsdSchema*>(xsdSchemaRef->getElement());
 
-  std::list<std::shared_ptr<XsdImport>> importsList = xsdSchema->getChildren<XsdImport>();
+  std::list<XsdImport*> importsList = xsdSchema->getChildren<XsdImport>();
 
   std::map<std::string, SchemaLocation> prefixLocations;
   for(auto& nspair : xsdSchema->getNamespaces())
@@ -205,11 +202,11 @@ static std::shared_ptr<ReferenceBase> schemaParser(std::shared_ptr<XsdParserCore
 }
 
 template<typename ClassType, typename VisitorType>
-static std::shared_ptr<XsdAbstractElementVisitor> genericVisitor(std::shared_ptr<XsdAbstractElement> element)
+static XsdAbstractElementVisitor* genericVisitor(XsdAbstractElement* element)
 {
-  return std::static_pointer_cast<XsdAbstractElementVisitor>(
-        create<VisitorType>(
-          std::static_pointer_cast<ClassType>(element)));
+  return static_cast<XsdAbstractElementVisitor*>(
+        new VisitorType(
+          static_cast<ClassType*>(element)));
 }
 
 template<typename T>

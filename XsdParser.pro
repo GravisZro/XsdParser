@@ -12,12 +12,10 @@ INCLUDEPATH += src
 HEADERS += \
   src/core/XsdParser.h \
   src/core/XsdParserCore.h \
-  src/core/XsdParserJar.h \
   src/core/utils/CommonTypes.h \
   src/core/utils/ConfigEntryData.h \
   src/core/utils/DefaultParserConfig.h \
   src/core/utils/NamespaceInfo.h \
-  src/core/utils/NonDeletedPtr.h \
   src/core/utils/ParserConfig.h \
   src/core/utils/SchemaLocation.h \
   src/core/utils/StringOperations.h \
@@ -117,7 +115,6 @@ SOURCES += \
   src/xsdelements/XsdAnnotation.cpp \
   src/xsdelements/XsdAttribute.cpp \
   src/xsdelements/XsdAttributeGroup.cpp \
-  src/xsdelements/XsdChoice.cpp \
   src/xsdelements/XsdComplexContent.cpp \
   src/xsdelements/XsdComplexType.cpp \
   src/xsdelements/XsdElement.cpp \
@@ -127,7 +124,6 @@ SOURCES += \
   src/xsdelements/XsdMultipleElements.cpp \
   src/xsdelements/XsdRestriction.cpp \
   src/xsdelements/XsdSchema.cpp \
-  src/xsdelements/XsdSequence.cpp \
   src/xsdelements/XsdSimpleType.cpp \
   src/xsdelements/XsdUnion.cpp \
   src/xsdelements/elementswrapper/ReferenceBase.cpp \

@@ -16,13 +16,11 @@
  * of the file to parse in its constructor and storing the parse results in its multiple fields, which can be consulted
  * after the instance is created.
  */
-class XsdParser : public XsdParserCore,
-    public std::enable_shared_from_this<XsdParser>
+class XsdParser : public XsdParserCore
 {
 public:
   XsdParser(void) = default;
   virtual ~XsdParser(void) = default;
-  virtual void initialize(void) { }
 #if 0
     /**
      * The XsdParser constructor will parse the XSD file with the {@code filepath} and will also parse all the subsequent

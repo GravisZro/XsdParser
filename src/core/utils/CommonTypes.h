@@ -12,20 +12,18 @@
 
 #include "TagLookup.h"
 
-#include "NonDeletedPtr.h"
+//#include "NonDeletedPtr.h"
 
 struct XsdAbstractElementVisitor;
 class XsdAbstractElement;
 class ReferenceBase;
-class XsdParserCore;
 
 using StringMap = std::map<std::string, std::string>;
 
-using VisitorFunctionType = std::shared_ptr<XsdAbstractElementVisitor> (*) (std::shared_ptr<XsdAbstractElement>);
-using ParserFunctionType = std::shared_ptr<ReferenceBase> (*)(std::shared_ptr<XsdParserCore>,
-                                                              pugi::xml_node,
+using VisitorFunctionType = XsdAbstractElementVisitor* (*) (XsdAbstractElement*);
+using ParserFunctionType = ReferenceBase* (*)(pugi::xml_node,
                                                               VisitorFunctionType,
-                                                              std::shared_ptr<XsdAbstractElement>);
+                                                              XsdAbstractElement*);
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

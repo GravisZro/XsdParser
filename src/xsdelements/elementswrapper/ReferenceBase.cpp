@@ -15,69 +15,60 @@
  * @param element The element which will be "wrapped".
  * @return A wrapper object for the element received.
  */
-std::shared_ptr<ReferenceBase> ReferenceBase::createFromXsd(std::shared_ptr<XsdAbstractElement> element)
+ReferenceBase* ReferenceBase::createFromXsd(XsdAbstractElement* element)
 {
   auto ref = getRef(element);
   auto name = getName(element);
 
-  if(std::dynamic_pointer_cast<XsdNamedElements>(element) == nullptr)
-    return create<ConcreteElement>(element);
+  if(dynamic_cast<XsdNamedElements*>(element) == nullptr)
+    return new ConcreteElement(element);
 
   if(!ref)
   {
     if (!name)
-      return create<ConcreteElement>(element);
+      return new ConcreteElement(element);
     else
-      return create<NamedConcreteElement>(std::static_pointer_cast<XsdNamedElements>(element),
-                                          name.value());
+      return new NamedConcreteElement(static_cast<XsdNamedElements*>(element), name.value());
   }
   else
-    return create<UnsolvedReference>(std::static_pointer_cast<XsdNamedElements>(element));
+    return new UnsolvedReference(static_cast<XsdNamedElements*>(element));
 }
 
-std::shared_ptr<ReferenceBase> ReferenceBase::clone(std::shared_ptr<XsdParserCore> parser,
-                                                    std::shared_ptr<ReferenceBase> originalReference,
-                                                    std::shared_ptr<XsdAbstractElement> parent)
+ReferenceBase::ReferenceBase(ReferenceBase* other, XsdAbstractElement* parent)
 {
-    if (originalReference == nullptr)
-      return nullptr;
-
-    std::shared_ptr<XsdAbstractElement> originalElement = originalReference->getElement();
-
-    if (auto original = std::dynamic_pointer_cast<UnsolvedReference>(originalReference); original)
+  if (other != nullptr)
+  {
+    XsdAbstractElement* originalElement = other->getElement();
+    if (auto original = dynamic_cast<UnsolvedReference*>(other); original != nullptr)
     {
       assert(original->getRef());
-        StringMap clonedAttributesMap = originalElement->getAttributesMap();
-        clonedAttributesMap.emplace(XsdAbstractElement::REF_TAG, original->getRef().value());
+      StringMap clonedAttributesMap = originalElement->getAttributesMap();
+      clonedAttributesMap.emplace(XsdAbstractElement::REF_TAG, original->getRef().value());
 
-        auto clonedElement = std::static_pointer_cast<XsdNamedElements>(
-                               originalElement->clone(clonedAttributesMap));
-        clonedElement->getAttributesMap().emplace(XsdAbstractElement::REF_TAG, original->getRef().value());
-        clonedElement->setCloneOf(originalElement);
-        clonedElement->setParent(parent);
+      auto clonedElement = new XsdNamedElements(clonedAttributesMap, nullptr, parent);
+      clonedElement->setCloneOf(originalElement);
 
-        auto unsolvedClonedElement = create<UnsolvedReference>(clonedElement);
-        parser->addUnsolvedReference(unsolvedClonedElement);
-        return unsolvedClonedElement;
+      auto unsolvedClonedElement = new UnsolvedReference(clonedElement);
+      getParser()->addUnsolvedReference(unsolvedClonedElement);
     }
-    else {
-        originalReference->getElement()->setParentAvailable(false);
-
-        return originalReference;
+    else
+    {
+      other->getElement()->setParentAvailable(false);
 
 //            XsdAbstractElement cloneElement = originalElement->clone(originalElement->getAttributesMap());
 //            cloneElement.setParent(parent);
 //
 //            return createFromXsd(cloneElement);
     }
+  }
 }
 
-std::optional<std::string> ReferenceBase::getName(std::shared_ptr<XsdAbstractElement> element)
+std::optional<std::string> ReferenceBase::getName(XsdAbstractElement* element)
 {
     return getNodeValue(element, *XsdNamedElements::NAME_TAG);
 }
 
-std::optional<std::string> ReferenceBase::getRef(std::shared_ptr<XsdAbstractElement> element)
+std::optional<std::string> ReferenceBase::getRef(XsdAbstractElement* element)
 {
     return getNodeValue(element, *XsdAbstractElement::REF_TAG);
 }
@@ -87,7 +78,7 @@ std::optional<std::string> ReferenceBase::getRef(std::shared_ptr<XsdAbstractElem
  * @param nodeName The attribute name that will be searched.
  * @return The value of the attribute contained in element with the name nodeName.
  */
-std::optional<std::string> ReferenceBase::getNodeValue(std::shared_ptr<XsdAbstractElement> element, std::string nodeName)
+std::optional<std::string> ReferenceBase::getNodeValue(XsdAbstractElement* element, std::string nodeName)
 {
   if(element->getAttributesMap().contains(nodeName))
     return element->getAttributesMap().at(nodeName);

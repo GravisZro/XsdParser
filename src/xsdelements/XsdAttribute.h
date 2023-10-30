@@ -18,12 +18,84 @@ class NamedConcreteElement;
  */
 class XsdAttribute : public XsdNamedElements
 {
+public: // ctors
+  XsdAttribute(StringMap attributesMap,
+               VisitorFunctionType visitorFunction,
+               XsdAbstractElement* parent);
+
+  XsdAttribute(const XsdAttribute& other);
+public:
+  /**
+     * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
+     */
+  virtual void validateSchemaRules(void) const override
+  {
+    XsdNamedElements::validateSchemaRules();
+    rule2();
+    rule3();
+  }
+
+  void accept(XsdAbstractElementVisitor* visitorParam) override;
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
+
+  void setSimpleType(ReferenceBase* simpleType)
+  {
+    m_simpleType = simpleType;
+  }
+
+  XsdSimpleType* getXsdSimpleType(void) const;
+
+  std::optional<std::string> getType(void) const
+  {
+    return m_type;
+  }
+
+  std::optional<std::string> getUse(void) const
+  {
+    return m_use;
+  }
+
+  std::optional<std::string> getForm(void) const
+  {
+    return m_form;
+  }
+
+  std::optional<std::string> getFixed(void) const
+  {
+    return m_fixed;
+  }
+
+  std::list<XsdRestriction*> getAllRestrictions(void) const;
+
+
+private:
+  static std::optional<std::string> getFormDefaultValue(XsdAbstractElement* parent);
+  /**
+     * Asserts if the current object has a ref attribute at the same time as either a simpleType as children, a form attribute or a type attribute.
+     * Throws an exception in that case.
+     */
+  void rule3(void) const
+  {
+    if (haveAttribute(REF_TAG) && (m_simpleType != nullptr || m_form || m_type))
+      throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
+  }
+
+  /**
+     * Asserts if the current object has the fixed and default attributes at the same time, which isn't allowed, throwing
+     * an exception in that case.
+     */
+  void rule2(void) const
+  {
+    if (m_fixed && m_defaultElement)
+      throw ParsingException(TAG<XsdAttribute>::xsd  + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
+  }
+
 private:
   /**
    * A {@link XsdSimpleType} instance wrapped in a {@link ReferenceBase} object which indicate any restrictions
    * that may be present in the current {@link XsdAttribute} instance.
    */
-  std::shared_ptr<ReferenceBase> m_simpleType;
+  ReferenceBase* m_simpleType;
 
   /**
    * A default value for the current {@link XsdAttribute} instance. This value and {@link XsdAttribute#fixed}
@@ -54,76 +126,4 @@ private:
    * Specifies how this {@link XsdAttribute} should be used. The possible values are: required, prohibited, optional.
    */
   UsageEnum m_use;
-public: // ctors
-  XsdAttribute(std::shared_ptr<XsdParserCore> parser,
-               StringMap attributesMap,
-               VisitorFunctionType visitorFunction,
-               std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
-
-public:
-  virtual void initialize(void) override;
-  /**
-     * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
-     */
-  virtual void validateSchemaRules(void) const override
-  {
-    XsdNamedElements::validateSchemaRules();
-    rule2();
-    rule3();
-  }
-private:
-  static std::optional<std::string> getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
-  /**
-     * Asserts if the current object has a ref attribute at the same time as either a simpleType as children, a form attribute or a type attribute.
-     * Throws an exception in that case.
-     */
-  void rule3(void) const
-  {
-    if (haveAttribute(REF_TAG) && (m_simpleType || m_form || m_type))
-      throw ParsingException(TAG<XsdAttribute>::xsd + " element: If " + REF_TAG + " attribute is present, simpleType element, form attribute and type attribute cannot be present at the same time.");
-  }
-
-  /**
-     * Asserts if the current object has the fixed and default attributes at the same time, which isn't allowed, throwing
-     * an exception in that case.
-     */
-  void rule2(void) const
-  {
-    if (m_fixed && m_defaultElement)
-      throw ParsingException(TAG<XsdAttribute>::xsd  + " element: " + FIXED_TAG + " and " + DEFAULT_ELEMENT_TAG + " attributes are not allowed at the same time.");
-  }
-public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper);
-
-  void setSimpleType(std::shared_ptr<ReferenceBase> simpleType)
-  {
-    m_simpleType = simpleType;
-  }
-
-  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) const;
-
-  std::optional<std::string> getType(void) const
-  {
-    return m_type;
-  }
-
-  std::optional<std::string> getUse(void) const
-  {
-    return m_use;
-  }
-
-  std::optional<std::string> getForm(void) const
-  {
-    return m_form;
-  }
-
-  std::optional<std::string> getFixed(void) const
-  {
-    return m_fixed;
-  }
-
-  std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void) const;
 };

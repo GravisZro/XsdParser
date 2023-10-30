@@ -14,23 +14,22 @@
 #include <xsdelements/exceptions/ParsingException.h>
 
 #define xsdElementIsXsdSchema TAG<XsdElement>::xsd + " is a " + TAG<XsdSchema>::xsd + " element."
-
-void XsdElement::initialize(void)
+XsdElement::XsdElement(StringMap attributesMap,
+           VisitorFunctionType visitorFunction,
+           XsdAbstractElement* parent)
+  : XsdNamedElements(attributesMap, visitorFunction, parent),
+    m_complexType(nullptr),
+    m_simpleType(nullptr),
+    m_type(nullptr),
+    m_substitutionGroup(nullptr),
+    m_nillable(false),
+    m_abstractObj(false),
+    m_minOccurs(1),
+    m_maxOccurs("1")
 {
-  XsdNamedElements::initialize();
-  m_complexType.reset();
-  m_simpleType.reset();
-  m_type.reset();
-  m_substitutionGroup.reset();
-  m_defaultObj.reset();
-  m_fixed.reset();
   m_form = AttributeValidations::getFormDefaultValue(getParent());
-  m_nillable = false;
-  m_abstractObj = false;
   m_block = AttributeValidations::getBlockDefaultValue(getParent());
   m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
-  m_minOccurs = 1;
-  m_maxOccurs = "1";
 
   if (haveAttribute(TYPE_TAG))
   {
@@ -40,19 +39,17 @@ void XsdElement::initialize(void)
       StringMap attributes;
       attributes.emplace(*NAME_TAG, typeString);
       m_type = ReferenceBase::createFromXsd(
-                 create<XsdBuiltInDataType>(getParser(),
-                                            attributes,
+                 new XsdBuiltInDataType(attributes,
                                             nullptr,
-                                            shared_from_this()));
+                                            this));
     }
     else
     {
-      m_type = create<UnsolvedReference>(typeString,
-                                         create<XsdElement>(getParser(),
-                                                            StringMap{},
+      m_type = new UnsolvedReference(typeString,
+                                         new XsdElement(StringMap{},
                                                             m_visitorFunction,
-                                                            shared_from_this()));
-      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_type));
+                                                            this));
+      getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_type));
     }
   }
 
@@ -62,14 +59,13 @@ void XsdElement::initialize(void)
 
   if (localSubstitutionGroup)
   {
-    m_substitutionGroup = create<UnsolvedReference>(
+    m_substitutionGroup = new UnsolvedReference(
                             localSubstitutionGroup.value(),
-                            std::static_pointer_cast<XsdNamedElements>(
-                              create<XsdElement>(getParser(),
-                                                 StringMap{},
+                            static_cast<XsdNamedElements*>(
+                              new XsdElement(StringMap{},
                                                  m_visitorFunction,
-                                                 shared_from_this())));
-    getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_substitutionGroup));
+                                                 this)));
+    getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_substitutionGroup));
   }
 
   if(haveAttribute(DEFAULT_TAG))
@@ -102,6 +98,41 @@ void XsdElement::initialize(void)
 }
 
 
+/**
+ * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
+ * {@link UnsolvedReference} objects in the reference solving process.
+ * @param placeHolderAttributes The additional attributes to add to the clone.
+ * @return A copy of the object from which is called upon.
+ */
+XsdElement::XsdElement(const XsdElement& other)
+  : XsdElement(other.getAttributesMap(), other.m_visitorFunction, other.getParent())
+{
+  removeAttribute(TYPE_TAG);
+  removeAttribute(REF_TAG);
+
+  if (other.m_simpleType != nullptr)
+    m_simpleType = new ReferenceBase(other.m_simpleType, this);
+
+  if (other.m_complexType != nullptr)
+    m_complexType = new ReferenceBase(other.m_complexType, this);
+
+  if (other.m_type != nullptr)
+  {
+    if (dynamic_cast<ConcreteElement*>(other.m_type) != nullptr)
+      m_type = new ReferenceBase(other.m_type, this);
+    else
+    {
+      m_type = new UnsolvedReference(
+                              static_cast<UnsolvedReference*>(m_type)->getRef().value(),
+                              new XsdElement(StringMap{},
+                                                 m_visitorFunction,
+                                                 nullptr));
+      getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_type));
+    }
+  }
+
+  setCloneOf(&other);
+}
 
 /**
  * Asserts if the current object has a form attribute while being a direct child of the top level XsdSchema element,
@@ -109,7 +140,7 @@ void XsdElement::initialize(void)
  */
 void XsdElement::rule7(void) const
 {
-  if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && haveAttribute(FORM_TAG))
+  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && haveAttribute(FORM_TAG))
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + FORM_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
@@ -129,7 +160,7 @@ void XsdElement::rule5(void) const
  */
 void XsdElement::rule4(void) const
 {
-  if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && m_substitutionGroup)
+  if (dynamic_cast<XsdSchema*>(getParent()) == nullptr && m_substitutionGroup)
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + SUBSTITUTION_GROUP_TAG + " attribute can only be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
@@ -139,7 +170,7 @@ void XsdElement::rule4(void) const
  */
 void XsdElement::rule3(void) const
 {
-  if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && haveAttribute(REF_TAG))
+  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && haveAttribute(REF_TAG))
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + REF_TAG + " attribute cannot be present when the parent of the " + xsdElementIsXsdSchema);
 }
 
@@ -149,53 +180,8 @@ void XsdElement::rule3(void) const
  */
 void XsdElement::rule2(void) const
 {
-  if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
+  if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && !getRawName())
     throw ParsingException(*TAG<XsdElement>::xsd + " element: The " + NAME_TAG + " attribute is required when the parent of the " + xsdElementIsXsdSchema);
-}
-
-
-/**
- * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
- * {@link UnsolvedReference} objects in the reference solving process.
- * @param placeHolderAttributes The additional attributes to add to the clone.
- * @return A copy of the object from which is called upon.
- */
-std::shared_ptr<XsdAbstractElement> XsdElement::clone(StringMap placeHolderAttributes)
-{
-  placeHolderAttributes.merge(getAttributesMap());
-  placeHolderAttributes.erase(*TYPE_TAG);
-  placeHolderAttributes.erase(*REF_TAG);
-
-  auto elementCopy = create<XsdElement>(getParser(),
-                                        placeHolderAttributes,
-                                        m_visitorFunction,
-                                        getParent());
-
-  if (m_simpleType)
-    elementCopy->m_simpleType = ReferenceBase::clone(getParser(), m_simpleType, elementCopy);
-
-  if (m_complexType)
-    elementCopy->m_complexType = ReferenceBase::clone(getParser(), m_complexType, elementCopy);
-
-  if (m_type)
-  {
-    if (std::dynamic_pointer_cast<ConcreteElement>(m_type))
-      elementCopy->m_type = ReferenceBase::clone(getParser(), m_type, elementCopy);
-    else
-    {
-      elementCopy->m_type = create<UnsolvedReference>(
-                              std::static_pointer_cast<UnsolvedReference>(m_type)->getRef().value(),
-                              create<XsdElement>(getParser(),
-                                                 StringMap{},
-                                                 m_visitorFunction,
-                                                 nullptr));
-      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(elementCopy->m_type));
-    }
-  }
-
-  elementCopy->setCloneOf(shared_from_this());
-
-  return elementCopy;
 }
 
 /**
@@ -205,100 +191,100 @@ std::shared_ptr<XsdAbstractElement> XsdElement::clone(StringMap placeHolderAttri
  *                {@link XsdElement} constructor. The {@link UnsolvedReference} is only replaced if there
  *                is a match between the {@link UnsolvedReference#ref} and the {@link NamedConcreteElement#name}.
  */
-void XsdElement::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
+void XsdElement::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
 {
-  XsdNamedElements::replaceUnsolvedElements(element);
+  XsdNamedElements::replaceUnsolvedElements(elementWrapper);
 
-  std::shared_ptr<XsdNamedElements> elem = element->getElement();
+  XsdNamedElements* element = elementWrapper->getElement();
 
-  bool isComplexOrSimpleType = std::dynamic_pointer_cast<XsdComplexType>(elem) ||
-                               std::dynamic_pointer_cast<XsdSimpleType>(elem);
+  bool isComplexOrSimpleType = dynamic_cast<XsdComplexType*>(element) != nullptr ||
+                               dynamic_cast<XsdSimpleType*>(element) != nullptr;
 
-  if(std::dynamic_pointer_cast<UnsolvedReference>(m_type) &&
+  if(dynamic_cast<UnsolvedReference*>(m_type) != nullptr &&
      isComplexOrSimpleType &&
-     compareReference(element, std::static_pointer_cast<UnsolvedReference>(m_type)))
-    m_type = element;
+     compareReference(elementWrapper, static_cast<UnsolvedReference*>(m_type)))
+    m_type = elementWrapper;
 
-  if (std::dynamic_pointer_cast<UnsolvedReference>(m_substitutionGroup) &&
-      std::dynamic_pointer_cast<XsdElement>(elem) &&
-      compareReference(element, std::static_pointer_cast<UnsolvedReference>(m_substitutionGroup)))
-    m_substitutionGroup = element;
+  if (dynamic_cast<UnsolvedReference*>(m_substitutionGroup) != nullptr &&
+      dynamic_cast<XsdElement*>(element) != nullptr &&
+      compareReference(elementWrapper, static_cast<UnsolvedReference*>(m_substitutionGroup)))
+    m_substitutionGroup = elementWrapper;
 }
 
-std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexType(void) const
+XsdComplexType* XsdElement::getXsdComplexType(void) const
 {
-  if(!m_complexType || std::dynamic_pointer_cast<UnsolvedReference>(m_complexType))
+  if(m_complexType == nullptr || dynamic_cast<UnsolvedReference*>(m_complexType) != nullptr)
     return getXsdComplexTypeFromType();
-  return std::static_pointer_cast<XsdComplexType>(m_complexType->getElement());
+  return static_cast<XsdComplexType*>(m_complexType->getElement());
 }
 
-std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleType(void) const
+XsdSimpleType* XsdElement::getXsdSimpleType(void) const
 {
-  if(!m_simpleType || std::dynamic_pointer_cast<UnsolvedReference>(m_simpleType))
+  if(m_simpleType == nullptr || dynamic_cast<UnsolvedReference*>(m_simpleType) != nullptr)
     return getXsdSimpleTypeFromType();
-  return std::static_pointer_cast<XsdSimpleType>(m_simpleType->getElement());
+  return static_cast<XsdSimpleType*>(m_simpleType->getElement());
 }
 
-std::shared_ptr<XsdComplexType> XsdElement::getXsdComplexTypeFromType(void) const
+XsdComplexType* XsdElement::getXsdComplexTypeFromType(void) const
 {
-  if (std::dynamic_pointer_cast<ConcreteElement>(m_type))
-    if(auto x = std::dynamic_pointer_cast<XsdComplexType>(m_type->getElement()); x)
+  if (dynamic_cast<ConcreteElement*>(m_type) != nullptr)
+    if(auto x = dynamic_cast<XsdComplexType*>(m_type->getElement()); x != nullptr)
       return x;
   return nullptr;
 }
 
-std::shared_ptr<XsdSimpleType> XsdElement::getXsdSimpleTypeFromType(void) const
+XsdSimpleType* XsdElement::getXsdSimpleTypeFromType(void) const
 {
-  if (std::dynamic_pointer_cast<ConcreteElement>(m_type))
-    if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(m_type->getElement()); x)
+  if (dynamic_cast<ConcreteElement*>(m_type) != nullptr)
+    if(auto x = dynamic_cast<XsdSimpleType*>(m_type->getElement()); x != nullptr)
       return x;
   return nullptr;
 }
 
-std::shared_ptr<XsdNamedElements> XsdElement::getTypeAsXsd(void) const
+XsdNamedElements* XsdElement::getTypeAsXsd(void) const
 {
-  if (auto x = std::dynamic_pointer_cast<NamedConcreteElement>(m_type); x)
+  if (auto x = dynamic_cast<NamedConcreteElement*>(m_type); x != nullptr)
     return x->getElement();
   return nullptr;
 }
 
-std::shared_ptr<XsdComplexType> XsdElement::getTypeAsComplexType(void) const
+XsdComplexType* XsdElement::getTypeAsComplexType(void) const
 {
-  if (std::dynamic_pointer_cast<NamedConcreteElement>(m_type))
-    if(auto x = std::dynamic_pointer_cast<XsdComplexType>(m_type->getElement()); x)
+  if (dynamic_cast<NamedConcreteElement*>(m_type) != nullptr)
+    if(auto x = dynamic_cast<XsdComplexType*>(m_type->getElement()); x != nullptr)
       return x;
   return nullptr;
 }
 
-std::shared_ptr<XsdSimpleType> XsdElement::getTypeAsSimpleType(void) const
+XsdSimpleType* XsdElement::getTypeAsSimpleType(void) const
 {
-  if (std::dynamic_pointer_cast<NamedConcreteElement>(m_type))
-    if(auto x = std::dynamic_pointer_cast<XsdSimpleType>(m_type->getElement()); x)
+  if (dynamic_cast<NamedConcreteElement*>(m_type) != nullptr)
+    if(auto x = dynamic_cast<XsdSimpleType*>(m_type->getElement()); x != nullptr)
       return x;
   return nullptr;
 }
 
-std::shared_ptr<XsdBuiltInDataType> XsdElement::getTypeAsBuiltInDataType(void) const
+XsdBuiltInDataType* XsdElement::getTypeAsBuiltInDataType(void) const
 {
-  if (std::dynamic_pointer_cast<NamedConcreteElement>(m_type))
-    if(auto x = std::dynamic_pointer_cast<XsdBuiltInDataType>(m_type->getElement()); x)
+  if (dynamic_cast<NamedConcreteElement*>(m_type) != nullptr)
+    if(auto x = dynamic_cast<XsdBuiltInDataType*>(m_type->getElement()); x != nullptr)
       return x;
   return nullptr;
 }
 
 std::optional<std::string> XsdElement::getType(void) const
 {
-  if (auto x = std::dynamic_pointer_cast<NamedConcreteElement>(m_type); x)
+  if (auto x = dynamic_cast<NamedConcreteElement*>(m_type); x != nullptr)
     return x->getName();
   if(haveAttribute(TYPE_TAG))
     return getAttribute(TYPE_TAG);
   return std::nullopt;
 }
 
-std::shared_ptr<XsdElement> XsdElement::getXsdSubstitutionGroup(void) const
+XsdElement* XsdElement::getXsdSubstitutionGroup(void) const
 {
-  if (std::dynamic_pointer_cast<ConcreteElement>(m_substitutionGroup))
-    if(auto x = std::dynamic_pointer_cast<XsdElement>(m_substitutionGroup->getElement()); x)
+  if (dynamic_cast<ConcreteElement*>(m_substitutionGroup) != nullptr)
+    if(auto x = dynamic_cast<XsdElement*>(m_substitutionGroup->getElement()); x != nullptr)
       return x;
   return nullptr;
 }

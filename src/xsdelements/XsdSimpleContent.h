@@ -16,28 +16,15 @@
  */
 class XsdSimpleContent : public XsdAnnotatedElements
 {
-private:
-  /**
-   * The {@link XsdRestriction} instance that should be applied to the {@link XsdSimpleContent} instance.
-   */
-  std::shared_ptr<ReferenceBase> m_restriction;
-
-  /**
-   * The {@link XsdExtension} instance that is present in the {@link XsdSimpleContent} instance.
-   */
-  std::shared_ptr<ReferenceBase> m_extension;
 public:
-  XsdSimpleContent(std::shared_ptr<XsdParserCore> parser,
-                   StringMap attributesMap,
+  XsdSimpleContent(StringMap attributesMap,
                    VisitorFunctionType visitorFunction,
-                   std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
-public:
-    void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-      XsdAnnotatedElements::accept(visitorParam);
-      visitorParam->visit(std::static_pointer_cast<XsdSimpleContent>(shared_from_this()));
-    }
+                   XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
+      m_restriction(nullptr),
+      m_extension(nullptr)
+  {
+  }
 
   /**
    * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -45,43 +32,53 @@ public:
    * @param placeHolderAttributes The additional attributes to add to the clone.
    * @return A copy of the object from which is called upon.
    */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
+  XsdSimpleContent(const XsdSimpleContent& other, XsdAbstractElement* parent = nullptr)
+    : XsdSimpleContent(other.getAttributesMap(), other.m_visitorFunction, parent)
   {
-    placeHolderAttributes.merge(getAttributesMap());
-
-    auto elementCopy = create<XsdSimpleContent>(getParser(),
-                                                placeHolderAttributes,
-                                                m_visitorFunction,
-                                                nullptr);
-
-    elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
-    elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
-    elementCopy->setCloneOf(shared_from_this());
-
-    return elementCopy;
+    m_restriction = new ReferenceBase(other.m_restriction, this);
+    m_extension = new ReferenceBase(other.m_extension, this);
+    setCloneOf(&other);
+  }
+public:
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdAnnotatedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdSimpleContent*>(this));
   }
 
-  std::shared_ptr<XsdExtension> getXsdExtension(void) const
+
+  XsdExtension* getXsdExtension(void) const
   {
-    if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_extension); x)
-      return std::static_pointer_cast<XsdExtension>(x->getElement());
+    if(auto x = dynamic_cast<ConcreteElement*>(m_extension); x != nullptr)
+      return static_cast<XsdExtension*>(x->getElement());
     return nullptr;
   }
 
-  std::shared_ptr<XsdRestriction> getXsdRestriction(void) const
+  XsdRestriction* getXsdRestriction(void) const
   {
-    if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_restriction); x)
-      return std::static_pointer_cast<XsdRestriction>(x->getElement());
+    if(auto x = dynamic_cast<ConcreteElement*>(m_restriction); x != nullptr)
+      return static_cast<XsdRestriction*>(x->getElement());
     return nullptr;
   }
 
-  void setRestriction(std::shared_ptr<ReferenceBase> restriction)
+  void setRestriction(ReferenceBase* restriction)
   {
     m_restriction = restriction;
   }
 
-  void setExtension(std::shared_ptr<ReferenceBase> extension)
+  void setExtension(ReferenceBase* extension)
   {
     m_extension = extension;
   }
+
+private:
+  /**
+   * The {@link XsdRestriction} instance that should be applied to the {@link XsdSimpleContent} instance.
+   */
+  ReferenceBase* m_restriction;
+
+  /**
+   * The {@link XsdExtension} instance that is present in the {@link XsdSimpleContent} instance.
+   */
+  ReferenceBase* m_extension;
 };

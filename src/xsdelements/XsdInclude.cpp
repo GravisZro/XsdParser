@@ -2,10 +2,11 @@
 
 #include <core/XsdParserCore.h>
 
-void XsdInclude::initialize(void)
+XsdInclude::XsdInclude(StringMap attributesMap,
+                       VisitorFunctionType visitorFunction,
+                       XsdAbstractElement* parent)
+  : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
 {
-  XsdAnnotatedElements::initialize();
-  m_schemaLocation.clear();
   if(haveAttribute(SCHEMA_LOCATION))
   {
     m_schemaLocation = getAttribute(SCHEMA_LOCATION);

@@ -3,8 +3,9 @@
 #include <core/utils/CommonTypes.h>
 
 #include <xsdelements/XsdAnnotatedElements.h>
-#include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/visitors/XsdAbstractElementVisitor.h>
+#include <xsdelements/elementswrapper/ReferenceBase.h>
+#include <xsdelements/elementswrapper/NamedConcreteElement.h>
 
 class XsdBuiltInDataType;
 class XsdExtension;
@@ -27,37 +28,23 @@ class NamedConcreteElement;
  */
 class XsdExtension : public XsdAnnotatedElements
 {
-private:
-  /**
-   * The child element of the {@link XsdExtension} instance. Either a {@link XsdGroup}, {@link XsdAll},
-   * {@link XsdSequence} or a {@link XsdChoice} instance wrapped in a {@link ReferenceBase} object.
-   */
-  std::shared_ptr<ReferenceBase> m_childElement;
-
-  /**
-   * A {@link XsdElement} instance wrapped in a {@link ReferenceBase} object from which this {@link XsdExtension}
-   * instance extends.
-   */
-  std::shared_ptr<ReferenceBase> m_base;
 public: // ctors
-  XsdExtension(std::shared_ptr<XsdParserCore> parser,
-               StringMap attributesMap,
+  XsdExtension(StringMap attributesMap,
                VisitorFunctionType visitorFunction,
-               std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
+               XsdAbstractElement* parent);
+
+  XsdExtension(const XsdExtension& other);
 
 public:
-  virtual void initialize(void) override;
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
+  void accept(XsdAbstractElementVisitor* visitorParam) override
   {
     XsdAnnotatedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdExtension>(shared_from_this()));
+    visitorParam->visit(static_cast<XsdExtension*>(this));
   }
 
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
+  virtual std::list<ReferenceBase*> getElements(void) const override;
 
 
   /**
@@ -73,19 +60,19 @@ public:
                                         std::is_same_v<XsdComplexType    , T> ||
                                         std::is_same_v<XsdSimpleType     , T> ||
                                         std::is_same_v<XsdBuiltInDataType, T>, bool> = true>
-  std::shared_ptr<T> getBaseAs(void) const
+  T* getBaseAs(void) const
   {
-    if(std::dynamic_pointer_cast<NamedConcreteElement>(m_base))
-      if(auto x = std::dynamic_pointer_cast<T>(m_base->getElement()); x)
+    if(dynamic_cast<NamedConcreteElement*>(m_base) != nullptr)
+      if(auto x = dynamic_cast<T*>(m_base->getElement()); x != nullptr)
         return x;
     return nullptr;
   }
 
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroup(void) const;
-  std::shared_ptr<XsdAbstractElement> getXsdChildElement(void) const;
+  std::list<XsdAttribute*> getXsdAttributes(void) const;
+  std::list<XsdAttributeGroup*> getXsdAttributeGroup(void) const;
+  XsdAbstractElement* getXsdChildElement(void) const;
 
-  void setChildElement(std::shared_ptr<ReferenceBase> childElement)
+  void setChildElement(ReferenceBase* childElement)
   {
     m_childElement = childElement;
   }
@@ -109,10 +96,23 @@ public:
                                         std::is_same_v<XsdChoice          , T> ||
                                         std::is_same_v<XsdSequence        , T> ||
                                         std::is_same_v<XsdElement         , T>, bool> = true>
-  std::shared_ptr<T> getChildAs(void) const
+  T* getChildAs(void) const
   {
-    if (m_childElement)
-      return std::dynamic_pointer_cast<T>(m_childElement->getElement());
+    if (m_childElement != nullptr)
+      return dynamic_cast<T*>(m_childElement->getElement());
     return nullptr;
   }
+
+private:
+  /**
+   * The child element of the {@link XsdExtension} instance. Either a {@link XsdGroup}, {@link XsdAll},
+   * {@link XsdSequence} or a {@link XsdChoice} instance wrapped in a {@link ReferenceBase} object.
+   */
+  ReferenceBase* m_childElement;
+
+  /**
+   * A {@link XsdElement} instance wrapped in a {@link ReferenceBase} object from which this {@link XsdExtension}
+   * instance extends.
+   */
+  ReferenceBase* m_base;
 };

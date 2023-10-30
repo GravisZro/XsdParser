@@ -9,32 +9,24 @@
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdAbstractElement> XsdComplexContent::clone(StringMap placeHolderAttributes)
+XsdComplexContent::XsdComplexContent(const XsdComplexContent& other, XsdAbstractElement* parent)
+  : XsdComplexContent(other.getAttributesMap(), other.m_visitorFunction, parent)
 {
-  placeHolderAttributes.merge(getAttributesMap());
-
-  auto elementCopy = create<XsdComplexContent>(getParser(),
-                                               placeHolderAttributes,
-                                               m_visitorFunction,
-                                               nullptr);
-
-  elementCopy->m_restriction = ReferenceBase::clone(getParser(), m_restriction, elementCopy);
-  elementCopy->m_extension = ReferenceBase::clone(getParser(), m_extension, elementCopy);
-  elementCopy->setCloneOf(shared_from_this());
-
-  return elementCopy;
+  m_restriction = new ReferenceBase(other.m_restriction, this);
+  m_extension = new ReferenceBase(other.m_extension, this);
+  setCloneOf(&other);
 }
 
-std::shared_ptr<XsdExtension> XsdComplexContent::getXsdExtension(void) const
+XsdExtension* XsdComplexContent::getXsdExtension(void) const
 {
-  if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_extension); x)
-    return std::static_pointer_cast<XsdExtension>(x->getElement());
+  if(auto x = dynamic_cast<ConcreteElement*>(m_extension); x != nullptr)
+    return static_cast<XsdExtension*>(x->getElement());
   return nullptr;
 }
 
-std::shared_ptr<XsdRestriction> XsdComplexContent::getXsdRestriction(void) const
+XsdRestriction* XsdComplexContent::getXsdRestriction(void) const
 {
-  if(auto x = std::dynamic_pointer_cast<ConcreteElement>(m_restriction); x)
-    return std::static_pointer_cast<XsdRestriction>(x->getElement());
+  if(auto x = dynamic_cast<ConcreteElement*>(m_restriction); x != nullptr)
+    return static_cast<XsdRestriction*>(x->getElement());
   return nullptr;
 }

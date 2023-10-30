@@ -8,7 +8,7 @@
 #include <memory>
 #include <initializer_list>
 
-class SchemaLocation : public std::enable_shared_from_this<SchemaLocation>
+class SchemaLocation
 {
 public:
   SchemaLocation(void) = default;

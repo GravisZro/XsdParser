@@ -3,16 +3,16 @@
 #include <xsdelements/XsdDocumentation.h>
 #include <xsdelements/XsdAppInfo.h>
 
-void XsdAnnotation::accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam)
+void XsdAnnotation::accept(XsdAbstractElementVisitor* visitorParam)
 {
   XsdIdentifierElements::accept(visitorParam);
-  visitorParam->visit(std::static_pointer_cast<XsdAnnotation>(shared_from_this()));
+  visitorParam->visit(static_cast<XsdAnnotation*>(this));
 }
 
-void XsdAnnotation::add(std::shared_ptr<XsdAnnotationChildren> element)
+void XsdAnnotation::add(XsdAnnotationChildren* element)
 {
-  if(std::dynamic_pointer_cast<XsdAppInfo>(element))
-    m_appInfoList.push_back(std::static_pointer_cast<XsdAppInfo>(element));
-  else if(std::dynamic_pointer_cast<XsdDocumentation>(element))
-    m_documentations.push_back(std::static_pointer_cast<XsdDocumentation>(element));
+  if(dynamic_cast<XsdAppInfo*>(element) != nullptr)
+    m_appInfoList.push_back(static_cast<XsdAppInfo*>(element));
+  else if(dynamic_cast<XsdDocumentation*>(element) != nullptr)
+    m_documentations.push_back(static_cast<XsdDocumentation*>(element));
 }

@@ -11,33 +11,26 @@
  */
 class XsdStringRestrictions : public XsdAnnotatedElements
 {
-private:
-    /**
-     * The value of associated with a given restriction. This field has different meanings depending on the concrete
-     * restriction, e.g. if the concrete class is {@link XsdEnumeration} this field means that the attribute which
-     * has the restriction can only have the value that is specified in this field.
-     */
-    std::optional<std::string> m_value;
-
 public: // ctors
-  XsdStringRestrictions(std::shared_ptr<XsdParserCore> parser,
-                        StringMap attributesMap,
+  XsdStringRestrictions(StringMap attributesMap,
                         VisitorFunctionType visitorFunction,
-                        std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+                        XsdAbstractElement* parent)
+      : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
   {
-  }
-public:
-  virtual void initialize(void) override
-  {
-    XsdAnnotatedElements::initialize();
-    m_value.reset();
     if(haveAttribute(VALUE_TAG))
       m_value = getAttribute(VALUE_TAG);
   }
-
+public:
   std::optional<std::string> getValue(void) const
   {
     return m_value;
   }
+
+private:
+  /**
+   * The value of associated with a given restriction. This field has different meanings depending on the concrete
+   * restriction, e.g. if the concrete class is {@link XsdEnumeration} this field means that the attribute which
+   * has the restriction can only have the value that is specified in this field.
+   */
+  std::optional<std::string> m_value;
 };

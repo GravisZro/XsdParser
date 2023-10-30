@@ -10,16 +10,16 @@
 
 struct XsdNamedElementsVisitor : XsdAnnotatedElementsVisitor
 {
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  virtual void visit(XsdAbstractElement* element) override
   {
-    if (std::dynamic_pointer_cast<XsdNamedElements>(element))
+    if (dynamic_cast<XsdNamedElements*>(element) != nullptr)
     {
-      std::shared_ptr<ReferenceBase> referenceBase = ReferenceBase::createFromXsd(element);
-      if (std::dynamic_pointer_cast<UnsolvedReference>(referenceBase))
-        element->getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(referenceBase));
+      ReferenceBase* referenceBase = ReferenceBase::createFromXsd(element);
+      if (dynamic_cast<UnsolvedReference*>(referenceBase) != nullptr)
+        getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(referenceBase));
     }
-    std::static_pointer_cast<XsdAnnotatedElements>(getOwner())->setAnnotation(
-          std::static_pointer_cast<XsdAnnotation>(element));
+    static_cast<XsdAnnotatedElements*>(getOwner())->setAnnotation(
+          static_cast<XsdAnnotation*>(element));
   }
 };
 

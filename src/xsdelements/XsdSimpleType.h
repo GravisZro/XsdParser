@@ -19,45 +19,22 @@ class XsdList;
  */
 class XsdSimpleType : public XsdNamedElements
 {
-private:
-  /**
-   * A {@link XsdRestriction} instance that is present in the {@link XsdSimpleType} instance.
-   */
-  std::shared_ptr<XsdRestriction> m_restriction;
-
-  /**
-   * A {@link XsdUnion} instance that is present in the {@link XsdSimpleType} instance.
-   */
-  std::shared_ptr<XsdUnion> m_xsd_union;
-
-  /**
-   * A {@link XsdList} instance that is present in the {@link XsdSimpleType} instance.
-   */
-  std::shared_ptr<XsdList> m_xsd_list;
-
-  /**
-   * Prevents other elements to derive depending on its value.
-   */
-  SimpleTypeFinalEnum m_finalObj;
-
 public: // ctors
-  XsdSimpleType(std::shared_ptr<XsdParserCore> parser,
-                StringMap attributesMap,
+  XsdSimpleType(StringMap attributesMap,
                 VisitorFunctionType visitorFunction,
-                std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
-public:
-  virtual void initialize(void) override
+                XsdAbstractElement* parent)
+    : XsdNamedElements(attributesMap, visitorFunction, parent),
+      m_restriction(nullptr),
+      m_xsd_union(nullptr),
+      m_xsd_list(nullptr)
   {
-    XsdNamedElements::initialize();
-    m_restriction.reset();
-    m_xsd_union.reset();
-    m_xsd_list.reset();
     m_finalObj = AttributeValidations::getFinalDefaultValue(getParent());
-
     if(haveAttribute(FINAL_TAG))
       m_finalObj = AttributeValidations::belongsToEnum<SimpleTypeFinalEnum>(getAttribute(FINAL_TAG) );
   }
+
+  XsdSimpleType(const XsdSimpleType& other, XsdAbstractElement* parent = nullptr);
+public:
 
   /**
    * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
@@ -70,6 +47,53 @@ public:
     rule3();
   }
 
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdNamedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdSimpleType*>(this));
+  }
+
+  XsdRestriction* getRestriction(void) const
+  {
+    return m_restriction;
+  }
+
+  XsdUnion* getUnion(void) const
+  {
+    return m_xsd_union;
+  }
+
+  XsdList* getList(void) const;
+
+  /**
+   * This method obtains all the restrictions for the current {@link XsdSimpleType} element. It also joins multiple
+   * restrictions with the same base attribute in the same {@link XsdRestriction} object, if a overlap doesn't occur.
+   * In case of restriction overlap an exception is thrown because the information on the xsd file is contradictory.
+   * @return A xsd_list of restrictions.
+   */
+  std::list<XsdRestriction*> getAllRestrictions(void) const;
+
+  void setList(XsdList* xsd_list)
+  {
+    m_xsd_list = xsd_list;
+  }
+
+  void setUnion(XsdUnion* xsd_union)
+  {
+    m_xsd_union = xsd_union;
+  }
+
+  void setRestriction(XsdRestriction* restriction)
+  {
+    m_restriction = restriction;
+  }
+
+  std::optional<std::string> getFinalObj(void) const
+  {
+    return m_finalObj;
+  }
+
+
 private:
   /**
    * Asserts that the current object has the required name attribute when not being a direct child of the XsdSchema element.
@@ -77,7 +101,7 @@ private:
    */
   void rule2(void) const
   {
-    if (std::dynamic_pointer_cast<XsdSchema>(getParent()) == nullptr && getRawName())
+    if (dynamic_cast<XsdSchema*>(getParent()) == nullptr && getRawName())
       throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should only be used when the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
   }
 
@@ -87,62 +111,28 @@ private:
    */
   void rule3(void) const
   {
-    if (std::dynamic_pointer_cast<XsdSchema>(getParent()) && !getRawName())
+    if (dynamic_cast<XsdSchema*>(getParent()) != nullptr && !getRawName())
       throw ParsingException(TAG<XsdSimpleType>::xsd + " element: The " + NAME_TAG + " should is required the parent of the " + TAG<XsdSimpleType>::xsd + " is the " + TAG<XsdSchema>::xsd + " element.");
   }
-public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-  {
-    XsdNamedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdSimpleType>(shared_from_this()));
-  }
+
+private:
+  /**
+   * A {@link XsdRestriction} instance that is present in the {@link XsdSimpleType} instance.
+   */
+  XsdRestriction* m_restriction;
 
   /**
-   * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-   * {@link UnsolvedReference} objects in the reference solving process.
-   * @param placeHolderAttributes The additional attributes to add to the clone.
-   * @return A copy of the object from which is called upon.
+   * A {@link XsdUnion} instance that is present in the {@link XsdSimpleType} instance.
    */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
-
-  std::shared_ptr<XsdRestriction> getRestriction(void) const
-  {
-    return m_restriction;
-  }
-
-  std::shared_ptr<XsdUnion> getUnion(void) const
-  {
-    return m_xsd_union;
-  }
-
-  std::shared_ptr<XsdList> getList(void) const;
+  XsdUnion* m_xsd_union;
 
   /**
-   * This method obtains all the restrictions for the current {@link XsdSimpleType} element. It also joins multiple
-   * restrictions with the same base attribute in the same {@link XsdRestriction} object, if a overlap doesn't occur.
-   * In case of restriction overlap an exception is thrown because the information on the xsd file is contradictory.
-   * @return A xsd_list of restrictions.
+   * A {@link XsdList} instance that is present in the {@link XsdSimpleType} instance.
    */
-  std::list<std::shared_ptr<XsdRestriction>> getAllRestrictions(void) const;
+  XsdList* m_xsd_list;
 
-public:
-  void setList(std::shared_ptr<XsdList> xsd_list)
-  {
-    m_xsd_list = xsd_list;
-  }
-
-  void setUnion(std::shared_ptr<XsdUnion> xsd_union)
-  {
-    m_xsd_union = xsd_union;
-  }
-
-  void setRestriction(std::shared_ptr<XsdRestriction> restriction)
-  {
-    m_restriction = restriction;
-  }
-
-  std::optional<std::string> getFinalObj(void) const
-  {
-    return m_finalObj;
-  }
+  /**
+   * Prevents other elements to derive depending on its value.
+   */
+  SimpleTypeFinalEnum m_finalObj;
 };

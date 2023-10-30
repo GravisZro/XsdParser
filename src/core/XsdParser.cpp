@@ -44,15 +44,14 @@ void XsdParser::parseLocation(const SchemaLocation& schemaLocation)
   else if(m_parseMappers.contains(TAG<XsdSchema>::xs))
     xsdSchemaConfig = m_parseMappers.at(TAG<XsdSchema>::xs);
 
-  if (xsdSchemaConfig.parserFunction == nullptr &&
+  if (xsdSchemaConfig.parserFunction == nullptr ||
       xsdSchemaConfig.visitorFunction == nullptr)
     throw std::runtime_error("XsdSchema not correctly configured.");
 
-  auto schemaReference = xsdSchemaConfig.parserFunction(shared_from_this(),
-                                                        getSchemaNode(schemaLocation),
+  auto schemaReference = xsdSchemaConfig.parserFunction(getSchemaNode(schemaLocation),
                                                         xsdSchemaConfig.visitorFunction,
                                                         nullptr);
-  std::static_pointer_cast<XsdSchema>(schemaReference->getElement())->setSchemaLocation(schemaLocation);
+  static_cast<XsdSchema*>(schemaReference->getElement())->setSchemaLocation(schemaLocation);
 }
 
 /**

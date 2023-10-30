@@ -12,49 +12,45 @@
  */
 class XsdUnion : public XsdAnnotatedElements
 {
-private:
-    /**
-     * A List of {@link XsdSimpleType} instances that represent the {@link XsdUnion}.
-     */
-    std::list<std::shared_ptr<XsdSimpleType>> m_simpleTypeList;
-
-    /**
-     * Specifies a list of built-in data types or {@link XsdSimpleType} instance names defined in a XsdSchema.
-     */
-    std::string m_memberTypes;
 public: // ctors
-  XsdUnion(std::shared_ptr<XsdParserCore> parser,
-           StringMap attributesMap,
+  XsdUnion(StringMap attributesMap,
            VisitorFunctionType visitorFunction,
-           std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
-
-public:
-  virtual void initialize(void) override
+           XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
   {
-    XsdAnnotatedElements::initialize();
-    m_simpleTypeList.clear();
-    m_memberTypes.clear();
-
     if(haveAttribute(MEMBER_TYPES_TAG))
       m_memberTypes = getAttribute(MEMBER_TYPES_TAG);
   }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdUnion>(shared_from_this()));
-    }
+  XsdUnion(const XsdUnion& other, XsdAbstractElement* parent = nullptr);
 
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
+public:
 
-  std::list<std::shared_ptr<XsdSimpleType>> getUnionElements(){
-        return m_simpleTypeList;
-    }
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdAnnotatedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdUnion*>(this));
+  }
+
+  std::list<XsdSimpleType*> getUnionElements(void) const
+  {
+    return m_simpleTypeList;
+  }
 
   std::list<std::string> getMemberTypesList(void);
 
-  void add(std::shared_ptr<XsdSimpleType> simpleType) {
-        m_simpleTypeList.push_back(simpleType);
-    }
+  void add(XsdSimpleType* simpleType) {
+    m_simpleTypeList.push_back(simpleType);
+  }
+
+private:
+  /**
+   * A List of {@link XsdSimpleType} instances that represent the {@link XsdUnion}.
+   */
+  std::list<XsdSimpleType*> m_simpleTypeList;
+
+  /**
+   * Specifies a list of built-in data types or {@link XsdSimpleType} instance names defined in a XsdSchema.
+   */
+  std::string m_memberTypes;
 };

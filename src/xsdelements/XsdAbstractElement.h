@@ -18,7 +18,7 @@ class ReferenceBase;
 /**
  * This class serves as a base to every element class, i.e. {@link XsdElement}, {@link XsdAttribute}, etc.
  */
-class XsdAbstractElement : public std::enable_shared_from_this<XsdAbstractElement>
+class XsdAbstractElement
 {
 public:
   constexpr static const std::string_view VALUE_TAG = "value";
@@ -55,67 +55,42 @@ public:
   constexpr static const std::string_view NAMESPACE = "namespace";
   constexpr static const std::string_view REF_TAG = "ref";
 
-private:
-  /**
-   * A {@link Map} object containing the keys/values of the attributes that belong to the concrete element instance.
-   */
-  StringMap m_attributesMap;
-
-
-  /**
-     * The instance which contains the present element.
-     */
-  std::shared_ptr<XsdAbstractElement> m_parent;
-
-  /**
-     * The {@link XsdParserCore} instance that parsed this element.
-     */
-  std::shared_ptr<XsdParserCore> m_parser;
-
-  /**
-     * The visitor instance for this element.
-     */
-  std::shared_ptr<XsdAbstractElementVisitor> m_visitor;
-
-  /**
-     * Indicates the source from this object was cloned, if applicable.
-     */
-  std::shared_ptr<XsdAbstractElement> m_cloneOf;
-
-  /**
-     * Indicates if this element has the Parent available. This was created as a way of indicating that the parent of the
-     * current element isn't present to avoid circular memory dependencies.
-     */
-  bool m_parentAvailable;
-
-
-  std::string m_element_name;
-
-protected:
-  VisitorFunctionType m_visitorFunction;
 public: // ctors
-  XsdAbstractElement(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
+  XsdAbstractElement(StringMap attributesMap,
                      VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent)
-    : m_attributesMap(attributesMap),
+                     XsdAbstractElement* parent)
+    : m_visitorFunction(visitorFunction),
+      m_attributesMap(attributesMap),
       m_parent(parent),
-      m_parser(parser),
-      m_parentAvailable(false),
-      m_visitorFunction(visitorFunction)
+      m_visitor(nullptr),
+      m_cloneOf(nullptr),
+      m_parentAvailable(false)
   {
+    m_parentAvailable = bool(m_parent);
+    if(m_visitorFunction)
+      m_visitor = m_visitorFunction(this);
+  }
+
+  /**
+   * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
+   * {@link UnsolvedReference} objects in the reference solving process.
+   * @param placeHolderAttributes The additional attributes to add to the clone.
+   * @return A copy of the object from which is called upon.
+   */
+  XsdAbstractElement(const XsdAbstractElement& other)
+    : XsdAbstractElement(other.getAttributesMap(), other.m_visitorFunction, nullptr)
+  {
+    setCloneOf(&other);
   }
 
 public:
   virtual ~XsdAbstractElement(void) = default;
 
-  virtual void initialize(void)
+  bool removeAttribute(const std::string_view& attribute)
   {
-    m_parentAvailable = bool(m_parent);
-    m_visitor.reset();
-    m_cloneOf.reset();
-    if(m_visitorFunction)
-      m_visitor = m_visitorFunction(shared_from_this());
+    if(haveAttribute(attribute))
+      return m_attributesMap.erase(std::string(attribute));
+    return false;
   }
 
   bool haveAttribute(const std::string_view& attribute) const
@@ -148,7 +123,7 @@ public:
      * Obtains the visitor of a concrete {@link XsdAbstractElement} instance.
      * @return The concrete visitor instance.
      */
-  virtual std::shared_ptr<XsdAbstractElementVisitor> getVisitor(void) const
+  virtual XsdAbstractElementVisitor* getVisitor(void) const
   {
     return m_visitor;
   }
@@ -163,25 +138,9 @@ public:
      * field.
      * @param xsdAbstractElementVisitor The visitor that is visiting the current instance.
      */
-  virtual void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor);
+  virtual void accept(XsdAbstractElementVisitor* xsdAbstractElementVisitor);
 
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const { return {}; }
-
-  /**
-     * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-     * {@link UnsolvedReference} objects in the reference solving process.
-     * @param placeHolderAttributes The additional attributes to add to the clone.
-     * @return A copy of the object from which is called upon.
-     */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes)
-  {
-    placeHolderAttributes.merge(getAttributesMap());
-    auto elementCopy = create<XsdAbstractElement>(getParser(),
-                                                  placeHolderAttributes,
-                                                  m_visitorFunction, nullptr);
-    elementCopy->setCloneOf(shared_from_this());
-    return elementCopy;
-  }
+  virtual std::list<ReferenceBase*> getElements(void) const { return {}; }
 
   /**
      * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -189,29 +148,28 @@ public:
      * @param placeHolderAttributes The additional attributes to add to the clone.
      * @return A copy of the object from which is called upon.
      */
-  std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes,
-                                            std::shared_ptr<XsdAbstractElement> parent)
-  {
-    std::shared_ptr<XsdAbstractElement> c = clone(placeHolderAttributes);
-    c->setParent(parent);
-    return c;
-  }
+//  template<typename T>
+//  T* clone(StringMap placeHolderAttributes,
+//                           XsdAbstractElement* parent)
+//  {
+//    XsdAbstractElement* c = clone<T>(placeHolderAttributes);
+//    c->setParent(parent);
+//    return c;
+//  }
 
   /**
      * @return All the {@link ConcreteElement} objects present in the concrete implementation of the
      * {@link XsdAbstractElement} class. It doesn't return the {@link UnsolvedReference} objects.
      */
-  virtual std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const;
+  virtual std::list<XsdAbstractElement*> getXsdElements(void) const;
 
-  std::shared_ptr<XsdSchema> getXsdSchema(void);
+  XsdSchema* getXsdSchema(void);
 
-  static std::shared_ptr<XsdSchema> getXsdSchema(std::shared_ptr<XsdAbstractElement> element,
-                                                 std::list<std::shared_ptr<XsdAbstractElement>> hierarchy);
+  static XsdSchema* getXsdSchema(XsdAbstractElement* element,
+                                                 std::list<XsdAbstractElement*> hierarchy);
 
 
-  static std::shared_ptr<ReferenceBase> xsdParseSkeleton(pugi::xml_node node, std::shared_ptr<XsdAbstractElement> element);
-
-  std::shared_ptr<XsdParserCore> getParser(void) const { return m_parser; }
+  static ReferenceBase* xsdParseSkeleton(pugi::xml_node node, XsdAbstractElement* element);
 
   /**
      * Converts a {@link DOMNamedNodeMap} to a {@link Map} object. This is meant to simplify the manipulation of the
@@ -235,15 +193,15 @@ public:
      *                match between the {@link NamedConcreteElement} name attribute and the {@link UnsolvedReference}
      *                ref attribute.
      */
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper);
 
-  static bool compareReference(std::shared_ptr<NamedConcreteElement> element, std::shared_ptr<UnsolvedReference> reference);
-  static bool compareReference(std::shared_ptr<NamedConcreteElement> element, std::optional<std::string> unsolvedRef);
+  static bool compareReference(NamedConcreteElement* element, UnsolvedReference* reference);
+  static bool compareReference(NamedConcreteElement* element, std::optional<std::string> unsolvedRef);
 
   /**
      * @return The parent of the current {@link XsdAbstractElement} object.
      */
-  std::shared_ptr<XsdAbstractElement> getParent(void) const
+  XsdAbstractElement* getParent(void) const
   {
     return getParent(false);
   }
@@ -251,7 +209,7 @@ public:
   /**
      * @return The parent of the current {@link XsdAbstractElement} object.
      */
-  std::shared_ptr<XsdAbstractElement> getParent(bool enforceParentAvailability) const
+  XsdAbstractElement* getParent(bool enforceParentAvailability) const
   {
     if (!m_parentAvailable)
     {
@@ -266,7 +224,7 @@ public:
   /**
      * @return The source of the clone of the current {@link XsdAbstractElement} object.
      */
-  std::shared_ptr<XsdAbstractElement> getCloneOf(void) const
+  const XsdAbstractElement* getCloneOf(void) const
   {
     return m_cloneOf;
   }
@@ -274,12 +232,12 @@ public:
   /**
      * Sets source of the clone of the current {@link XsdAbstractElement} object.
      */
-  void setCloneOf(const std::shared_ptr<XsdAbstractElement>& cloneOf)
+  void setCloneOf(const XsdAbstractElement* cloneOf)
   {
     m_cloneOf = cloneOf;
   }
 
-  void setParent(std::shared_ptr<XsdAbstractElement> parent)
+  void setParent(XsdAbstractElement* parent)
   {
     m_parent = parent;
     m_parentAvailable = bool(m_parent);
@@ -327,4 +285,38 @@ public:
 #endif
     return node.text().get();
   }
+
+protected:
+  VisitorFunctionType m_visitorFunction;
+
+private:
+  /**
+   * A {@link Map} object containing the keys/values of the attributes that belong to the concrete element instance.
+   */
+  StringMap m_attributesMap;
+
+
+  /**
+     * The instance which contains the present element.
+     */
+  XsdAbstractElement* m_parent;
+
+  /**
+     * The visitor instance for this element.
+     */
+  XsdAbstractElementVisitor* m_visitor;
+
+  /**
+     * Indicates the source from this object was cloned, if applicable.
+     */
+  const XsdAbstractElement* m_cloneOf;
+
+  /**
+     * Indicates if this element has the Parent available. This was created as a way of indicating that the parent of the
+     * current element isn't present to avoid circular memory dependencies.
+     */
+  bool m_parentAvailable;
+
+
+  std::string m_element_name;
 };

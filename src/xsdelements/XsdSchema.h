@@ -20,77 +20,18 @@ class ReferenceBase;
 
 class XsdSchema : public XsdAnnotatedElements
 {
-private:
-    /**
-     * Specifies if the form attribute for the current {@link XsdSchema} children attributes. The default value is
-     * "unqualified". Other possible value is "qualified".
-     */
-    FormEnum m_attributeFormDefault;
-
-    /**
-     * Specifies if the form attribute for the current {@link XsdSchema} children elements. The default value is
-     * "unqualified". Other possible value is "qualified".
-     */
-    FormEnum m_elementFormDefault;
-
-    /**
-     * Specifies if the block attribute for the current {@link XsdSchema} children such as {@link XsdElement} and
-     * {@link XsdComplexType}. The default value is "". Other possible value are "extension", "restriction",
-     * "substitution" and "#all".
-     */
-    BlockDefaultEnum m_blockDefault;
-
-    /**
-     * Specifies if the final attribute for the current {@link XsdSchema} children such as {@link XsdElement},
-     * {@link XsdSimpleType} and {@link XsdComplexType}. The default value is "". Other possible value are "extension",
-     * "restriction", "list", "union" and "#all".
-     */
-    FinalDefaultEnum m_finalDefault;
-
-    /**
-     * A URI reference of the namespace of this {@link XsdSchema} element.
-     */
-    std::optional<std::string> m_targetNamespace;
-
-    /**
-     * The version of this {@link XsdSchema} element.
-     */
-    std::optional<std::string> m_version;
-
-    /**
-     * A URI reference that specifies one or more namespaces for use in this {@link XsdSchema}. If no prefix is assigned,
-     * the schema components of the namespace can be used with unqualified references.
-     */
-    std::optional<std::string> m_xmlns;
-
-    SchemaLocation m_schemaLocation;
-
-    std::map<std::string, NamespaceInfo> m_namespaces;
-
-    /**
-     * The children elements contained in this {@link XsdSchema} element.
-     */
-    std::list<std::shared_ptr<XsdAbstractElement>> m_elements;
 public: // ctors
-    XsdSchema(std::shared_ptr<XsdParserCore> parser,
-              StringMap attributesMap,
-              VisitorFunctionType visitorFunction,
-              std::shared_ptr<XsdAbstractElement> parent)
-      : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-    {}
-
+  XsdSchema(StringMap attributesMap,
+            VisitorFunctionType visitorFunction,
+            XsdAbstractElement* parent);
 public:
-  virtual void initialize(void) override;
-   std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override
-    {
-        return m_elements;
-    }
+  std::list<XsdAbstractElement*> getXsdElements(void) const override
+  {
+    return m_elements;
+  }
 
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
+  virtual std::list<ReferenceBase*> getElements(void) const override;
 
-  
-
-public:
   void updatePrefixLocations(std::map<std::string, SchemaLocation> prefixLocations)
   {
     for(auto& pair : prefixLocations)
@@ -99,9 +40,8 @@ public:
       m_namespaces.at(pair.first).setLocation(pair.second);
     }
   }
-public:
 
-  void add(std::shared_ptr<XsdAbstractElement> element);
+  void add(XsdAbstractElement* element);
 
   std::optional<std::string> getAttributeFormDefault(void) const
   {
@@ -117,7 +57,6 @@ public:
   {
     return m_blockDefault;
   }
-
     
   std::optional<std::string> getFinalDefault(void) const
   {
@@ -156,11 +95,11 @@ public:
                                         std::is_same_v<XsdAttributeGroup, T> ||
                                         std::is_same_v<XsdElement       , T> ||
                                         std::is_same_v<XsdAttribute     , T>, bool> = true>
-  std::list<std::shared_ptr<T>> getChildren(void) const
+  std::list<T*> getChildren(void) const
   {
-    std::list<std::shared_ptr<T>> targets;
+    std::list<T*> targets;
     for(auto& element : getXsdElements())
-      if(auto x = std::dynamic_pointer_cast<T>(element); x)
+      if(auto x = dynamic_cast<T*>(element); x != nullptr)
         targets.push_back(x);
     return targets;
   }
@@ -181,4 +120,56 @@ public:
   {
     m_schemaLocation = schemaLocation;
   }
+
+private:
+  /**
+   * Specifies if the form attribute for the current {@link XsdSchema} children attributes. The default value is
+   * "unqualified". Other possible value is "qualified".
+   */
+  FormEnum m_attributeFormDefault;
+
+  /**
+   * Specifies if the form attribute for the current {@link XsdSchema} children elements. The default value is
+   * "unqualified". Other possible value is "qualified".
+   */
+  FormEnum m_elementFormDefault;
+
+  /**
+   * Specifies if the block attribute for the current {@link XsdSchema} children such as {@link XsdElement} and
+   * {@link XsdComplexType}. The default value is "". Other possible value are "extension", "restriction",
+   * "substitution" and "#all".
+   */
+  BlockDefaultEnum m_blockDefault;
+
+  /**
+   * Specifies if the final attribute for the current {@link XsdSchema} children such as {@link XsdElement},
+   * {@link XsdSimpleType} and {@link XsdComplexType}. The default value is "". Other possible value are "extension",
+   * "restriction", "list", "union" and "#all".
+   */
+  FinalDefaultEnum m_finalDefault;
+
+  /**
+   * A URI reference of the namespace of this {@link XsdSchema} element.
+   */
+  std::optional<std::string> m_targetNamespace;
+
+  /**
+   * The version of this {@link XsdSchema} element.
+   */
+  std::optional<std::string> m_version;
+
+  /**
+   * A URI reference that specifies one or more namespaces for use in this {@link XsdSchema}. If no prefix is assigned,
+   * the schema components of the namespace can be used with unqualified references.
+   */
+  std::optional<std::string> m_xmlns;
+
+  SchemaLocation m_schemaLocation;
+
+  std::map<std::string, NamespaceInfo> m_namespaces;
+
+  /**
+   * The children elements contained in this {@link XsdSchema} element.
+   */
+  std::list<XsdAbstractElement*> m_elements;
 };

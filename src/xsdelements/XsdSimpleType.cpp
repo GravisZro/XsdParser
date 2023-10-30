@@ -31,11 +31,11 @@
  * @param newRestriction The new {@link XsdRestriction} instance.
  */
 static void updateExistingRestrictionEnumerations(
-    std::shared_ptr<XsdRestriction> existing,
-    std::shared_ptr<XsdRestriction> newRestriction)
+    XsdRestriction* existing,
+    XsdRestriction* newRestriction)
 {
-  std::list<std::shared_ptr<XsdEnumeration>> existingEnumeration = existing->getEnumeration();
-  std::list<std::shared_ptr<XsdEnumeration>> newRestrictionEnumeration = newRestriction->getEnumeration();
+  std::list<XsdEnumeration*> existingEnumeration = existing->getEnumeration();
+  std::list<XsdEnumeration*> newRestrictionEnumeration = newRestriction->getEnumeration();
 
   if(!existingEnumeration.empty())
     existing->setEnumeration(newRestrictionEnumeration);
@@ -61,63 +61,63 @@ static void updateExistingRestrictionEnumerations(
  * @param newRestriction The new restriction.
  */
 static void updateExistingRestriction(
-    std::shared_ptr<XsdRestriction> existing,
-    std::shared_ptr<XsdRestriction> newRestriction)
+    XsdRestriction* existing,
+    XsdRestriction* newRestriction)
 {
-  std::shared_ptr<XsdPattern>         pattern         = newRestriction->getPattern();
-  std::shared_ptr<XsdMaxExclusive>    maxExclusive    = newRestriction->getMaxExclusive();
-  std::shared_ptr<XsdMaxInclusive>    maxInclusive    = newRestriction->getMaxInclusive();
-  std::shared_ptr<XsdMaxLength>       maxLength       = newRestriction->getMaxLength();
-  std::shared_ptr<XsdMinExclusive>    minExclusive    = newRestriction->getMinExclusive();
-  std::shared_ptr<XsdMinInclusive>    minInclusive    = newRestriction->getMinInclusive();
-  std::shared_ptr<XsdMinLength>       minLength       = newRestriction->getMinLength();
-  std::shared_ptr<XsdLength>          length          = newRestriction->getLength();
-  std::shared_ptr<XsdFractionDigits>  fractionDigits  = newRestriction->getFractionDigits();
-  std::shared_ptr<XsdTotalDigits>     totalDigits     = newRestriction->getTotalDigits();
-  std::shared_ptr<XsdWhiteSpace>      whiteSpace      = newRestriction->getWhiteSpace();
+  XsdPattern*         pattern         = newRestriction->getPattern();
+  XsdMaxExclusive*    maxExclusive    = newRestriction->getMaxExclusive();
+  XsdMaxInclusive*    maxInclusive    = newRestriction->getMaxInclusive();
+  XsdMaxLength*       maxLength       = newRestriction->getMaxLength();
+  XsdMinExclusive*    minExclusive    = newRestriction->getMinExclusive();
+  XsdMinInclusive*    minInclusive    = newRestriction->getMinInclusive();
+  XsdMinLength*       minLength       = newRestriction->getMinLength();
+  XsdLength*          length          = newRestriction->getLength();
+  XsdFractionDigits*  fractionDigits  = newRestriction->getFractionDigits();
+  XsdTotalDigits*     totalDigits     = newRestriction->getTotalDigits();
+  XsdWhiteSpace*      whiteSpace      = newRestriction->getWhiteSpace();
 
-  if (pattern)
+  if (pattern != nullptr)
     existing->setPattern(pattern);
 
-  if (maxExclusive)
+  if (maxExclusive != nullptr)
     existing->setMaxExclusive(maxExclusive);
 
-  if (maxInclusive)
+  if (maxInclusive != nullptr)
     existing->setMaxInclusive(maxInclusive);
 
-  if (maxLength)
+  if (maxLength != nullptr)
     existing->setMaxLength(maxLength);
 
-  if (minExclusive)
+  if (minExclusive != nullptr)
     existing->setMinExclusive(minExclusive);
 
-  if (minInclusive)
+  if (minInclusive != nullptr)
     existing->setMinInclusive(minInclusive);
 
-  if (minLength)
+  if (minLength != nullptr)
     existing->setMinLength(minLength);
 
-  if (length)
+  if (length != nullptr)
     existing->setLength(length);
 
-  if (fractionDigits)
+  if (fractionDigits != nullptr)
     existing->setFractionDigits(fractionDigits);
 
-  if (totalDigits)
+  if (totalDigits != nullptr)
     existing->setTotalDigits(totalDigits);
 
-  if (whiteSpace)
+  if (whiteSpace != nullptr)
     existing->setWhiteSpace(whiteSpace);
 
   updateExistingRestrictionEnumerations(existing, newRestriction);
 }
 
 template<typename T>
-constexpr bool hasDifferentValue(std::shared_ptr<T> existing, std::shared_ptr<T> newRestriction)
+constexpr bool hasDifferentValue(T* existing, T* newRestriction)
 {
-  if (existing && newRestriction)
+  if (existing != nullptr && newRestriction != nullptr)
     return existing->getValue() != newRestriction->getValue();
-  return bool(existing) != bool(newRestriction);
+  return bool(existing != nullptr) != bool(newRestriction != nullptr);
 }
 
 
@@ -128,8 +128,8 @@ constexpr bool hasDifferentValue(std::shared_ptr<T> existing, std::shared_ptr<T>
  * @return True if an overlap between the restrictions occur, false if it doesn't occur.
  */
 static bool existsRestrictionOverlap(
-    std::shared_ptr<XsdRestriction> existing,
-    std::shared_ptr<XsdRestriction> newRestriction)
+    XsdRestriction* existing,
+    XsdRestriction* newRestriction)
 {
   return hasDifferentValue(existing->getPattern()       , newRestriction->getPattern()        ) ||
       hasDifferentValue(existing->getWhiteSpace()    , newRestriction->getWhiteSpace()     ) ||
@@ -151,38 +151,22 @@ static bool existsRestrictionOverlap(
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdAbstractElement> XsdSimpleType::clone(StringMap placeHolderAttributes)
+XsdSimpleType::XsdSimpleType(const XsdSimpleType& other, XsdAbstractElement* parent)
+  : XsdSimpleType(other.getAttributesMap(), other.m_visitorFunction, parent)
 {
-  placeHolderAttributes.merge(getAttributesMap());
-  placeHolderAttributes.erase(*REF_TAG);
+  removeAttribute(REF_TAG);
 
-  auto elementCopy = create<XsdSimpleType>(getParser(),
-                                           placeHolderAttributes,
-                                           m_visitorFunction,
-                                           getParent());
+  if (other.m_xsd_union != nullptr)
+    m_xsd_union = new XsdUnion(*other.m_xsd_union, this);
 
-  if (m_xsd_union)
-    elementCopy->m_xsd_union = std::static_pointer_cast<XsdUnion>(
-                                 m_xsd_union->XsdAbstractElement::clone(
-                                   m_xsd_union->getAttributesMap(),
-                                   elementCopy));
+  if (other.m_xsd_list != nullptr)
+    m_xsd_list = new XsdList(*other.m_xsd_list, this);
 
-  if (m_xsd_list)
-    elementCopy->m_xsd_list = std::static_pointer_cast<XsdList>(
-                                m_xsd_list->XsdAbstractElement::clone(
-                                  m_xsd_list->getAttributesMap(),
-                                  elementCopy));
-
-  if (m_restriction)
-    elementCopy->m_restriction = std::static_pointer_cast<XsdRestriction>(
-                                   m_restriction->XsdAbstractElement::clone(
-                                     m_restriction->getAttributesMap(),
-                                     elementCopy));
-
-  return elementCopy;
+  if (other.m_restriction != nullptr)
+    m_restriction = new XsdRestriction(*other.m_restriction, this);
 }
 
-std::shared_ptr<XsdList> XsdSimpleType::getList(void) const
+XsdList* XsdSimpleType::getList(void) const
 {
   if (!m_xsd_list && m_xsd_union)
     for(auto& xsdSimpleType : m_xsd_union->getUnionElements())
@@ -197,42 +181,42 @@ std::shared_ptr<XsdList> XsdSimpleType::getList(void) const
  * In case of restriction overlap an exception is thrown because the information on the xsd file is contradictory.
  * @return A xsd_list of restrictions.
  */
-std::list<std::shared_ptr<XsdRestriction>> XsdSimpleType::getAllRestrictions(void) const
+std::list<XsdRestriction*> XsdSimpleType::getAllRestrictions(void) const
 {
-  std::map<std::string, std::shared_ptr<XsdRestriction>> restrictions;
+  std::map<std::string, XsdRestriction*> restrictions;
   StringMap xsdBuiltinTypes = XsdParserCore::getXsdTypesToCpp();
 
-  if (m_restriction && m_restriction->getBase())
-    restrictions.emplace(xsdBuiltinTypes.at(m_restriction->getBase().value()), m_restriction);
+  if (m_restriction != nullptr && m_restriction->getBaseType())
+    restrictions.emplace(xsdBuiltinTypes.at(m_restriction->getBaseType().value()), m_restriction);
 
-  if (m_xsd_union)
+  if (m_xsd_union != nullptr)
   {
     for(auto& unionMember :  m_xsd_union->getUnionElements())
     {
       auto unionMemberRestriction = unionMember->getRestriction();
-      if (unionMemberRestriction)
+      if (unionMemberRestriction != nullptr)
       {
-        assert(unionMemberRestriction->getBase());
-        assert(xsdBuiltinTypes.contains(unionMemberRestriction->getBase().value()));
+        assert(unionMemberRestriction->getBaseType());
+        assert(xsdBuiltinTypes.contains(unionMemberRestriction->getBaseType().value()));
 
 
-        std::shared_ptr<XsdRestriction> existingRestriction;
-        if(restrictions.contains(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value())))
-          existingRestriction = restrictions.at(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()));
+        XsdRestriction* existingRestriction = nullptr;
+        if(restrictions.contains(xsdBuiltinTypes.at(unionMemberRestriction->getBaseType().value())))
+          existingRestriction = restrictions.at(xsdBuiltinTypes.at(unionMemberRestriction->getBaseType().value()));
 
-        if(existingRestriction)
+        if(existingRestriction != nullptr)
         {
           if (existsRestrictionOverlap(existingRestriction, unionMemberRestriction))
             throw std::runtime_error("The xsd file is invalid because has contradictory restrictions.");
           updateExistingRestriction(existingRestriction, unionMemberRestriction);
         }
         else
-          restrictions.emplace(xsdBuiltinTypes.at(unionMemberRestriction->getBase().value()), unionMemberRestriction);
+          restrictions.emplace(xsdBuiltinTypes.at(unionMemberRestriction->getBaseType().value()), unionMemberRestriction);
       }
     }
   }
 
-  std::list<std::shared_ptr<XsdRestriction>> rvals;
+  std::list<XsdRestriction*> rvals;
   for(auto& pair : restrictions)
     rvals.push_back(pair.second);
   return rvals;

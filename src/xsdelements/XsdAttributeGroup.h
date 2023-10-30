@@ -17,56 +17,51 @@ class NamedConcreteElement;
  */
 class XsdAttributeGroup : public XsdNamedElements
 {
+public:
+  XsdAttributeGroup(StringMap attributesMap,
+                    VisitorFunctionType visitorFunction,
+                    XsdAbstractElement* parent)
+    : XsdNamedElements(attributesMap, visitorFunction, parent)
+  {
+  }
+
+  XsdAttributeGroup(const XsdAttributeGroup& other, XsdAbstractElement* parent = nullptr);
+
+public:
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdNamedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdAttributeGroup*>(this));
+  }
+
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
+
+  virtual std::list<ReferenceBase*> getElements(void) const override;
+  std::list<XsdAttributeGroup*> getXsdAttributeGroups(void) const;
+  std::list<XsdAttributeGroup*> getAllXsdAttributeGroups(void) const;
+  std::list<XsdAttribute*> getXsdAttributes(void) const;
+
+  void addAttribute(ReferenceBase* attribute)
+  {
+    m_attributes.push_back(attribute);
+  }
+
+  void addAttributeGroup(ReferenceBase* attributeGroup)
+  {
+    m_attributeGroups.push_back(attributeGroup);
+  }
+
 private:
   /**
    * A list of {@link XsdAttributeGroup} children instances.
    */
   //This list is populated by the replaceUnsolvedElements and never directly (such as a Visitor method like all else).
-  //The UnsolvedReference is placed in the XsdParser queue by the default implementation of the Visitor#visit(std::enable_shared_from_this<XsdAttributeGroup>::create element)
+  //The UnsolvedReference is placed in the XsdParser queue by the default implementation of the Visitor#visit
   //The reference solving process then sends the XsdAttributeGroup to this class.
-  std::list<std::shared_ptr<ReferenceBase>> m_attributeGroups;
+  std::list<ReferenceBase*> m_attributeGroups;
 
   /**
    * A list of {@link XsdAttribute} children instances.
    */
-  std::list<std::shared_ptr<ReferenceBase>> m_attributes;
-public:
-  XsdAttributeGroup(std::shared_ptr<XsdParserCore> parser,
-                    StringMap attributesMap,
-                    VisitorFunctionType visitorFunction,
-                    std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, visitorFunction, parent) { }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdNamedElements::initialize();
-    m_attributeGroups.clear();
-    m_attributes.clear();
-  }
-
-
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-  {
-    XsdNamedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdAttributeGroup>(shared_from_this()));
-  }
-
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
-
-  virtual std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override;
-  std::list<std::shared_ptr<XsdAttributeGroup>> getXsdAttributeGroups(void) const;
-  std::list<std::shared_ptr<XsdAttributeGroup>> getAllXsdAttributeGroups(void) const;
-  std::list<std::shared_ptr<XsdAttribute>> getXsdAttributes(void) const;
-
-  void addAttribute(std::shared_ptr<ReferenceBase> attribute)
-  {
-    m_attributes.push_back(attribute);
-  }
-
-  void addAttributeGroup(std::shared_ptr<ReferenceBase> attributeGroup)
-  {
-    m_attributeGroups.push_back(attributeGroup);
-  }
+  std::list<ReferenceBase*> m_attributes;
 };

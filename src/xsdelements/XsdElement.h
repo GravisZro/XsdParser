@@ -22,29 +22,133 @@ class NamedConcreteElement;
  */
 class XsdElement : public XsdNamedElements
 {
+public: // ctors
+  XsdElement(StringMap attributesMap,
+             VisitorFunctionType visitorFunction,
+             XsdAbstractElement* parent);
+
+  XsdElement(const XsdElement& other);
+public:
+  /**
+     * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
+     */
+  virtual void validateSchemaRules(void) const override
+  {
+    XsdNamedElements::validateSchemaRules();
+    rule2();
+    rule3();
+    rule4();
+    rule5();
+    rule6();
+    rule7();
+  }
+
+public:
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdNamedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdElement*>(this));
+  }
+
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
+
+  XsdComplexType* getXsdComplexType(void) const;
+  XsdSimpleType* getXsdSimpleType(void) const;
+
+  XsdNamedElements* getTypeAsXsd(void) const;
+  XsdComplexType* getTypeAsComplexType(void) const;
+  XsdSimpleType* getTypeAsSimpleType(void) const;
+  XsdBuiltInDataType* getTypeAsBuiltInDataType(void) const;
+
+  std::optional<std::string> getFinal(void) const
+  {
+    return m_finalObj;
+  }
+
+  bool isNillable(void) const
+  {
+    return m_nillable;
+  }
+
+  int getMinOccurs(void) const
+  {
+    return m_minOccurs;
+  }
+
+  std::string getMaxOccurs(void) const
+  {
+    return m_maxOccurs;
+  }
+
+  bool isAbstractObj(void) const
+  {
+    return m_abstractObj;
+  }
+
+  void setComplexType(ReferenceBase* complexType)
+  {
+    m_complexType = complexType;
+  }
+
+  void setSimpleType(ReferenceBase* simpleType)
+  {
+    m_simpleType = simpleType;
+  }
+
+  std::optional<std::string> getBlock(void) const
+  {
+    return m_block;
+  }
+
+  std::optional<std::string> getForm(void) const
+  {
+    return m_form;
+  }
+
+  std::optional<std::string> getType(void) const;
+
+  ReferenceBase* getSubstitutionGroup(void) const
+  {
+    return m_substitutionGroup;
+  }
+
+  XsdElement* getXsdSubstitutionGroup(void) const;  
+
+
+private:
+  XsdComplexType* getXsdComplexTypeFromType(void) const;
+  XsdSimpleType* getXsdSimpleTypeFromType(void) const;
+
+  void rule7(void) const;
+  void rule6(void) const;
+  void rule5(void) const;
+  void rule4(void) const;
+  void rule3(void) const;
+  void rule2(void) const;
+
 private:
   /**
    * The {@link XsdComplexType} instance wrapped in a {@link ReferenceBase} object.
    */
-  std::shared_ptr<ReferenceBase> m_complexType;
+  ReferenceBase* m_complexType;
 
   /**
    * The {@link XsdSimpleType} instance wrapped in a {@link ReferenceBase} object.
    */
-  std::shared_ptr<ReferenceBase> m_simpleType;
+  ReferenceBase* m_simpleType;
 
   /**
    * The type of the current element.
    * Either specified a built in data type or is a reference to a existent {@link XsdComplexType} or a
    * {@link XsdSimpleType} instances.
    */
-  std::shared_ptr<ReferenceBase> m_type;
+  ReferenceBase* m_type;
 
   /**
    * Specifies the name of an element that can be substituted with this element. Only should be present if this
    * {@link XsdElement} is a top level element, i.e. his parent is a XsdSchema element.
    */
-  std::shared_ptr<ReferenceBase> m_substitutionGroup;
+  ReferenceBase* m_substitutionGroup;
 
   /**
    * Specifies a default value for the element. It's only available if the type contents are text only type defined by
@@ -105,113 +209,4 @@ private:
    * Default value is 1. This attribute cannot be used if the parent element is the XsdSchema element.
    */
   std::string m_maxOccurs;
-
-public: // ctors
-  XsdElement(std::shared_ptr<XsdParserCore> parser,
-             StringMap attributesMap,
-             VisitorFunctionType visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, visitorFunction, parent),
-      m_minOccurs(INT_MIN)
-  { }
-
-public:
-  virtual void initialize(void) override;
-
-  /**
-     * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
-     */
-  virtual void validateSchemaRules(void) const override
-  {
-    XsdNamedElements::validateSchemaRules();
-    rule2();
-    rule3();
-    rule4();
-    rule5();
-    rule6();
-    rule7();
-  }
-
-private:
-  void rule7(void) const;
-  void rule6(void) const;
-  void rule5(void) const;
-  void rule4(void) const;
-  void rule3(void) const;
-  void rule2(void) const;
-public:
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-  {
-    XsdNamedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdElement>(shared_from_this()));
-  }
-
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element);
-
-  std::shared_ptr<XsdComplexType> getXsdComplexType(void) const;
-  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) const;
-
-private:
-  std::shared_ptr<XsdComplexType> getXsdComplexTypeFromType(void) const;
-  std::shared_ptr<XsdSimpleType> getXsdSimpleTypeFromType(void) const;
-public:
-  std::shared_ptr<XsdNamedElements> getTypeAsXsd(void) const;
-  std::shared_ptr<XsdComplexType> getTypeAsComplexType(void) const;
-  std::shared_ptr<XsdSimpleType> getTypeAsSimpleType(void) const;
-  std::shared_ptr<XsdBuiltInDataType> getTypeAsBuiltInDataType(void) const;
-
-  std::optional<std::string> getFinal(void) const
-  {
-    return m_finalObj;
-  }
-
-  bool isNillable(void) const
-  {
-    return m_nillable;
-  }
-
-  int getMinOccurs(void) const
-  {
-    return m_minOccurs;
-  }
-
-  std::string getMaxOccurs(void) const
-  {
-    return m_maxOccurs;
-  }
-
-  bool isAbstractObj(void) const
-  {
-    return m_abstractObj;
-  }
-
-  void setComplexType(std::shared_ptr<ReferenceBase> complexType)
-  {
-    m_complexType = complexType;
-  }
-
-  void setSimpleType(std::shared_ptr<ReferenceBase> simpleType)
-  {
-    m_simpleType = simpleType;
-  }
-
-  std::optional<std::string> getBlock(void) const
-  {
-    return m_block;
-  }
-
-  std::optional<std::string> getForm(void) const
-  {
-    return m_form;
-  }
-
-  std::optional<std::string> getType(void) const;
-
-  std::shared_ptr<ReferenceBase> getSubstitutionGroup(void) const
-  {
-    return m_substitutionGroup;
-  }
-
-  std::shared_ptr<XsdElement> getXsdSubstitutionGroup(void) const;
 };

@@ -13,44 +13,24 @@ struct XsdAbstractElementVisitor;
  */
 class XsdAll : public XsdMultipleElements
 {
-private:
-  /**
-   * Specifies the minimum number of times this element can occur in the parent element. The value can be any
-   * number bigger or equal to 0. Default value is 1. This attribute cannot be used if the parent element is the
-   * std::shared_ptr<XsdSchema> element.
-   */
-  int m_minOccurs;
-
-  /**
-   * Specifies the maximum number of times this element can occur in the parent element. The value can be any
-   * number bigger or equal to 0. Default value is 1. This attribute cannot be used if the parent element is the
-   * std::shared_ptr<XsdSchema> element.
-   */
-  int m_maxOccurs;
 public: // ctors
-  XsdAll(std::shared_ptr<XsdParserCore> parser,
-         StringMap attributesMap,
+  XsdAll(StringMap attributesMap,
          VisitorFunctionType visitorFunction,
-         std::shared_ptr<XsdAbstractElement> parent)
-    : XsdMultipleElements(parser, attributesMap, visitorFunction, parent),
-      m_minOccurs(INT_MIN),
-      m_maxOccurs(INT_MIN)
+         XsdAbstractElement* parent)
+    : XsdMultipleElements(attributesMap, visitorFunction, parent),
+      m_minOccurs(1),
+      m_maxOccurs(1)
   {
-  }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdMultipleElements::initialize();
-    m_minOccurs = 1;
-    m_maxOccurs = 1;
     if(haveAttribute(MIN_OCCURS_TAG))
       m_minOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdAll>::xsd, *MIN_OCCURS_TAG, getAttribute(MIN_OCCURS_TAG));
     if(haveAttribute(MAX_OCCURS_TAG))
       m_maxOccurs = AttributeValidations::validateNonNegativeInteger(*TAG<XsdAll>::xsd, *MAX_OCCURS_TAG, getAttribute(MAX_OCCURS_TAG));
   }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override;
+  XsdAll(const XsdAll& other, XsdAbstractElement* parent = nullptr);
+
+public:
+  void accept(XsdAbstractElementVisitor* visitorParam) override;
 
   /**
    * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
@@ -58,7 +38,6 @@ public:
    * @param placeHolderAttributes The additional attributes to add to the clone.
    * @return A copy of the object from which is called upon.
    */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   int getMinOccurs(void) const
   {
@@ -69,4 +48,19 @@ public:
   {
     return m_maxOccurs;
   }
+
+private:
+  /**
+   * Specifies the minimum number of times this element can occur in the parent element. The value can be any
+   * number bigger or equal to 0. Default value is 1. This attribute cannot be used if the parent element is the
+   * XsdSchema element.
+   */
+  int m_minOccurs;
+
+  /**
+   * Specifies the maximum number of times this element can occur in the parent element. The value can be any
+   * number bigger or equal to 0. Default value is 1. This attribute cannot be used if the parent element is the
+   * XsdSchema element.
+   */
+  int m_maxOccurs;
 };

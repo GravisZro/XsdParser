@@ -11,18 +11,18 @@
 #include <xsdelements/XsdAttribute.h>
 
 
-void XsdSchemaVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
+void XsdSchemaVisitor::visit(XsdAbstractElement* element)
 {
   AttributesVisitor::visit(element);
 
-  assert(std::dynamic_pointer_cast<XsdInclude       >(element) ||
-         std::dynamic_pointer_cast<XsdImport        >(element) ||
-         std::dynamic_pointer_cast<XsdAnnotation    >(element) ||
-         std::dynamic_pointer_cast<XsdSimpleType    >(element) ||
-         std::dynamic_pointer_cast<XsdComplexType   >(element) ||
-         std::dynamic_pointer_cast<XsdGroup         >(element) ||
-         std::dynamic_pointer_cast<XsdAttributeGroup>(element) ||
-         std::dynamic_pointer_cast<XsdElement       >(element) ||
-         std::dynamic_pointer_cast<XsdAttribute     >(element));
+  assert(dynamic_cast<XsdInclude       *>(element) != nullptr ||
+         dynamic_cast<XsdImport        *>(element) != nullptr ||
+         dynamic_cast<XsdAnnotation    *>(element) != nullptr ||
+         dynamic_cast<XsdSimpleType    *>(element) != nullptr ||
+         dynamic_cast<XsdComplexType   *>(element) != nullptr ||
+         dynamic_cast<XsdGroup         *>(element) != nullptr ||
+         dynamic_cast<XsdAttributeGroup*>(element) != nullptr ||
+         dynamic_cast<XsdElement       *>(element) != nullptr ||
+         dynamic_cast<XsdAttribute     *>(element) != nullptr);
   owner->add(element);
 }

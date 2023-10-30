@@ -9,6 +9,6 @@
  */
 struct ConcreteElement : ReferenceBase
 {
-    ConcreteElement(std::shared_ptr<XsdAbstractElement> element)
+    ConcreteElement(XsdAbstractElement* element)
       : ReferenceBase(element) { }
 };

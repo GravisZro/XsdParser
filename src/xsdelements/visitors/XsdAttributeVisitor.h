@@ -13,18 +13,18 @@
  */
 struct XsdAttributeVisitor : XsdNamedElementsVisitor
 {
-  XsdAttributeVisitor(std::shared_ptr<XsdAttribute> _owner) : owner(_owner) { }
+  XsdAttributeVisitor(XsdAttribute* _owner) : owner(_owner) { }
 
   /**
    * The {@link XsdAttribute} instance which owns this {@link XsdAttributeVisitor} instance. This way this visitor
    * instance can perform changes in the {@link XsdAttribute} object.
    */
-  std::shared_ptr<XsdAttribute> owner;
+  XsdAttribute* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  virtual void visit(XsdAbstractElement* element) override
   {
     XsdNamedElementsVisitor::visit(element);
     owner->setSimpleType(ReferenceBase::createFromXsd(element));

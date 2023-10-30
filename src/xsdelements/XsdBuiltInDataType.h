@@ -5,19 +5,15 @@
 class XsdBuiltInDataType : public XsdNamedElements
 {
 public: // ctors
-  XsdBuiltInDataType(std::shared_ptr<XsdParserCore> parser,
-                     StringMap attributesMap,
+  XsdBuiltInDataType(StringMap attributesMap,
                      VisitorFunctionType visitorFunction,
-                     std::shared_ptr<XsdAbstractElement> parent)
-    : XsdNamedElements(parser, attributesMap, visitorFunction, parent)
+                     XsdAbstractElement* parent)
+    : XsdNamedElements(attributesMap, visitorFunction, parent)
   {
   }
-public:
-  virtual std::shared_ptr<XsdAbstractElement> clone([[maybe_unused]] StringMap placeHolderAttributes) override
+
+  XsdBuiltInDataType(const XsdBuiltInDataType& other)
+    : XsdNamedElements(other.getAttributesMap(), nullptr, other.getParent())
   {
-    return create<XsdBuiltInDataType>(getParser(),
-                                      getAttributesMap(),
-                                      nullptr,
-                                      getParent());
   }
 };

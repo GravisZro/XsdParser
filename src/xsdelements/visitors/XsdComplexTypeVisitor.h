@@ -3,10 +3,11 @@
 #include <xsdelements/elementswrapper/ReferenceBase.h>
 #include <xsdelements/XsdMultipleElements.h>
 #include <xsdelements/XsdComplexType.h>
+#include <xsdelements/XsdGroup.h>
+#include <xsdelements/XsdComplexContent.h>
+#include <xsdelements/XsdSimpleContent.h>
 
 #include <xsdelements/visitors/AttributesVisitor.h>
-
-class XsdComplexType;
 
 /**
  * Represents the restrictions of the {@link XsdComplexType} element, which can contain the following children:
@@ -19,29 +20,28 @@ class XsdComplexType;
  */
 struct XsdComplexTypeVisitor : AttributesVisitor
 {
-  XsdComplexTypeVisitor(std::shared_ptr<XsdComplexType> _owner) : owner(_owner) { }
+  XsdComplexTypeVisitor(XsdComplexType* _owner) : owner(_owner) { }
 
   /**
    * The {@link XsdComplexType} instance which owns this {@link XsdComplexTypeVisitor} instance. This way this visitor
    * instance can perform changes in the {@link XsdComplexType} object.
    */
-  std::shared_ptr<XsdComplexType> owner;
+  XsdComplexType* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  virtual void visit(XsdAbstractElement* element) override
   {
     XsdNamedElementsVisitor::visit(element);
     AttributesVisitor::visit(element);
 
-    if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
-       std::dynamic_pointer_cast<XsdGroup>(element))
+    if(dynamic_cast<XsdMultipleElements*>(element) != nullptr ||
+       dynamic_cast<XsdGroup*>(element) != nullptr)
       owner->setChildElement(ReferenceBase::createFromXsd(element));
-    else if(std::dynamic_pointer_cast<XsdComplexContent>(element))
-      owner->setComplexContent(std::static_pointer_cast<XsdComplexContent>(element));
-    else if(std::dynamic_pointer_cast<XsdSimpleContent>(element))
-      owner->setSimpleContent(std::static_pointer_cast<XsdSimpleContent>(element));
+    else if(dynamic_cast<XsdComplexContent*>(element) != nullptr)
+      owner->setComplexContent(static_cast<XsdComplexContent*>(element));
+    else if(dynamic_cast<XsdSimpleContent*>(element) != nullptr)
+      owner->setSimpleContent(static_cast<XsdSimpleContent*>(element));
   }
-
 };

@@ -17,7 +17,7 @@
  * field.
  * @param xsdAbstractElementVisitor The visitor that is visiting the current instance.
  */
-void XsdAbstractElement::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor)
+void XsdAbstractElement::accept(XsdAbstractElementVisitor* xsdAbstractElementVisitor)
 {
   assert(xsdAbstractElementVisitor);
   setParent(xsdAbstractElementVisitor->getOwner());
@@ -30,23 +30,20 @@ void XsdAbstractElement::accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAb
  * @param element The concrete element that will be populated and returned.
  * @return A wrapper object that contains the parsed XSD object.
  */
-std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_node node,
-                                                                    std::shared_ptr<XsdAbstractElement> element)
+ReferenceBase* XsdAbstractElement::xsdParseSkeleton(pugi::xml_node node,
+                                                    XsdAbstractElement* element)
 {
-  static int counter = 0;
-  std::shared_ptr<XsdParserCore> parser = element->getParser();
   auto parse_mappers = XsdParserCore::getParseMappers();
 
   for(pugi::xml_node child = node.first_child(); child; child = child.next_sibling())
   {
-    ++counter;
     if (child.type() == pugi::node_element)
     {
       std::string nodeName = child.name();
       if(parse_mappers.contains(nodeName))
         if(auto configEntryData = parse_mappers.at(nodeName); configEntryData.parserFunction)
         {
-          auto rval = configEntryData.parserFunction(parser, child, configEntryData.visitorFunction, nullptr);
+          auto rval = configEntryData.parserFunction(child, configEntryData.visitorFunction, nullptr);
           auto childElement = rval->getElement();
           childElement->setElementName(nodeName);
           if(element->getVisitor())
@@ -57,7 +54,7 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
   }
 
   auto wrappedElement = ReferenceBase::createFromXsd(element);
-  parser->addParsedElement(wrappedElement);
+  getParser()->addParsedElement(wrappedElement);
   return wrappedElement;
 }
 
@@ -68,33 +65,33 @@ std::shared_ptr<ReferenceBase> XsdAbstractElement::xsdParseSkeleton(pugi::xml_no
  *                match between the {@link NamedConcreteElement} name attribute and the {@link UnsolvedReference}
  *                ref attribute.
  */
-void XsdAbstractElement::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
+void XsdAbstractElement::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
 {
-  std::list<std::shared_ptr<ReferenceBase>> element_list = getElements();
-  std::list<std::shared_ptr<UnsolvedReference>> unsolved_refs;
-  for(auto e : element_list)
-    if(auto x = std::dynamic_pointer_cast<UnsolvedReference>(e);
-       x && compareReference(element, x))
-      unsolved_refs.push_back(x);
+  std::list<ReferenceBase*> element_list = getElements();
+  std::list<UnsolvedReference*> unsolved_refs;
+  for(auto element : element_list)
+    if(auto unsolved = dynamic_cast<UnsolvedReference*>(element);
+       unsolved && compareReference(elementWrapper, unsolved))
+      unsolved_refs.push_back(unsolved);
 
   if(!unsolved_refs.empty())
   {
     auto oldElement = unsolved_refs.front();
     auto iter = std::find(std::begin(element_list),
                           std::end(element_list),
-                          std::static_pointer_cast<ReferenceBase>(oldElement));
+                          static_cast<ReferenceBase*>(oldElement));
     assert(iter != std::end(element_list));
-    **iter = *ReferenceBase::clone(getParser(), std::static_pointer_cast<ReferenceBase>(element), oldElement->getParent());
+    **iter = *new ReferenceBase(static_cast<ReferenceBase*>(elementWrapper), oldElement->getParent());
   }
 }
 
 
-bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> element, std::shared_ptr<UnsolvedReference> reference)
+bool XsdAbstractElement::compareReference(NamedConcreteElement* element, UnsolvedReference* reference)
 {
   return compareReference(element, reference->getRef());
 }
 
-bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> element, std::optional<std::string> unsolvedRef)
+bool XsdAbstractElement::compareReference(NamedConcreteElement* element, std::optional<std::string> unsolvedRef)
 {
   if (unsolvedRef && unsolvedRef->contains(':'))
     unsolvedRef = unsolvedRef->substr(unsolvedRef->find_first_of(':') + 1);
@@ -105,37 +102,37 @@ bool XsdAbstractElement::compareReference(std::shared_ptr<NamedConcreteElement> 
  * @return All the {@link ConcreteElement} objects present in the concrete implementation of the
  * {@link XsdAbstractElement} class. It doesn't return the {@link UnsolvedReference} objects.
  */
-std::list<std::shared_ptr<XsdAbstractElement>> XsdAbstractElement::getXsdElements(void) const
+std::list<XsdAbstractElement*> XsdAbstractElement::getXsdElements(void) const
 {
-  std::list<std::shared_ptr<XsdAbstractElement>> xsd_elements;
+  std::list<XsdAbstractElement*> xsd_elements;
   for(const auto& element : getElements())
-    if(std::dynamic_pointer_cast<ConcreteElement>(element))
+    if(dynamic_cast<ConcreteElement*>(element) != nullptr)
       xsd_elements.push_back(element->getElement());
   return xsd_elements;
 }
 
-std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(void)
+XsdSchema* XsdAbstractElement::getXsdSchema(void)
 {
-  std::shared_ptr<XsdSchema> schema;
-  try { schema = getXsdSchema(shared_from_this(), {}); }
+  XsdSchema* schema;
+  try { schema = getXsdSchema(this, {}); }
   catch (...) { return nullptr; }
 
-  if(!schema)
+  if(schema == nullptr)
     throw ParsingException("The parent is null while searching for the XsdSchema. Please submit an issue with the xsd file being parsed to the project page.");
   return schema;
 }
 
-std::shared_ptr<XsdSchema> XsdAbstractElement::getXsdSchema(std::shared_ptr<XsdAbstractElement> element,
-                                                            std::list<std::shared_ptr<XsdAbstractElement>> hierarchy)
+XsdSchema* XsdAbstractElement::getXsdSchema(XsdAbstractElement* element,
+                                            std::list<XsdAbstractElement*> hierarchy)
 {
-  if (!element)
+  if (element == nullptr)
     return nullptr;
 
   for(auto& x : hierarchy)
     if(x == element)
       throw ParsingException("There is a circular reference in the Xsd Element tree. Please submit an issue with the xsd file being parsed to the project page.");
 
-  if (auto schema = std::dynamic_pointer_cast<XsdSchema>(element); schema)
+  if (auto schema = dynamic_cast<XsdSchema*>(element); schema != nullptr)
     return schema;
 
   hierarchy.push_back(element);

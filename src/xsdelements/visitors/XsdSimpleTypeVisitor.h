@@ -15,25 +15,25 @@
 
 struct XsdSimpleTypeVisitor : XsdNamedElementsVisitor
 {
-  XsdSimpleTypeVisitor(std::shared_ptr<XsdSimpleType> _owner) : owner(_owner) { }
+  XsdSimpleTypeVisitor(XsdSimpleType* _owner) : owner(_owner) { }
 
   /**
    * The {@link XsdSimpleType} instance which owns this {@link XsdSimpleTypeVisitor} instance. This way this visitor
    * instance can perform changes in the {@link XsdSimpleType} object.
    */
-  std::shared_ptr<XsdSimpleType> owner;
+  XsdSimpleType* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  void visit(std::shared_ptr<XsdAbstractElement> element) override
+  void visit(XsdAbstractElement* element) override
   {
     XsdNamedElementsVisitor::visit(element);
-    if(std::dynamic_pointer_cast<XsdList>(element))
-      owner->setList(std::static_pointer_cast<XsdList>(element));
-    else if(std::dynamic_pointer_cast<XsdUnion>(element))
-      owner->setUnion(std::static_pointer_cast<XsdUnion>(element));
-    else if(std::dynamic_pointer_cast<XsdRestriction>(element))
-      owner->setRestriction(std::static_pointer_cast<XsdRestriction>(element));
+    if(dynamic_cast<XsdList*>(element) != nullptr)
+      owner->setList(static_cast<XsdList*>(element));
+    else if(dynamic_cast<XsdUnion*>(element) != nullptr)
+      owner->setUnion(static_cast<XsdUnion*>(element));
+    else if(dynamic_cast<XsdRestriction*>(element) != nullptr)
+      owner->setRestriction(static_cast<XsdRestriction*>(element));
   }
 };

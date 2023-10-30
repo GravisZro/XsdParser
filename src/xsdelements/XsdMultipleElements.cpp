@@ -17,18 +17,19 @@
  *                       object, if a match between the {@link NamedConcreteElement#name} attribute and the
  *                       {@link UnsolvedReference#ref} attribute.
  */
-void XsdMultipleElements::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper)
+void XsdMultipleElements::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
 {
-  if (std::dynamic_pointer_cast<XsdElement>(elementWrapper->getElement()))
+  if (dynamic_cast<XsdElement*>(elementWrapper->getElement()) != nullptr)
     XsdAnnotatedElements::replaceUnsolvedElements(elementWrapper);
 
-  if (std::dynamic_pointer_cast<XsdGroup>(elementWrapper->getElement()))
+  if (dynamic_cast<XsdGroup*>(elementWrapper->getElement()) != nullptr)
   {
     m_elements.push_back(elementWrapper);
-    m_elements.remove_if([elementWrapper](std::shared_ptr<ReferenceBase> e)
+    m_elements.remove_if([elementWrapper](ReferenceBase* ref)
     {
-      auto x = std::dynamic_pointer_cast<UnsolvedReference>(e);
-      return x && compareReference(elementWrapper, x);
+      auto x = dynamic_cast<UnsolvedReference*>(ref);
+      return x != nullptr &&
+                  compareReference(elementWrapper, x);
     });
   }
 }
@@ -36,16 +37,16 @@ void XsdMultipleElements::replaceUnsolvedElements(std::shared_ptr<NamedConcreteE
 /**
  * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
  */
-std::list<std::shared_ptr<XsdAbstractElement>> XsdMultipleElements::getXsdElements(void) const
+std::list<XsdAbstractElement*> XsdMultipleElements::getXsdElements(void) const
 {
-  std::list<std::shared_ptr<XsdAbstractElement>> rval;
+  std::list<XsdAbstractElement*> rval;
   for(auto& element : m_elements)
-    if(std::dynamic_pointer_cast<ConcreteElement>(element))
+    if(dynamic_cast<ConcreteElement*>(element) != nullptr)
       rval.push_back(element->getElement());
   return rval;
 }
 
-void XsdMultipleElements::addElement(std::shared_ptr<XsdAbstractElement> element)
+void XsdMultipleElements::addElement(XsdAbstractElement* element)
 {
   m_elements.push_back(ReferenceBase::createFromXsd(element));
 }

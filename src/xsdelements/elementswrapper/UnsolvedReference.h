@@ -13,15 +13,15 @@ private:
   bool m_isTypeRef;
 
 public:
-  UnsolvedReference(std::shared_ptr<XsdNamedElements> element)
-    : ReferenceBase(std::static_pointer_cast<XsdAbstractElement>(element)),
-      m_ref(ReferenceBase::getRef(std::static_pointer_cast<XsdAbstractElement>(element))),
+  UnsolvedReference(XsdNamedElements* element)
+    : ReferenceBase(static_cast<XsdAbstractElement*>(element)),
+      m_ref(ReferenceBase::getRef(static_cast<XsdAbstractElement*>(element))),
       m_isTypeRef(false)
   {
   }
 
-  UnsolvedReference(std::optional<std::string> refType, std::shared_ptr<XsdNamedElements> element)
-    : ReferenceBase(std::static_pointer_cast<XsdAbstractElement>(element)),
+  UnsolvedReference(std::optional<std::string> refType, XsdNamedElements* element)
+    : ReferenceBase(static_cast<XsdAbstractElement*>(element)),
       m_ref(refType),
       m_isTypeRef(true)
   {
@@ -31,13 +31,13 @@ public:
 
   bool isTypeRef(void) const { return m_isTypeRef; }
 
-  std::shared_ptr<XsdAbstractElement> getParent(void) const
+  XsdAbstractElement* getParent(void) const
   {
     return m_element->getParent();
   }
 
-  std::shared_ptr<XsdNamedElements> getElement(void) const
+  XsdNamedElements* getElement(void) const
   {
-    return std::static_pointer_cast<XsdNamedElements>(m_element);
+    return static_cast<XsdNamedElements*>(m_element);
   }
 };

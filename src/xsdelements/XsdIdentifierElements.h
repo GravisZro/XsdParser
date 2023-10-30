@@ -7,30 +7,26 @@
  */
 class XsdIdentifierElements : public XsdAbstractElement
 {
-private:
-    /**
-     * Specifies a unique ID for the element.
-     */
-  std::optional<std::string> m_id;
-
 public: // ctors
-  XsdIdentifierElements(std::shared_ptr<XsdParserCore> parser,
-                        StringMap attributesMap,
+  XsdIdentifierElements(StringMap attributesMap,
                         VisitorFunctionType visitorFunction,
-                        std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAbstractElement(parser, attributesMap, visitorFunction, parent) { }
-
-public:
-  virtual void initialize(void) override
+                        XsdAbstractElement* parent)
+    : XsdAbstractElement(attributesMap, visitorFunction, parent)
   {
-    XsdAbstractElement::initialize();
-    m_id.reset();
     if(haveAttribute(XsdAbstractElement::ID_TAG))
       m_id = getAttribute(XsdAbstractElement::ID_TAG);
   }
+
+public:
 
   std::optional<std::string> getId(void) const
   {
     return m_id;
   }
+
+private:
+  /**
+   * Specifies a unique ID for the element.
+   */
+  std::optional<std::string> m_id;
 };

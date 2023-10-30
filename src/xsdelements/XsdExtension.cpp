@@ -22,12 +22,13 @@
 
 #include <core/XsdParserCore.h>
 
-void XsdExtension::initialize(void)
+XsdExtension::XsdExtension(StringMap attributesMap,
+                           VisitorFunctionType visitorFunction,
+                           XsdAbstractElement* parent)
+  : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
+    m_childElement(nullptr),
+    m_base(nullptr)
 {
-  XsdAnnotatedElements::initialize();
-  m_childElement.reset();
-  m_base.reset();
-
   if (haveAttribute(BASE_TAG))
   {
     std::string baseValue = getAttribute(BASE_TAG);
@@ -37,10 +38,9 @@ void XsdExtension::initialize(void)
       StringMap attributes;
       attributes.emplace(NAME_TAG, baseValue);
       m_base = ReferenceBase::createFromXsd(
-                 create<XsdBuiltInDataType>(getParser(),
-                                            attributes,
+                 new XsdBuiltInDataType(attributes,
                                             nullptr,
-                                            shared_from_this()));
+                                            this));
     }
     else
     {
@@ -55,12 +55,11 @@ void XsdExtension::initialize(void)
       if (config.parserFunction == nullptr || config.visitorFunction == nullptr)
         throw ParsingException("Invalid Parsing Configuration for XsdElement.");
 
-      m_base = create<UnsolvedReference>(baseValue,
-                                         create<XsdElement>(getParser(),
-                                                            StringMap{},
+      m_base = new UnsolvedReference(baseValue,
+                                         new XsdElement(StringMap{},
                                                             config.visitorFunction,
-                                                            shared_from_this()));
-      getParser()->addUnsolvedReference(std::static_pointer_cast<UnsolvedReference>(m_base));
+                                                            this));
+      getParser()->addUnsolvedReference(static_cast<UnsolvedReference*>(m_base));
     }
   }
 }
@@ -72,30 +71,29 @@ void XsdExtension::initialize(void)
  *                {@link XsdExtension} constructor. The {@link UnsolvedReference} is only replaced if there
  *                is a match between the {@link UnsolvedReference#ref} and the {@link NamedConcreteElement#name}.
  */
-void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
+void XsdExtension::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
 {
-  XsdAnnotatedElements::replaceUnsolvedElements(element);
+  XsdAnnotatedElements::replaceUnsolvedElements(elementWrapper);
 
-  auto elem = element->getElement();
+  auto element = elementWrapper->getElement();
 
-  bool isComplexOrSimpleType = std::dynamic_pointer_cast<XsdComplexType>(elem) ||
-                               std::dynamic_pointer_cast<XsdSimpleType>(elem);
+  bool isComplexOrSimpleType = dynamic_cast<XsdComplexType*>(element) != nullptr ||
+                               dynamic_cast<XsdSimpleType*>(element) != nullptr;
 
-  if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_base);
-      x && isComplexOrSimpleType &&
-      compareReference(element, x))
-    m_base = element;
+  if (auto x = dynamic_cast<UnsolvedReference*>(m_base);
+      x != nullptr &&
+      isComplexOrSimpleType &&
+      compareReference(elementWrapper, x))
+    m_base = elementWrapper;
 
 
-  if (auto x = std::dynamic_pointer_cast<UnsolvedReference>(m_base);
-      x && std::dynamic_pointer_cast<XsdGroup>(m_base) &&
-      compareReference(element, x))
-    m_childElement = element;
+  if (auto x = dynamic_cast<UnsolvedReference*>(m_base);
+      x != nullptr &&
+      dynamic_cast<XsdGroup*>(m_base) != nullptr &&
+      compareReference(elementWrapper, x))
+    m_childElement = elementWrapper;
 
-  std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->replaceUnsolvedAttributes(
-        getParser(),
-        element,
-        shared_from_this());
+  static_cast<XsdExtensionVisitor*>(getVisitor())->replaceUnsolvedAttributes(elementWrapper, this);
 }
 
 /**
@@ -104,64 +102,44 @@ void XsdExtension::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement>
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdAbstractElement> XsdExtension::clone(StringMap placeHolderAttributes)
+XsdExtension::XsdExtension(const XsdExtension& other)
+ : XsdExtension(other.getAttributesMap(), other.m_visitorFunction, nullptr)
 {
-  placeHolderAttributes.merge(getAttributesMap());
+  for(auto& attribute : other.getXsdAttributes())
+    getVisitor()->visit(new XsdAttribute(attribute->getAttributesMap(), nullptr, this));
 
-  auto elementCopy = create<XsdExtension>(getParser(),
-                                          placeHolderAttributes,
-                                          m_visitorFunction,
-                                          nullptr);
+  for(auto& attributeGroup : other.getXsdAttributeGroup())
+    getVisitor()->visit(new XsdAttributeGroup(attributeGroup->getAttributesMap(), nullptr, this));
 
-  for(auto& attribute : getXsdAttributes())
-  {
-    elementCopy->getVisitor()->visit(
-          std::static_pointer_cast<XsdAttribute>(
-            attribute->XsdAbstractElement::clone(
-              attribute->getAttributesMap(),
-              elementCopy)));
-  }
-
-  for(auto& attributeGroup : getXsdAttributeGroup())
-  {
-    elementCopy->getVisitor()->visit(
-          std::static_pointer_cast<XsdAttributeGroup>(
-            attributeGroup->XsdAbstractElement::clone(
-              attributeGroup->getAttributesMap(),
-              elementCopy)));
-  }
-
-  elementCopy->m_childElement = ReferenceBase::clone(getParser(), m_childElement, elementCopy);
-  elementCopy->m_base = m_base;
-  elementCopy->setCloneOf(shared_from_this());
-
-  return elementCopy;
+  m_childElement = new ReferenceBase(m_childElement, this);
+  m_base = other.m_base;
+  setCloneOf(&other);
 }
 
 /**
  * @return Its children elements as his own.
  */
-std::list<std::shared_ptr<ReferenceBase>> XsdExtension::getElements(void) const
+std::list<ReferenceBase*> XsdExtension::getElements(void) const
 {
   if(m_childElement)
     return m_childElement->getElement()->getElements();
   return {};
 }
 
-std::list<std::shared_ptr<XsdAttribute>> XsdExtension::getXsdAttributes(void) const
+std::list<XsdAttribute*> XsdExtension::getXsdAttributes(void) const
 {
-  return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributes();
+  return static_cast<XsdExtensionVisitor*>(getVisitor())->getXsdAttributes();
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdExtension::getXsdAttributeGroup(void) const
+std::list<XsdAttributeGroup*> XsdExtension::getXsdAttributeGroup(void) const
 {
-  return std::static_pointer_cast<XsdExtensionVisitor>(getVisitor())->getXsdAttributeGroups();
+  return static_cast<XsdExtensionVisitor*>(getVisitor())->getXsdAttributeGroups();
 }
 
-std::shared_ptr<XsdAbstractElement> XsdExtension::getXsdChildElement(void) const
+XsdAbstractElement* XsdExtension::getXsdChildElement(void) const
 {
-  if (m_childElement &&
-      std::dynamic_pointer_cast<UnsolvedReference>(m_childElement) == nullptr)
+  if (m_childElement != nullptr &&
+      dynamic_cast<UnsolvedReference*>(m_childElement) == nullptr)
     return m_childElement->getElement();
   return nullptr;
 }

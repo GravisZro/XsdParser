@@ -6,24 +6,14 @@
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdAbstractElement> XsdUnion::clone(StringMap placeHolderAttributes)
+XsdUnion::XsdUnion(const XsdUnion& other, XsdAbstractElement* parent)
+    : XsdUnion(other.getAttributesMap(), other.m_visitorFunction, parent)
 {
-    placeHolderAttributes.merge(getAttributesMap());
-
-    auto elementCopy = create<XsdUnion>(getParser(),
-                                        placeHolderAttributes,
-                                        m_visitorFunction,
-                                        nullptr);
-
-    if (m_simpleTypeList.empty())
-    {
-      for(auto& simpleType : m_simpleTypeList)
-        elementCopy->m_simpleTypeList.push_back(
-            std::static_pointer_cast<XsdSimpleType>(
-                simpleType->XsdAbstractElement::clone(simpleType->getAttributesMap(), elementCopy)));
-    }
-
-    return elementCopy;
+  if (other.m_simpleTypeList.empty())
+  {
+    for(auto& simpleType : m_simpleTypeList)
+      m_simpleTypeList.push_back(new XsdSimpleType(*simpleType, this));
+  }
 }
 
 std::list<std::string> XsdUnion::getMemberTypesList(void)

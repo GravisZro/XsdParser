@@ -18,26 +18,14 @@ class NamedConcreteElement;
  */
 class XsdMultipleElements : public XsdAnnotatedElements
 {
-protected:
-    /**
-     * A list of elements that are contained in the concrete implementation of the {@link XsdMultipleElements} instance.
-     */
-  std::list<std::shared_ptr<ReferenceBase>> m_elements;
-
 public: // ctors
-  XsdMultipleElements(std::shared_ptr<XsdParserCore> parser,
-                      StringMap attributesMap,
+  XsdMultipleElements(StringMap attributesMap,
                       VisitorFunctionType visitorFunction,
-                      std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent) { }
-
-public:
-  virtual void initialize(void) override
+                      XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
   {
-    XsdAnnotatedElements::initialize();
-    m_elements.clear();
   }
-
+public:
   /**
    * Replaces possible {@link UnsolvedReference} objects in the {@link XsdMultipleElements#elements} if any of their
    * {@link UnsolvedReference#ref} field matches the {@link NamedConcreteElement#name} field.
@@ -45,12 +33,12 @@ public:
    *                       object, if a match between the {@link NamedConcreteElement#name} attribute and the
    *                       {@link UnsolvedReference#ref} attribute.
    */
-  void replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> elementWrapper);
+  virtual void replaceUnsolvedElements(NamedConcreteElement* elementWrapper) override;
 
-    /**
+  /**
      * @return All the elements received in the parsing process.
      */
-  std::list<std::shared_ptr<ReferenceBase>> getElements(void) const override
+  std::list<ReferenceBase*> getElements(void) const override
   {
     return m_elements;
   }
@@ -58,7 +46,7 @@ public:
   /**
    * @return The elements that are fully resolved. The {@link UnsolvedReference} objects aren't returned.
    */
-  std::list<std::shared_ptr<XsdAbstractElement>> getXsdElements(void) const override;
+  std::list<XsdAbstractElement*> getXsdElements(void) const override;
 
   /**
    * @tparam One of the following classes:
@@ -72,14 +60,19 @@ public:
                                         std::is_same_v<XsdChoice  , T> ||
                                         std::is_same_v<XsdSequence, T> ||
                                         std::is_same_v<XsdGroup   , T>, bool> = true>
-  std::list<std::shared_ptr<T>> getChildren(void) const
+  std::list<T*> getChildren(void) const
   {
-    std::list<std::shared_ptr<T>> targets;
+    std::list<T*> targets;
     for(auto& element : getXsdElements())
-      if(auto x = std::dynamic_pointer_cast<T>(element); x)
+      if(auto x = dynamic_cast<T*>(element); x != nullptr)
         targets.push_back(x);
     return targets;
   }
 
-  void addElement(std::shared_ptr<XsdAbstractElement> element);
+  void addElement(XsdAbstractElement* element);
+protected:
+  /**
+   * A list of elements that are contained in the concrete implementation of the {@link XsdMultipleElements} instance.
+   */
+  std::list<ReferenceBase*> m_elements;
 };

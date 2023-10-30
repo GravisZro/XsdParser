@@ -93,7 +93,7 @@ namespace AttributeValidations
    * @param parent The parent of the element requesting the default form value.
    * @return The default value for the form attribute.
    */
-  std::string getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
+  std::string getFormDefaultValue(XsdAbstractElement* parent);
   /**
    * Obtains the default value of the {@link XsdSchema#finalDefault} attribute by iterating in the element tree by
    * going from {@link XsdAbstractElement#parent} to {@link XsdAbstractElement#parent} until reaching the top level
@@ -101,7 +101,7 @@ namespace AttributeValidations
    * @param parent The parent of the element requesting the default final value.
    * @return The default value for the final attribute.
    */
-  std::string getFinalDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
+  std::string getFinalDefaultValue(XsdAbstractElement* parent);
 
   /**
    * Obtains the default value of the {@link XsdSchema#blockDefault} attribute by iterating in the element tree by
@@ -110,5 +110,5 @@ namespace AttributeValidations
    * @param parent The parent of the element requesting the default block value.
    * @return The default value for the block attribute.
    */
-  std::string getBlockDefaultValue(std::shared_ptr<XsdAbstractElement> parent);
+  std::string getBlockDefaultValue(XsdAbstractElement* parent);
 };

@@ -13,67 +13,38 @@
  */
 class XsdList : public XsdAnnotatedElements
 {
-private:
-    /**
-     * The {@link XsdSimpleType} instance that states the type of the elements that belong to this {@link XsdList}
-     * instance. This value shouldn't be present if there is a {@link XsdList#itemType} present.
-     */
-    std::shared_ptr<XsdSimpleType> m_simpleType;
-
-    /**
-     * The itemType defines the built-it type or the name of a present {@link XsdSimpleType} instance that represent
-     * the type of the elements that belong to this {@link XsdList}. This value shouldn't be present if there is a
-     * {@link XsdList#simpleType} is present.
-     */
-    std::optional<std::string> m_itemType;
 public: // ctors
-  XsdList(std::shared_ptr<XsdParserCore> parser,
-          StringMap attributesMap,
+  XsdList(StringMap attributesMap,
           VisitorFunctionType visitorFunction,
-          std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
+          XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
+      m_simpleType(nullptr)
   {
-  }
-public:
-  virtual void initialize(void) override
-  {
-    XsdAnnotatedElements::initialize();
-    m_simpleType.reset();
-    m_itemType.reset();
     if(haveAttribute(ITEM_TYPE_TAG))
       m_itemType = getAttribute(ITEM_TYPE_TAG);
   }
+
+  /**
+   * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
+   * {@link UnsolvedReference} objects in the reference solving process.
+   * @param placeHolderAttributes The additional attributes to add to the clone.
+   * @return A copy of the object from which is called upon.
+   */
+  XsdList(const XsdList& other, XsdAbstractElement* parent = nullptr)
+    : XsdList(other.getAttributesMap(), other.m_visitorFunction, parent)
+  {
+    if (other.m_simpleType != nullptr)
+      m_simpleType = new XsdSimpleType(*other.m_simpleType, this);
+  }
+
 public:
-    void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdList>(shared_from_this()));
-    }
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdAnnotatedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdList*>(this));
+  }
 
-    /**
-     * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-     * {@link UnsolvedReference} objects in the reference solving process.
-     * @param placeHolderAttributes The additional attributes to add to the clone.
-     * @return A copy of the object from which is called upon.
-     */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
-    {
-        placeHolderAttributes.merge(getAttributesMap());
-
-        auto elementCopy = create<XsdList>(getParser(),
-                                           placeHolderAttributes,
-                                           m_visitorFunction,
-                                           nullptr);
-
-        if (m_simpleType)
-            elementCopy->m_simpleType = std::static_pointer_cast<XsdSimpleType>(
-                                          m_simpleType->XsdAbstractElement::clone(m_simpleType->getAttributesMap(),
-                                                              elementCopy));
-
-        return elementCopy;
-    }
-
-  std::shared_ptr<XsdSimpleType> getXsdSimpleType(void) const
+  XsdSimpleType* getXsdSimpleType(void) const
   {
     return m_simpleType;
   }
@@ -83,8 +54,22 @@ public:
     return m_itemType;
   }
 
-  void setSimpleType(std::shared_ptr<XsdSimpleType> simpleType)
+  void setSimpleType(XsdSimpleType* simpleType)
   {
     m_simpleType = simpleType;
   }
+
+private:
+  /**
+   * The {@link XsdSimpleType} instance that states the type of the elements that belong to this {@link XsdList}
+   * instance. This value shouldn't be present if there is a {@link XsdList#itemType} present.
+   */
+  XsdSimpleType* m_simpleType;
+
+  /**
+   * The itemType defines the built-it type or the name of a present {@link XsdSimpleType} instance that represent
+   * the type of the elements that belong to this {@link XsdList}. This value shouldn't be present if there is a
+   * {@link XsdList#simpleType} is present.
+   */
+  std::optional<std::string> m_itemType;
 };

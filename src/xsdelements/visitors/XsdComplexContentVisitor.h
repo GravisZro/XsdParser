@@ -14,24 +14,24 @@
  */
 struct XsdComplexContentVisitor : XsdAnnotatedElementsVisitor
 {
-  XsdComplexContentVisitor(std::shared_ptr<XsdComplexContent> _owner) : owner(_owner) { }
+  XsdComplexContentVisitor(XsdComplexContent* _owner) : owner(_owner) { }
 
   /**
    * The {@link XsdComplexContent} instance which owns this {@link XsdComplexContentVisitor} instance. This way this
    * visitor instance can perform changes in the {@link XsdComplexContent} object.
    */
-  std::shared_ptr<XsdComplexContent> owner;
+  XsdComplexContent* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  virtual void visit(XsdAbstractElement* element) override
   {
     XsdAnnotatedElementsVisitor::visit(element);
 
-    if(std::dynamic_pointer_cast<XsdRestriction>(element))
+    if(dynamic_cast<XsdRestriction*>(element) != nullptr)
       owner->setRestriction(ReferenceBase::createFromXsd(element));
-    else if(std::dynamic_pointer_cast<XsdExtension>(element))
+    else if(dynamic_cast<XsdExtension*>(element) != nullptr)
       owner->setExtension(ReferenceBase::createFromXsd(element));
     else
       assert(false);

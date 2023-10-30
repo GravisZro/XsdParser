@@ -18,6 +18,10 @@
 
 class XsdElement;
 class XsdSchema;
+class XsdParserCore;
+
+extern XsdParserCore* getParser(void);
+
 
 class XsdParserCore
 {
@@ -34,14 +38,14 @@ private:
      * A {@link List} of {@link UnsolvedReference} elements that weren't solved. This list is consulted after all the
      * elements are parsed in order to find if there is any suitable parsed element to replace the unsolved element.
      */
-    std::map<SchemaLocation, std::list<std::shared_ptr<UnsolvedReference>>> m_unsolvedElements;
+    std::map<SchemaLocation, std::list<UnsolvedReference*>> m_unsolvedElements;
 
     /**
      * A {@link List} containing all the elements that even after parsing all the elements on the file, don't have a
      * suitable object to replace the reference. This list can be consulted after the parsing process to assert if there
      * is any missing information in the XSD file.
      */
-    std::list<std::shared_ptr<UnsolvedReferenceItem>> m_parserUnsolvedElements;
+    std::list<UnsolvedReferenceItem*> m_parserUnsolvedElements;
 
 protected:
     SchemaLocation m_currentSchemaLocation;
@@ -56,7 +60,7 @@ protected:
     /**
      * A {@link List} which contains all the top elements parsed by this class.
      */
-  std::map<SchemaLocation, std::list<std::shared_ptr<ReferenceBase>>> m_parseElements;
+  std::map<SchemaLocation, std::list<ReferenceBase*>> m_parseElements;
     /**
      * A {@link List} containing the paths of files that were present in either {@link XsdInclude} or {@link XsdImport}
      * objects that are present in the original or subsequent files. These paths are stored to be parsed as well, the
@@ -66,6 +70,7 @@ protected:
   std::map<SchemaLocation, SchemaLocation> m_schemaLocationsMap;
 
 public:
+  XsdParserCore(void);
     /**
      * Verifies if a given {@link DOMNode} object, i.e. {@code node} is a xsd:schema node.
      * @param node The node to verify.
@@ -90,8 +95,8 @@ public:
 
     private:
     void resolveOtherNamespaceRefs(void);
-    void replaceUnsolvedImportedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
-                                          std::shared_ptr<UnsolvedReference> unsolvedReference,
+    void replaceUnsolvedImportedReference(std::map<std::string, std::list<NamedConcreteElement*>> concreteElementsMap,
+                                          UnsolvedReference* unsolvedReference,
                                           SchemaLocation schemaLocation);
     
     void resolveInnerRefs(void);
@@ -103,8 +108,8 @@ public:
      * @param concreteElementsMap The map containing all named concreteElements.
      * @param unsolvedReference The unsolved reference to solve.
      */
-    void replaceUnsolvedReference(std::map<std::string, std::list<std::shared_ptr<NamedConcreteElement>>> concreteElementsMap,
-                                  std::shared_ptr<UnsolvedReference> unsolvedReference,
+    void replaceUnsolvedReference(std::map<std::string, std::list<NamedConcreteElement*>> concreteElementsMap,
+                                  UnsolvedReference* unsolvedReference,
                                   SchemaLocation schemaLocation);
 
     /**
@@ -113,13 +118,13 @@ public:
      * references that couldn't be solved.
      * @param unsolvedReference The unsolved reference which couldn't be resolved.
      */
-    void storeUnsolvedItem(std::shared_ptr<UnsolvedReference> unsolvedReference);
+    void storeUnsolvedItem(UnsolvedReference* unsolvedReference);
 public:
     /**
      * @return The {@link List} of {@link UnsolvedReferenceItem} that represent all the objects with a reference that couldn't
      * be solved.
      */
-  std::list<std::shared_ptr<UnsolvedReferenceItem>> getUnsolvedReferences(void) const
+  std::list<UnsolvedReferenceItem*> getUnsolvedReferences(void) const
   {
     return m_parserUnsolvedElements;
   }
@@ -128,15 +133,15 @@ public:
      * @return A list of all the top level parsed xsd:elements by this class. It doesn't return any other elements apart
      * from xsd:elements. To access the whole element tree use {@link XsdParser#getResultXsdSchemas()}
      */
-  std::list<std::shared_ptr<XsdAbstractElement>> getResultXsdElements(void);
+  std::list<XsdAbstractElement*> getResultXsdElements(void);
 
-  std::list<std::shared_ptr<XsdElement>> getResultChildrenElements(void);
+  std::list<XsdElement*> getResultChildrenElements(void);
 
     /**
      * @return A {@link List} of all the {@link XsdSchema} elements parsed by this class. You can use the {@link XsdSchema}
      * instances to navigate through the whole element tree.
      */
-  std::list<std::shared_ptr<XsdSchema>> getResultXsdSchemas(void);
+  std::list<XsdSchema*> getResultXsdSchemas(void);
 
 
 
@@ -145,7 +150,7 @@ public:
      * at a later time in the parsing process.
      * @param unsolvedReference The unsolvedReference to add to the unsolvedElements list.
      */
-  void addUnsolvedReference(std::shared_ptr<UnsolvedReference> unsolvedReference);
+  void addUnsolvedReference(UnsolvedReference* unsolvedReference);
 
     /**
      * Adds a new file to the parsing queue. This new file appears by having xsd:import or xsd:include tags in the
@@ -164,7 +169,7 @@ public:
     return m_parseMappers;
   }
 
-  void addParsedElement(std::shared_ptr<ReferenceBase> wrappedElement)
+  void addParsedElement(ReferenceBase* wrappedElement)
   {
     m_parseElements[m_currentSchemaLocation].push_back(wrappedElement);
   }

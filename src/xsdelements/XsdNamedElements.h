@@ -10,52 +10,28 @@
  */
 class XsdNamedElements : public XsdAnnotatedElements
 {
-private:
-    /**
-     * The name of the element.
-     */
-    std::optional<std::string> m_name;
 public: // ctors
-  XsdNamedElements(std::shared_ptr<XsdParserCore> parser,
-                   StringMap attributesMap,
+  XsdNamedElements(StringMap attributesMap,
                    VisitorFunctionType visitorFunction,
-                   std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-  {
-  }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdAnnotatedElements::initialize();
-    m_name.reset();
+                   XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent)
+  {    
     if(haveAttribute(XsdAbstractElement::NAME_TAG))
       m_name = getAttribute(XsdAbstractElement::NAME_TAG);
   }
 
-    /**
-     * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
-     */
+public:
+  /**
+   * Runs verifications on each concrete element to ensure that the XSD schema rules are verified.
+   */
   virtual void validateSchemaRules(void) const override
   {
     rule1();
   }
 
-    /**
-     * Asserts that the current element doesn't have both ref and name attributes at the same time. Throws an exception
-     * if they are both present.
-     */
-private:
-  void rule1(void) const
-  {
-    if (m_name && haveAttribute(REF_TAG))
-      throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
-  }
-
-public:
-    /**
-     * @return The name of the element, with all the special characters replaced with the '_' char.
-     */
+  /**
+   * @return The name of the element, with all the special characters replaced with the '_' char.
+   */
   std::optional<std::string> getName(void) const
   {
     if(m_name)
@@ -73,11 +49,28 @@ public:
 
   std::optional<std::string> getRawName(void) const
   {
-        return m_name;
+    return m_name;
   }
 
   void setName(std::string name)
   {
     m_name = name;
   }
+
+private:
+  /**
+   * Asserts that the current element doesn't have both ref and name attributes at the same time. Throws an exception
+   * if they are both present.
+   */
+  void rule1(void) const
+  {
+    if (m_name && haveAttribute(REF_TAG))
+      throw ParsingException(*NAME_TAG + " and " + REF_TAG + " attributes cannot both be present at the same time.");
+  }
+
+private:
+  /**
+   * The name of the element.
+   */
+  std::optional<std::string> m_name;
 };

@@ -10,20 +10,20 @@
  */
 struct XsdUnionVisitor : XsdAnnotatedElementsVisitor
 {
-  XsdUnionVisitor(std::shared_ptr<XsdUnion> _owner) : owner(_owner) { }
+  XsdUnionVisitor(XsdUnion* _owner) : owner(_owner) { }
 
   /**
    * The {@link XsdUnion} instance which owns this {@link XsdUnionVisitor} instance. This way this visitor instance
    * can perform changes in the {@link XsdUnion} object.
    */
-  std::shared_ptr<XsdUnion> owner;
+  XsdUnion* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  void visit(std::shared_ptr<XsdAbstractElement> element) override
+  void visit(XsdAbstractElement* element) override
   {
     XsdAnnotatedElementsVisitor::visit(element);
-    owner->add(std::static_pointer_cast<XsdSimpleType>(element));
+    owner->add(static_cast<XsdSimpleType*>(element));
   }
 };

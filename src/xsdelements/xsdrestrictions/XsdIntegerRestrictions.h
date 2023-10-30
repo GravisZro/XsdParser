@@ -15,39 +15,19 @@
  */
 class XsdIntegerRestrictions : public XsdAnnotatedElements
 {
-protected:
-    /**
-     * Indicates if the value is fixed.
-     */
-    bool m_fixed;
-
-    /**
-     * The value of associated with a given restriction. This field has different meanings depending on the concrete
-     * restriction, e.g. if the concrete class is {@link XsdLength} this field means that the attribute which
-     * has the restriction can only have the length specified in this field..
-     */
-    int m_value;
 public: // ctors
-  XsdIntegerRestrictions(std::shared_ptr<XsdParserCore> parser,
-                         StringMap attributesMap,
+  XsdIntegerRestrictions(StringMap attributesMap,
                          VisitorFunctionType visitorFunction,
-                         std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
+                         XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
       m_fixed(false),
       m_value(INT_MIN)
   {
-  }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdAnnotatedElements::initialize();
-    m_fixed = false;
-    m_value = INT_MIN;
     if(haveAttribute(FIXED_TAG))
       m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
   }
 
+public:
   int getValue(void) const
   {
     return m_value;
@@ -57,4 +37,17 @@ public:
   {
     return m_fixed;
   }
+
+protected:
+  /**
+   * Indicates if the value is fixed.
+   */
+  bool m_fixed;
+
+  /**
+   * The value of associated with a given restriction. This field has different meanings depending on the concrete
+   * restriction, e.g. if the concrete class is {@link XsdLength} this field means that the attribute which
+   * has the restriction can only have the length specified in this field..
+   */
+  int m_value;
 };

@@ -16,22 +16,22 @@
  */
 struct XsdExtensionVisitor : AttributesVisitor
 {
-  XsdExtensionVisitor(std::shared_ptr<XsdExtension> _owner) : owner(_owner) { }
+  XsdExtensionVisitor(XsdExtension* _owner) : owner(_owner) { }
 
     /**
      * The {@link XsdExtension} instance which owns this {@link XsdExtensionVisitor} instance. This way this visitor
      * instance can perform changes in the {@link XsdExtension} object.
      */
-  std::shared_ptr<XsdExtension> owner;
+  XsdExtension* owner;
 
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) override
-    { return std::static_pointer_cast<XsdAbstractElement>(owner); }
+  virtual XsdAbstractElement* getOwner(void) override
+    { return static_cast<XsdAbstractElement*>(owner); }
 
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) override
+  virtual void visit(XsdAbstractElement* element) override
   {
     AttributesVisitor::visit(element);
-    if(std::dynamic_pointer_cast<XsdMultipleElements>(element) ||
-       std::dynamic_pointer_cast<XsdGroup>(element))
+    if(dynamic_cast<XsdMultipleElements*>(element) != nullptr ||
+       dynamic_cast<XsdGroup*>(element) != nullptr)
       owner->setChildElement(ReferenceBase::createFromXsd(element));
   }
 };

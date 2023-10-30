@@ -22,40 +22,40 @@
 
 #include <xsdelements/XsdRestriction.h>
 
-void XsdRestrictionVisitor::visit(std::shared_ptr<XsdAbstractElement> element)
+void XsdRestrictionVisitor::visit(XsdAbstractElement* element)
 {
   AttributesVisitor::visit(element);
 
-  if(std::dynamic_pointer_cast<XsdEnumeration>(element))
-    owner->add(std::static_pointer_cast<XsdEnumeration>(element));
-  else if(std::dynamic_pointer_cast<XsdFractionDigits>(element))
-    owner->setFractionDigits(std::static_pointer_cast<XsdFractionDigits>(element));
-  else if(std::dynamic_pointer_cast<XsdLength>(element))
-    owner->setLength(std::static_pointer_cast<XsdLength>(element));
-  else if(std::dynamic_pointer_cast<XsdMaxExclusive>(element))
-    owner->setMaxExclusive(std::static_pointer_cast<XsdMaxExclusive>(element));
-  else if(std::dynamic_pointer_cast<XsdMaxInclusive>(element))
-    owner->setMaxInclusive(std::static_pointer_cast<XsdMaxInclusive>(element));
-  else if(std::dynamic_pointer_cast<XsdMaxLength>(element))
-    owner->setMaxLength(std::static_pointer_cast<XsdMaxLength>(element));
-  else if(std::dynamic_pointer_cast<XsdMinExclusive>(element))
-    owner->setMinExclusive(std::static_pointer_cast<XsdMinExclusive>(element));
-  else if(std::dynamic_pointer_cast<XsdMinInclusive>(element))
-    owner->setMinInclusive(std::static_pointer_cast<XsdMinInclusive>(element));
-  else if(std::dynamic_pointer_cast<XsdMinLength>(element))
-    owner->setMinLength(std::static_pointer_cast<XsdMinLength>(element));
-  else if(std::dynamic_pointer_cast<XsdPattern>(element))
-    owner->setPattern(std::static_pointer_cast<XsdPattern>(element));
-  else if(std::dynamic_pointer_cast<XsdTotalDigits>(element))
-    owner->setTotalDigits(std::static_pointer_cast<XsdTotalDigits>(element));
-  else if(std::dynamic_pointer_cast<XsdWhiteSpace>(element))
-    owner->setWhiteSpace(std::static_pointer_cast<XsdWhiteSpace>(element));
-  else if(std::dynamic_pointer_cast<XsdAll>(element))
-    owner->setAll(std::static_pointer_cast<XsdAll>(element));
-  else if(std::dynamic_pointer_cast<XsdChoice>(element))
-    owner->setChoice(std::static_pointer_cast<XsdChoice>(element));
-  else if(std::dynamic_pointer_cast<XsdSequence>(element))
-    owner->setSequence(std::static_pointer_cast<XsdSequence>(element));
-  else if(std::dynamic_pointer_cast<XsdGroup>(element))
+  if(dynamic_cast<XsdEnumeration*>(element) != nullptr)
+    owner->add(static_cast<XsdEnumeration*>(element));
+  else if(dynamic_cast<XsdFractionDigits*>(element) != nullptr)
+    owner->setFractionDigits(static_cast<XsdFractionDigits*>(element));
+  else if(dynamic_cast<XsdLength*>(element) != nullptr)
+    owner->setLength(static_cast<XsdLength*>(element));
+  else if(dynamic_cast<XsdMaxExclusive*>(element) != nullptr)
+    owner->setMaxExclusive(static_cast<XsdMaxExclusive*>(element));
+  else if(dynamic_cast<XsdMaxInclusive*>(element) != nullptr)
+    owner->setMaxInclusive(static_cast<XsdMaxInclusive*>(element));
+  else if(dynamic_cast<XsdMaxLength*>(element) != nullptr)
+    owner->setMaxLength(static_cast<XsdMaxLength*>(element));
+  else if(dynamic_cast<XsdMinExclusive*>(element) != nullptr)
+    owner->setMinExclusive(static_cast<XsdMinExclusive*>(element));
+  else if(dynamic_cast<XsdMinInclusive*>(element) != nullptr)
+    owner->setMinInclusive(static_cast<XsdMinInclusive*>(element));
+  else if(dynamic_cast<XsdMinLength*>(element) != nullptr)
+    owner->setMinLength(static_cast<XsdMinLength*>(element));
+  else if(dynamic_cast<XsdPattern*>(element) != nullptr)
+    owner->setPattern(static_cast<XsdPattern*>(element));
+  else if(dynamic_cast<XsdTotalDigits*>(element) != nullptr)
+    owner->setTotalDigits(static_cast<XsdTotalDigits*>(element));
+  else if(dynamic_cast<XsdWhiteSpace*>(element) != nullptr)
+    owner->setWhiteSpace(static_cast<XsdWhiteSpace*>(element));
+  else if(dynamic_cast<XsdAll*>(element) != nullptr)
+    owner->setAll(static_cast<XsdAll*>(element));
+  else if(dynamic_cast<XsdChoice*>(element) != nullptr)
+    owner->setChoice(static_cast<XsdChoice*>(element));
+  else if(dynamic_cast<XsdSequence*>(element) != nullptr)
+    owner->setSequence(static_cast<XsdSequence*>(element));
+  else if(dynamic_cast<XsdGroup*>(element) != nullptr)
     owner->setGroup(ReferenceBase::createFromXsd(element));
 }

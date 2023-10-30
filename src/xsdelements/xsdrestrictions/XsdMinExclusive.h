@@ -14,51 +14,41 @@
  */
 class XsdMinExclusive : public XsdStringRestrictions
 {
-private:
-    /**
-     * Indicates if the value is fixed.
-     */
-    bool m_fixed;
 public: // ctors
-  XsdMinExclusive(std::shared_ptr<XsdParserCore> parser,
-                  StringMap attributesMap,
+  XsdMinExclusive(StringMap attributesMap,
                   VisitorFunctionType visitorFunction,
-                  std::shared_ptr<XsdAbstractElement> parent)
-      : XsdStringRestrictions(parser, attributesMap, visitorFunction, parent),
+                  XsdAbstractElement* parent)
+      : XsdStringRestrictions(attributesMap, visitorFunction, parent),
         m_fixed(false)
   {
-  }
-public:
-  virtual void initialize(void) override
-  {
-    XsdStringRestrictions::initialize();
-    m_fixed = false;
     if(haveAttribute(FIXED_TAG))
       m_fixed = AttributeValidations::validateBoolean(getAttribute(FIXED_TAG));
   }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> xsdAbstractElementVisitor) override
+  /**
+   * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
+   * {@link UnsolvedReference} objects in the reference solving process.
+   * @param placeHolderAttributes The additional attributes to add to the clone.
+   * @return A copy of the object from which is called upon.
+   */
+  XsdMinExclusive(const XsdMinExclusive& other, XsdAbstractElement* parent = nullptr)
+    : XsdMinExclusive(other.getAttributesMap(), other.m_visitorFunction, parent)
+  {
+  }
+public:
+  void accept(XsdAbstractElementVisitor* xsdAbstractElementVisitor) override
     {
         XsdStringRestrictions::accept(xsdAbstractElementVisitor);
-        xsdAbstractElementVisitor->visit(std::static_pointer_cast<XsdMinExclusive>(shared_from_this()));
+        xsdAbstractElementVisitor->visit(static_cast<XsdMinExclusive*>(this));
     }
 
-    /**
-     * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
-     * {@link UnsolvedReference} objects in the reference solving process.
-     * @param placeHolderAttributes The additional attributes to add to the clone.
-     * @return A copy of the object from which is called upon.
-     */
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override
-    {
-        placeHolderAttributes.merge(getAttributesMap());
-        return create<XsdMinExclusive>(getParser(),
-                                       placeHolderAttributes,
-                                       m_visitorFunction,
-                                       nullptr);
-    }
-
-  bool isFixed(void) {
-        return m_fixed;
-    }
+  bool isFixed(void) const
+  {
+    return m_fixed;
+  }
+private:
+  /**
+   * Indicates if the value is fixed.
+   */
+  bool m_fixed;
 };

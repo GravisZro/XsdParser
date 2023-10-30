@@ -156,12 +156,12 @@ namespace AttributeValidations
    * @param parent The parent of the element requesting the default form value.
    * @return The default value for the form attribute.
    */
-  std::string getFormDefaultValue(std::shared_ptr<XsdAbstractElement> parent)
+  std::string getFormDefaultValue(XsdAbstractElement* parent)
   {
     if (parent == nullptr)
       return {};
 
-    if (auto x = std::dynamic_pointer_cast<XsdSchema>(parent); x)
+    if (auto x = dynamic_cast<XsdSchema*>(parent); x != nullptr)
       return x->getElementFormDefault().value();
     return getFormDefaultValue(parent->getParent());
   }
@@ -173,12 +173,12 @@ namespace AttributeValidations
    * @param parent The parent of the element requesting the default final value.
    * @return The default value for the final attribute.
    */
-  std::string getFinalDefaultValue(std::shared_ptr<XsdAbstractElement> parent)
+  std::string getFinalDefaultValue(XsdAbstractElement* parent)
   {
     if (parent == nullptr)
       return {};
 
-    if (auto x = std::dynamic_pointer_cast<XsdSchema>(parent); x)
+    if (auto x = dynamic_cast<XsdSchema*>(parent); x != nullptr)
       return x->getFinalDefault().value();
     return getFinalDefaultValue(parent->getParent());
   }
@@ -190,12 +190,12 @@ namespace AttributeValidations
    * @param parent The parent of the element requesting the default block value.
    * @return The default value for the block attribute.
    */
-  std::string getBlockDefaultValue(std::shared_ptr<XsdAbstractElement> parent)
+  std::string getBlockDefaultValue(XsdAbstractElement* parent)
   {
     if (parent == nullptr)
       return {};
 
-    if (auto x = std::dynamic_pointer_cast<XsdSchema>(parent); x)
+    if (auto x = dynamic_cast<XsdSchema*>(parent); x != nullptr)
       return x->getBlockDefault().value();
     return getBlockDefaultValue(parent->getParent());
   }

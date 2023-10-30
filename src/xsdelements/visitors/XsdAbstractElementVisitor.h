@@ -9,8 +9,7 @@
 struct XsdAbstractElementVisitor
 {
   virtual ~XsdAbstractElementVisitor(void) = default;
-  virtual void initialize(void) { }
 
-  virtual void visit(std::shared_ptr<XsdAbstractElement> element) = 0;
-  virtual std::shared_ptr<XsdAbstractElement> getOwner(void) = 0;
+  virtual void visit(XsdAbstractElement* element) = 0;
+  virtual XsdAbstractElement* getOwner(void) = 0;
 };

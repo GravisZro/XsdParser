@@ -14,41 +14,38 @@
  */
 class XsdImport : public XsdAnnotatedElements
 {
-private:
-    /**
-     * Specifies the a namespace to import.
-     */
-    std::optional<std::string> m_namespace;
-
-    /**
-     * Specifies the URI to the schema for the imported namespace.
-     * In this project this attribute is used to specify another file location that contains more element definitions
-     * that belong to the same XSD language definition.
-     */
-    std::string m_schemaLocation;
 public: // ctors
-  XsdImport(std::shared_ptr<XsdParserCore> parser,
-            StringMap attributesMap,
+  XsdImport(StringMap attributesMap,
             VisitorFunctionType visitorFunction,
-            std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-  {
-  }
+            XsdAbstractElement* parent);
 
 public:
-  virtual void initialize(void) override;
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdAnnotatedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdImport*>(this));
+  }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdImport>(shared_from_this()));
-    }
+  std::optional<std::string> getNamespace(void) const
+  {
+    return m_namespace;
+  }
 
-  std::optional<std::string> getNamespace(void) {
-        return m_namespace;
-    }
+  SchemaLocation getSchemaLocation(void) const
+  {
+    return m_schemaLocation;
+  }
 
-  SchemaLocation getSchemaLocation(void) {
-        return m_schemaLocation;
-    }
+private:
+  /**
+   * Specifies the a namespace to import.
+   */
+  std::optional<std::string> m_namespace;
+
+  /**
+   * Specifies the URI to the schema for the imported namespace.
+   * In this project this attribute is used to specify another file location that contains more element definitions
+   * that belong to the same XSD language definition.
+   */
+  std::string m_schemaLocation;
 };

@@ -17,66 +17,60 @@ class XsdRestriction;
  */
 class XsdComplexContent : public XsdAnnotatedElements
 {
-private:
-  /**
-     * A {@link XsdRestriction} object wrapped in a {@link ReferenceBase} object.
-     */
-  std::shared_ptr<ReferenceBase> m_restriction;
-
-  /**
-     * A {@link XsdExtension} object wrapped in a {@link ReferenceBase} object.
-     */
-  std::shared_ptr<ReferenceBase> m_extension;
-
-  /**
-     * Specifies whether character data is allowed to appear between the child elements of this element.
-     */
-  bool m_mixed;
 public: // ctors
-  XsdComplexContent(std::shared_ptr<XsdParserCore> parser,
-                    StringMap attributesMap,
+  XsdComplexContent(StringMap attributesMap,
                     VisitorFunctionType visitorFunction,
-                    std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent),
+                    XsdAbstractElement* parent)
+    : XsdAnnotatedElements(attributesMap, visitorFunction, parent),
+      m_restriction(nullptr),
+      m_extension(nullptr),
       m_mixed(false)
   {
-  }
-
-public:
-  virtual void initialize(void) override
-  {
-    XsdAnnotatedElements::initialize();
-    m_restriction.reset();
-    m_extension.reset();
-    m_mixed = false;
     if(haveAttribute(MIXED_TAG))
       m_mixed = AttributeValidations::validateBoolean(getAttribute(MIXED_TAG));
   }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
+  XsdComplexContent(const XsdComplexContent& other, XsdAbstractElement* parent = nullptr);
+
+public:
+  void accept(XsdAbstractElementVisitor* visitorParam) override
   {
     XsdAnnotatedElements::accept(visitorParam);
-    visitorParam->visit(std::static_pointer_cast<XsdComplexContent>(shared_from_this()));
+    visitorParam->visit(static_cast<XsdComplexContent*>(this));
   }
-
-  virtual std::shared_ptr<XsdAbstractElement> clone(StringMap placeHolderAttributes) override;
 
   bool isMixed(void) const
   {
     return m_mixed;
   }
 
-  std::shared_ptr<XsdExtension> getXsdExtension(void) const;
-  std::shared_ptr<XsdRestriction> getXsdRestriction(void) const;
+  XsdExtension* getXsdExtension(void) const;
+  XsdRestriction* getXsdRestriction(void) const;
 
 
-  void setExtension(std::shared_ptr<ReferenceBase> extension)
+  void setExtension(ReferenceBase* extension)
   {
     m_extension = extension;
   }
 
-  void setRestriction(std::shared_ptr<ReferenceBase> restriction)
+  void setRestriction(ReferenceBase* restriction)
   {
     m_restriction = restriction;
   }
+
+private:
+  /**
+     * A {@link XsdRestriction} object wrapped in a {@link ReferenceBase} object.
+     */
+  ReferenceBase* m_restriction;
+
+  /**
+     * A {@link XsdExtension} object wrapped in a {@link ReferenceBase} object.
+     */
+  ReferenceBase* m_extension;
+
+  /**
+     * Specifies whether character data is allowed to appear between the child elements of this element.
+     */
+  bool m_mixed;
 };

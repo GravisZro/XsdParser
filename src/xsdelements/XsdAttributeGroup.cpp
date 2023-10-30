@@ -9,79 +9,72 @@
 #include <algorithm>
 
 /**
- * @return A list of all {@link XsdAttribute} objects contained in the current {@link XsdAttributeGroup} instance,
- * either directly or present in its children {@link XsdAttributeGroup} in the
- * {@link XsdAttributeGroup#attributeGroups} field.
- */
-std::list<std::shared_ptr<ReferenceBase>> XsdAttributeGroup::getElements(void) const
-{
-  std::list<std::shared_ptr<ReferenceBase>> allAttributes = m_attributes;
-  for(auto& attributeGroup : getXsdAttributeGroups())
-    for(auto& element : attributeGroup->getElements())
-      allAttributes.push_back(element);
-  return allAttributes;
-}
-
-/**
  * Performs a copy of the current object for replacing purposes. The cloned objects are used to replace
  * {@link UnsolvedReference} objects in the reference solving process.
  * @param placeHolderAttributes The additional attributes to add to the clone.
  * @return A copy of the object from which is called upon.
  */
-std::shared_ptr<XsdAbstractElement> XsdAttributeGroup::clone(StringMap placeHolderAttributes)
+
+XsdAttributeGroup::XsdAttributeGroup(const XsdAttributeGroup& other, XsdAbstractElement* parent)
+  : XsdAttributeGroup(other.getAttributesMap(), other.m_visitorFunction, parent)
 {
-  placeHolderAttributes.merge(getAttributesMap());
-  placeHolderAttributes.erase(*REF_TAG);
+  removeAttribute(REF_TAG);
 
-  auto elementCopy = create<XsdAttributeGroup>(getParser(),
-                                               placeHolderAttributes,
-                                               m_visitorFunction,
-                                               nullptr);
+  for(const auto& attribute : other.m_attributes)
+    m_attributes.push_back(new ReferenceBase(attribute, this));
 
-  for(const auto& attribute : m_attributes)
-    elementCopy->m_attributes.push_back(ReferenceBase::clone(getParser(), attribute, elementCopy));
+  for(const auto& attributeGroup : other.m_attributeGroups)
+    m_attributeGroups.push_back(new ReferenceBase(attributeGroup, this));
 
-  for(const auto& attributeGroup : m_attributeGroups)
-    elementCopy->m_attributeGroups.push_back(ReferenceBase::clone(getParser(), attributeGroup, elementCopy));
-
-  elementCopy->setCloneOf(shared_from_this());
-
-  return elementCopy;
+  setCloneOf(&other);
 }
 
-void XsdAttributeGroup::replaceUnsolvedElements(std::shared_ptr<NamedConcreteElement> element)
+/**
+ * @return A list of all {@link XsdAttribute} objects contained in the current {@link XsdAttributeGroup} instance,
+ * either directly or present in its children {@link XsdAttributeGroup} in the
+ * {@link XsdAttributeGroup#attributeGroups} field.
+ */
+std::list<ReferenceBase*> XsdAttributeGroup::getElements(void) const
 {
-  if (std::dynamic_pointer_cast<XsdAttributeGroup>(element->getElement()))
+  std::list<ReferenceBase*> allAttributes = m_attributes;
+  for(auto& attributeGroup : getXsdAttributeGroups())
+    allAttributes.merge(attributeGroup->getElements());
+  return allAttributes;
+}
+
+void XsdAttributeGroup::replaceUnsolvedElements(NamedConcreteElement* elementWrapper)
+{
+  if (dynamic_cast<XsdAttributeGroup*>(elementWrapper->getElement()) != nullptr)
   {
-    std::shared_ptr<ReferenceBase> attributeGroupUnsolvedReference;
+    ReferenceBase* attributeGroupUnsolvedReference = nullptr;
     for(auto& attributeGroup : m_attributeGroups)
-      if(auto x = std::dynamic_pointer_cast<UnsolvedReference>(attributeGroup);
-         x && x->getRef() && x->getRef() == element->getName())
+      if(auto x = dynamic_cast<UnsolvedReference*>(attributeGroup);
+         x != nullptr && x->getRef() && x->getRef() == elementWrapper->getName())
       {
         attributeGroupUnsolvedReference = attributeGroup;
         break;
       }
 
-    if (attributeGroupUnsolvedReference)
+    if (attributeGroupUnsolvedReference != nullptr)
     {
       m_attributeGroups.remove(attributeGroupUnsolvedReference);
-      m_attributeGroups.push_back(element);
+      m_attributeGroups.push_back(elementWrapper);
     }
   }
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getXsdAttributeGroups(void) const
+std::list<XsdAttributeGroup*> XsdAttributeGroup::getXsdAttributeGroups(void) const
 {
-  std::list<std::shared_ptr<XsdAttributeGroup>> rvals;
+  std::list<XsdAttributeGroup*> rvals;
   for(auto& element : m_attributeGroups)
-    if(auto x = std::dynamic_pointer_cast<XsdAttributeGroup>(element->getElement()); x)
+    if(auto x = dynamic_cast<XsdAttributeGroup*>(element->getElement()); x != nullptr)
       rvals.push_back(x);
   return rvals;
 }
 
-std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getAllXsdAttributeGroups(void) const
+std::list<XsdAttributeGroup*> XsdAttributeGroup::getAllXsdAttributeGroups(void) const
 {
-  std::list<std::shared_ptr<XsdAttributeGroup>> rvals;
+  std::list<XsdAttributeGroup*> rvals;
   for(auto& attributeGroup : getXsdAttributeGroups())
   {
     rvals.push_back(attributeGroup);
@@ -93,11 +86,11 @@ std::list<std::shared_ptr<XsdAttributeGroup>> XsdAttributeGroup::getAllXsdAttrib
 /**
  * @return All the attributes of this attributeGroup and other attributeGroups contained within.
  */
-std::list<std::shared_ptr<XsdAttribute>> XsdAttributeGroup::getXsdAttributes(void) const
+std::list<XsdAttribute*> XsdAttributeGroup::getXsdAttributes(void) const
 {
-  std::list<std::shared_ptr<XsdAttribute>> rvals;
+  std::list<XsdAttribute*> rvals;
   for(auto& element : m_attributes)
-    if(auto x = std::dynamic_pointer_cast<XsdAttribute>(element->getElement()); x)
+    if(auto x = dynamic_cast<XsdAttribute*>(element->getElement()); x != nullptr)
       rvals.push_back(x);
   return rvals;
 }

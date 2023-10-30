@@ -13,31 +13,27 @@
  */
 class XsdInclude : public XsdAnnotatedElements
 {
-private:
-    /**
-     * Specifies the URI to the schema for the imported namespace.
-     * In this project this attribute is used to specify another file location that contains more element definitions
-     * that belong to the same XSD language definition.
-     */
-    std::string m_schemaLocation;
 public: // ctors
-  XsdInclude(std::shared_ptr<XsdParserCore> parser,
-             StringMap attributesMap,
+  XsdInclude(StringMap attributesMap,
              VisitorFunctionType visitorFunction,
-             std::shared_ptr<XsdAbstractElement> parent)
-    : XsdAnnotatedElements(parser, attributesMap, visitorFunction, parent)
-  {
-  }
+             XsdAbstractElement* parent);
 public:
-  virtual void initialize(void) override;
+  void accept(XsdAbstractElementVisitor* visitorParam) override
+  {
+    XsdAnnotatedElements::accept(visitorParam);
+    visitorParam->visit(static_cast<XsdInclude*>(this));
+  }
 
-  void accept(std::shared_ptr<XsdAbstractElementVisitor> visitorParam) override
-    {
-        XsdAnnotatedElements::accept(visitorParam);
-        visitorParam->visit(std::static_pointer_cast<XsdInclude>(shared_from_this()));
-    }
+  SchemaLocation getSchemaLocation(void) const
+  {
+    return m_schemaLocation;
+  }
 
-  SchemaLocation getSchemaLocation(void) {
-        return m_schemaLocation;
-    }
+private:
+  /**
+   * Specifies the URI to the schema for the imported namespace.
+   * In this project this attribute is used to specify another file location that contains more element definitions
+   * that belong to the same XSD language definition.
+   */
+  std::string m_schemaLocation;
 };
